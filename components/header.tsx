@@ -15,7 +15,7 @@ const Header = ({backIcon, title, menuIcon}: HeaderProps) => {
 					{backIcon}
 				</View>
 			)}
-			<View>
+			<View style={styles.titleContainer}>
 				<Text style={styles.title}>
 					{title}
 				</Text>
@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
 		fontFamily: 'InterBold',
 		color: '#2C2C2C',
 		fontSize: 28,
-		letterSpacing: 0.5
+		letterSpacing: 0.5,
+		textAlign: 'center'
 	}
 });

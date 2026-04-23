@@ -1,0 +1,18 @@
+export const colors = {
+  primary: '#00C588',
+  primaryDark: '#00956A',
+  primaryDeep: '#007A56',
+  primaryLight: '#e6fff7',
+  background: '#f0fdf8',
+  text: '#0a2e22',
+  subtext: '#4d7a68',
+  border: '#d1f0e5',
+  white: '#ffffff',
+  whiteFaded: 'rgba(255, 255, 255, 0.60)',
+  danger: '#ef4444',  
+  dangerFaded: 'rgba(239, 68, 68, 0.9)',
+  warning: '#f59e0b',
+  warningFaded: 'rgba(245, 158, 11, 0.9)',
+  info: '#0ea5e9',
+  footerIconDefault: '#a0a1a1'
+};

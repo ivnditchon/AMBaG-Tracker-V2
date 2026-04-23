@@ -1,9 +1,9 @@
 import { StyleSheet, Keyboard, TouchableWithoutFeedback, View } from 'react-native'
 import React, { useState } from 'react'
-import BackButton from '@/components/backButton'
-import ScreenTitle from '@/components/screen-title'
-import Input from '@/components/input'
-import Button from '@/components/button'
+import BackButton from '@/components/BackButton'
+import ScreenTitle from '@/components/ScreenTitle'
+import Input from '@/components/Input'
+import Button from '@/components/Button'
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
 
