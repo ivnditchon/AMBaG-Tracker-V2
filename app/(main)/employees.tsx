@@ -44,7 +44,7 @@ const Employees = () => {
 									customValueStyle={item.customValueStyle}
 									showDivider={item.showDivider}
 								/>
-							))};	
+							))}
 						</View>
 					}
 				/>

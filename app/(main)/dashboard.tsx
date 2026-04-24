@@ -54,7 +54,7 @@ const Dashboard = () => {
                            customValueStyle={item.customValueStyle}
                            showDivider={item.showDivider}
                         />
-                     ))};
+                     ))}
                   </View>
                }
             />

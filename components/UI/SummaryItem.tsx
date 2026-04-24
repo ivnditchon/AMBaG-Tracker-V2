@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
 
 	summaryItem: {
 		alignItems: 'center',
-		paddingHorizontal: 25
+		paddingHorizontal: 15
 	},
 
 	value: {

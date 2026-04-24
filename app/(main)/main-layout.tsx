@@ -15,6 +15,10 @@ export default function MainLayout({children}: MainLayoutProps) {
 		router.push('/(main)/employees');
 	};
 
+	const handleDashboardScreen = () => {
+		router.push('/(main)/dashboard');
+	};
+
 	const footerData: FooterMenuProps[] = [
 		// Home
 		{	
@@ -23,11 +27,13 @@ export default function MainLayout({children}: MainLayoutProps) {
 			size: 22, 
 			color: colors.subtext, 
 			labelFont: 'InterRegular',
-			activeLabelFont: 'InterMedium',
+			activeLabelFont: 'InterBold',
 			labelColor: colors.subtext,
 			activeLabelColor: colors.primary,
 			activeColor: colors.primary, 
-			label: 'Dashboard', onPress: () => {}
+			label: 'Dashboard', 
+			onPress: handleDashboardScreen,
+			isActive: pathname.includes('dashboard')
 		},
 		// Employees 
 		{
@@ -36,7 +42,7 @@ export default function MainLayout({children}: MainLayoutProps) {
 			size: 22, 
 			color: colors.subtext, 
 			labelFont: 'InterRegular',
-			activeLabelFont: 'InterMedium',
+			activeLabelFont: 'InterBold',
 			labelColor: colors.subtext,
 			activeLabelColor: colors.primary,
 			activeColor: colors.primary, 
@@ -51,7 +57,7 @@ export default function MainLayout({children}: MainLayoutProps) {
 			size: 22, 
 			color: colors.subtext, 
 			labelFont: 'InterRegular',
-			activeLabelFont: 'InterMedium',
+			activeLabelFont: 'InterBold',
 			labelColor: colors.subtext,
 			activeLabelColor: colors.primary,
 			activeColor: colors.primary, 
@@ -64,7 +70,7 @@ export default function MainLayout({children}: MainLayoutProps) {
 			size: 22, 
 			color: colors.subtext, 
 			labelFont: 'InterRegular',
-			activeLabelFont: 'InterMedium',
+			activeLabelFont: 'InterBold',
 			labelColor: colors.subtext,
 			activeLabelColor: colors.primary,
 			activeColor: colors.primary, 
@@ -77,7 +83,7 @@ export default function MainLayout({children}: MainLayoutProps) {
 			size: 22, 
 			color: colors.subtext, 
 			labelFont: 'InterRegular',
-			activeLabelFont: 'InterMedium',
+			activeLabelFont: 'InterBold',
 			labelColor: colors.subtext,
 			activeLabelColor: colors.primary,
 			activeColor: colors.primary, 
