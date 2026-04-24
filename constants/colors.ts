@@ -10,7 +10,7 @@ export const colors = {
   white: '#ffffff',
   whiteFaded: 'rgba(255, 255, 255, 0.60)',
   danger: '#ef4444',  
-  dangerFaded: 'rgba(239, 68, 68, 0.9)',
+  dangerFaded: 'rgba(239, 68, 68, 0.8)',
   warning: '#f59e0b',
   warningFaded: 'rgba(245, 158, 11, 0.9)',
   info: '#0ea5e9',

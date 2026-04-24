@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import BackButton from '@/components/BackButton'
 import ScreenTitle from '@/components/ScreenTitle'
 import Input from '@/components/Input'
-import Button from '@/components/Button'
+import Button from '@/components/UI/Button'
 import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
 

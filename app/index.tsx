@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, Image } from 'react-native'
 import React from 'react'
 import ScreenTitle from '@/components/ScreenTitle'
-import Button from '@/components/Button'
+import Button from '@/components/UI/Button'
 import { useRouter } from 'expo-router'
 
 const Home = () => {
