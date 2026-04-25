@@ -1,16 +1,17 @@
 import BackButton from "@/components/backButton";
-import Input from "@/components/input";
 import ScreenTitle from "@/components/ScreenTitle";
 import Button from "@/components/UI/Button";
+import Input from "@/components/UI/Input";
+import { colors } from "@/constants/colors";
 import { globalStyles } from "@/styles/globalStyle";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-	Keyboard,
-	StyleSheet,
-	TouchableWithoutFeedback,
-	View,
+  Keyboard,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  View,
 } from "react-native";
 
 const Login = () => {
@@ -40,50 +41,48 @@ const Login = () => {
               subTitle="Sign in to access your dashboard and features"
             />
             <View style={styles.inputContainer}>
-              <View style={styles.usernameFieldContainer}>
-                <Input
-                  value={username.trim()}
-                  iconLeft={
-                    <Ionicons name="person-outline" size={18} color="#D1D5DB" />
-                  }
-                  placeHolder="Enter your username"
-                  onChangeText={(newText) => {
-                    setUsername(newText);
-                  }}
-                />
-              </View>
-              <View style={styles.passwordFieldContainer}>
-                <Input
-                  value={password.trim()}
-                  iconLeft={
-                    <Ionicons
-                      name="lock-closed-outline"
-                      size={18}
-                      color="#D1D5DB"
-                    />
-                  }
-                  placeHolder="Enter your password"
-                  iconRight={
-                    <Ionicons
-                      name={showPassword ? "eye-outline" : "eye-off-outline"}
-                      size={18}
-                      color="#D1D5DB"
-                    />
-                  }
-                  onChangeText={(newText) => {
-                    setPassword(newText);
-                  }}
-                  secureTextEntry={showPassword ? false : true}
-                  onPress={togglePasswordVisibility}
-                />
-              </View>
-              <Button
-                title="Login"
-                onPress={handleLogin}
-                customContainerStyle={globalStyles.loginCustomButtomContainer}
-                customTitleStyle={globalStyles.loginCustomButtonTitle}
+              <Input
+                label="Username"
+                value={username.trim()}
+                iconLeft={
+                  <Ionicons name="person-outline" size={18} color="#D1D5DB" />
+                }
+                placeHolder="Enter your username"
+                onChangeText={(newText) => {
+                  setUsername(newText);
+                }}
+              />
+              <Input
+                label="Password"
+                value={password.trim()}
+                iconLeft={
+                  <Ionicons
+                    name="lock-closed-outline"
+                    size={18}
+                    color="#D1D5DB"
+                  />
+                }
+                placeHolder="Enter your password"
+                iconRight={
+                  <Ionicons
+                    name={showPassword ? "eye-outline" : "eye-off-outline"}
+                    size={18}
+                    color="#D1D5DB"
+                  />
+                }
+                onChangeText={(newText) => {
+                  setPassword(newText);
+                }}
+                secureTextEntry={showPassword ? false : true}
+                onPress={togglePasswordVisibility}
               />
             </View>
+            <Button
+              title="Login"
+              onPress={handleLogin}
+              customContainerStyle={globalStyles.loginCustomButtomContainer}
+              customTitleStyle={globalStyles.loginCustomButtonTitle}
+            />
           </View>
         </View>
       </View>
@@ -110,7 +109,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25,
     borderWidth: 1,
     borderRadius: 12,
-    borderColor: "#E5E7EB",
+    borderColor: colors.border,
     backgroundColor: "#FFFFFF",
     // Soft shadow
     shadowColor: "#000",
@@ -122,13 +121,6 @@ const styles = StyleSheet.create({
 
   inputContainer: {
     marginTop: 40,
-  },
-
-  usernameFieldContainer: {
     marginBottom: 20,
-  },
-
-  passwordFieldContainer: {
-    marginBottom: 40,
   },
 });

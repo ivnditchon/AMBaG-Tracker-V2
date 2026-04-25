@@ -1,5 +1,6 @@
 import Header from "@/components/Layout/Header";
 import Button from "@/components/UI/Button";
+import Form from "@/components/UI/Modal";
 import SummaryItem, { SummaryItemProps } from "@/components/UI/SummaryItem";
 import { colors } from "@/constants/colors";
 import { globalStyles } from "@/styles/globalStyle";
@@ -7,25 +8,7 @@ import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import MainLayout from "./main-layout";
 
-type EmployeeProps = {
-  firstName: string;
-  middleName: string;
-  lastName: string;
-  position:
-    | "Administrative Assistant I"
-    | "Administrative Assistant II"
-    | "Administrative Assistant III";
-  department: "Technical" | "Admin" | "Communication" | "Monitoring";
-};
-
 const Employees = () => {
-  const [employee, setEmployee] = useState<EmployeeProps[]>([]);
-
-  const [isFormActive, setFormActive] = useState(false);
-  const employeeForm = () => {
-    setFormActive(true);
-  };
-
   const employeeSummaryData: SummaryItemProps[] = [
     {
       value: 50,
@@ -47,6 +30,11 @@ const Employees = () => {
     },
   ];
 
+  const [isFormVisible, setFormVisible] = useState(false);
+  const handleAddEmployee = () => {
+    setFormVisible(true);
+  };
+
   return (
     <MainLayout>
       <View style={styles.container}>
@@ -65,7 +53,7 @@ const Employees = () => {
               iconColor={colors.primary}
               customContainerStyle={styles.buttonContainer}
               customTitleStyle={styles.buttonTitle}
-              onPress={employeeForm}
+              onPress={handleAddEmployee}
             />
           }
           bottomComponent={
@@ -83,6 +71,15 @@ const Employees = () => {
           }
         />
       </View>
+      <Form
+        title="Add Employee"
+        subTitle="Fill in the employee details below"
+        icon="person-add"
+        visible={isFormVisible}
+        onClose={() => setFormVisible(false)}
+      >
+        <View></View>
+      </Form>
     </MainLayout>
   );
 };

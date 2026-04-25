@@ -2,16 +2,6 @@ import { colors } from "@/constants/colors";
 import { StyleSheet } from "react-native";
 
 export const globalStyles = StyleSheet.create({
-  loginCustomButtomContainer: {
-    width: "100%",
-    height: 55,
-    backgroundColor: colors.primary,
-  },
-
-  loginCustomButtonTitle: {
-    fontSize: 20,
-  },
-
   headerLeftComponentContainer: {
     flexDirection: "column",
   },
