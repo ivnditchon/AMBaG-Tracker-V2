@@ -80,8 +80,11 @@ const Login = () => {
             <Button
               title="Login"
               onPress={handleLogin}
-              customContainerStyle={globalStyles.loginCustomButtomContainer}
-              customTitleStyle={globalStyles.loginCustomButtonTitle}
+              customContainerStyle={[
+                globalStyles.buttonContainer,
+                styles.customButtonContainer,
+              ]}
+              customTitleStyle={globalStyles.buttonTitle}
             />
           </View>
         </View>
@@ -122,5 +125,9 @@ const styles = StyleSheet.create({
   inputContainer: {
     marginTop: 40,
     marginBottom: 20,
+  },
+
+  customButtonContainer: {
+    marginTop: 5,
   },
 });

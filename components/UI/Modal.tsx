@@ -1,7 +1,14 @@
 import { colors } from "@/constants/colors";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Modal,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Button from "./Button";
 
 type FormProps = {
@@ -39,18 +46,23 @@ const Form = ({
                 </TouchableOpacity>
               </View>
             </View>
-            <View style={styles.avatarPlaceholder}>
-              <Ionicons name={icon} size={24} color={colors.subtext} />
-            </View>
-            <View style={styles.modalContent}>
-              {children}
-              <Button
-                title="Add Employee"
-                customContainerStyle={styles.buttonContainer}
-                customTitleStyle={styles.buttonTitle}
-                onPress={() => console.log()}
-              />
-            </View>
+            <ScrollView
+              nestedScrollEnabled={true}
+              keyboardShouldPersistTaps="handled"
+            >
+              <View style={styles.avatarPlaceholder}>
+                <Ionicons name={icon} size={24} color={colors.subtext} />
+              </View>
+              <View style={styles.modalContent}>
+                {children}
+                <Button
+                  title="Add Employee"
+                  customContainerStyle={styles.buttonContainer}
+                  customTitleStyle={styles.buttonTitle}
+                  onPress={() => console.log()}
+                />
+              </View>
+            </ScrollView>
           </View>
         </View>
       </Modal>
@@ -68,6 +80,7 @@ const styles = StyleSheet.create({
   },
 
   modalView: {
+    height: 600,
     backgroundColor: colors.white,
     borderTopStartRadius: 30,
     borderTopEndRadius: 30,
@@ -102,13 +115,13 @@ const styles = StyleSheet.create({
 
   title: {
     fontFamily: "DINBold",
-    fontSize: 24,
+    fontSize: 26,
     color: colors.text,
   },
 
   subTitle: {
     fontFamily: "DINMedium",
-    fontSize: 14,
+    fontSize: 15,
     color: colors.subtext,
     marginTop: 8,
   },

@@ -29,10 +29,10 @@ const Home = () => {
         title="Login"
         onPress={LoginScreen}
         customContainerStyle={[
+          globalStyles.buttonContainer,
           styles.customButtonContainer,
-          globalStyles.loginCustomButtomContainer,
         ]}
-        customTitleStyle={globalStyles.loginCustomButtonTitle}
+        customTitleStyle={globalStyles.buttonTitle}
       />
     </View>
   );

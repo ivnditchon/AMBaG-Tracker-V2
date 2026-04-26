@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
 
   label: {
     fontFamily: "DINBold",
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: 600,
     color: colors.text,
     marginBottom: 8,

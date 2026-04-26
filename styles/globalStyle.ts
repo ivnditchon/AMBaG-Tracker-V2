@@ -38,4 +38,13 @@ export const globalStyles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 15,
   },
+
+  buttonContainer: {
+    width: "100%",
+    height: 55,
+    backgroundColor: colors.primary,
+  },
+  buttonTitle: {
+    fontSize: 22,
+  },
 });

@@ -1,5 +1,7 @@
 import Header from "@/components/Layout/Header";
 import Button from "@/components/UI/Button";
+import Dropdown from "@/components/UI/Dropdown";
+import Input from "@/components/UI/Input";
 import Form from "@/components/UI/Modal";
 import SummaryItem, { SummaryItemProps } from "@/components/UI/SummaryItem";
 import { colors } from "@/constants/colors";
@@ -34,6 +36,24 @@ const Employees = () => {
   const handleAddEmployee = () => {
     setFormVisible(true);
   };
+
+  // Add employee
+  const positions = [
+    "Administrative Assistant VI",
+    "Administrative Assistant V",
+    "Administrative Assistant IV",
+    "Administrative Assistant III",
+    "Administrative Assistant II",
+    "Administrative Assistant I",
+  ];
+
+  const departments = ["Technical", "Admin", "Monitoring", "Communication"];
+
+  const [firstName, setFirstName] = useState<string>("");
+  const [middleName, setMiddleName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
+  const [position, setPosition] = useState<string>("");
+  const [department, setDepartment] = useState<string>("");
 
   return (
     <MainLayout>
@@ -78,7 +98,40 @@ const Employees = () => {
         visible={isFormVisible}
         onClose={() => setFormVisible(false)}
       >
-        <View></View>
+        <View style={styles.inputContainer}>
+          <Input
+            label="FIRST NAME"
+            value={firstName.trim()}
+            placeHolder="e.g Ivan"
+            onChangeText={(newText) => setFirstName(newText)}
+          />
+          <Input
+            label="MIDDLE NAME"
+            value={middleName.trim()}
+            placeHolder="e.g Hanma"
+            onChangeText={(newText) => setMiddleName(newText)}
+          />
+          <Input
+            label="LAST NAME"
+            value={lastName.trim()}
+            placeHolder="e.g Hanma"
+            onChangeText={(newText) => setLastName(newText)}
+          />
+          <Dropdown
+            label="POSITION"
+            value={position}
+            onValueChange={setPosition}
+            items={positions}
+            placeholder="Select position"
+          />
+          <Dropdown
+            label="DEPARTMENT"
+            value={department}
+            onValueChange={setDepartment}
+            items={departments}
+            placeholder="Select department"
+          />
+        </View>
       </Form>
     </MainLayout>
   );
@@ -101,5 +154,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.primary,
     marginLeft: 5,
+  },
+
+  inputContainer: {
+    marginTop: 30,
   },
 });
