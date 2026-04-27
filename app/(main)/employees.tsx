@@ -9,32 +9,65 @@ import { globalStyles } from "@/styles/globalStyle";
 import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import MainLayout from "./main-layout";
-import { Ionicons } from "@expo/vector-icons";
+
+type EmployeesProps = {
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  position: string;
+  department: string;
+  designation: string;
+  status: "Active" | "Inactive";
+}
 
 const Employees = () => {
+  const [isFormVisible, setFormVisible] = useState(false);
+  const [employees, setEmployees] = useState<EmployeesProps[]>([]);
+  const [firstName, setFirstName] = useState<string>("");
+  const [middleName, setMiddleName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
+  const [position, setPosition] = useState<string>("");
+  const [designation, setDesignation] = useState<string>("");
+  const [department, setDepartment] = useState<string>("");
+  const [status, setStatus] = useState<"Active" | "Inactive">("Active"); // Union type - allows only active and inactive
+
+  const handleAddemployee = () => {
+    const newEmployee: EmployeesProps = {
+      firstName: firstName, // Comes from Props: Value(state)
+      middleName: middleName,
+      lastName: lastName,
+      position: position,
+      department: department,
+      designation: designation,
+      status: status
+    }
+
+    setEmployees(prev => [...prev, newEmployee]); // Get all employees from Employees and copy (...prev) all employees + new employee
+    setFormVisible(false);
+  }
+
   const employeeSummaryData: SummaryItemProps[] = [
     {
-      value: 50,
+      value: employees.length,
       label: "Total",
       customValueStyle: colors.primaryLight,
       showDivider: true,
     },
     {
-      value: 42,
+      value: employees.filter(emp => emp.status === "Active").length,
       label: "Active",
       customValueStyle: colors.whiteFaded,
       showDivider: true,
     },
     {
-      value: 8,
+      value: employees.filter(emp => emp.status === "Inactive").length,
       label: "Inactive",
       customValueStyle: colors.dangerFaded,
       showDivider: false,
     },
   ];
 
-  const [isFormVisible, setFormVisible] = useState(false);
-  const handleAddEmployee = () => {
+  const handleOpenAddForm = () => {
     setFormVisible(true);
   };
 
@@ -79,14 +112,6 @@ const Employees = () => {
   // PMO Status
   const statusOptions = ["Active", "Isactive"];
 
-  const [firstName, setFirstName] = useState<string>("");
-  const [middleName, setMiddleName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
-  const [position, setPosition] = useState<string>("");
-  const [designation, setDesignation] = useState<string>("");
-  const [department, setDepartment] = useState<string>("");
-  const [status, setStatus] = useState<string>("")
-
   return (
     <MainLayout>
       <View style={styles.container}>
@@ -105,7 +130,7 @@ const Employees = () => {
               iconColor={colors.primary}
               customContainerStyle={styles.buttonContainer}
               customTitleStyle={styles.buttonTitle}
-              onPress={handleAddEmployee}
+              onPress={handleOpenAddForm}
             />
           }
           bottomComponent={
@@ -129,6 +154,7 @@ const Employees = () => {
         icon="person-add"
         visible={isFormVisible}
         onClose={() => setFormVisible(false)}
+        onSubmit={handleAddemployee}
       >
         <View style={styles.inputContainer}>
           <Input
@@ -155,7 +181,6 @@ const Employees = () => {
             onValueChange={setPosition}
             items={positions}
             placeholder="Select position"
-            icon="briefcase-outline"
           />
           <Dropdown
             label="DESIGNATION"
@@ -163,7 +188,6 @@ const Employees = () => {
             onValueChange={setDesignation}
             items={designations}
             placeholder="Select designation"
-            icon="ribbon-outline"
           />
           <Dropdown
             label="DEPARTMENT"
@@ -171,15 +195,13 @@ const Employees = () => {
             onValueChange={setDepartment}
             items={departments}
             placeholder="Select department"
-            icon="business-outline"
           />
           <Dropdown
             label="STATUS"
             value={status}
-            onValueChange={setStatus}
+            onValueChange={(value) => setStatus(value as "Active" | "Inactive")}
             items={statusOptions}
             placeholder="Select status"
-            icon="checkmark-circle-outline"
           />
         </View>
       </Form>

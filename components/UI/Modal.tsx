@@ -17,7 +17,7 @@ type FormProps = {
   subTitle: string;
   icon: React.ComponentProps<typeof Ionicons>["name"];
   onClose: () => void;
-  onSubmit?: () => void;
+  onSubmit: () => void;
   children: React.ReactNode;
 };
 
@@ -59,7 +59,7 @@ const Form = ({
                   title="Add Employee"
                   customContainerStyle={styles.buttonContainer}
                   customTitleStyle={styles.buttonTitle}
-                  onPress={() => console.log()}
+                  onPress={onSubmit}
                 />
               </View>
             </ScrollView>
