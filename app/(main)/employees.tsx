@@ -211,22 +211,24 @@ const Employees = () => {
             </View>
           }
         />
-        <View style={{ padding: 20 }}>
-          {" "}
+        <View style={styles.mainContent}>
           {/** Content */}
           <SearchBar
             value={search.trim()}
             placeHolder="Seach name, position, department..."
             onChangeText={(newText) => setSearch(newText)}
           />
+          <Snackbar
+            visible={visible}
+            onDismiss={() => setVisible(false)}
+            duration={3000}
+            style={styles.snackbar}
+          >
+            <Text style={styles.snackBarText}>
+              Employee added successfully ✅
+            </Text>
+          </Snackbar>
         </View>
-        <Snackbar
-          visible={visible}
-          onDismiss={() => setVisible(false)}
-          duration={2000}
-        >
-          Employee added successfully ✅
-        </Snackbar>
       </View>
       <Form
         title="Add Employee"
@@ -299,6 +301,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
+  mainContent: {
+    padding: 20,
+    borderWidth: 1,
+    flex: 1,
+    alignItems: "center",
+  },
+
   buttonContainer: {
     height: 45,
     width: 150,
@@ -313,5 +322,23 @@ const styles = StyleSheet.create({
 
   inputContainer: {
     marginTop: 30,
+  },
+
+  snackbar: {
+    width: "90%",
+    position: "absolute",
+    bottom: 20,
+    backgroundColor: colors.primary,
+    borderRadius: 8,
+    alignSelf: "center",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  snackBarText: {
+    fontFamily: "DINMedium",
+    fontSize: 16,
+    color: colors.primaryLight,
+    textAlign: "center",
   },
 });

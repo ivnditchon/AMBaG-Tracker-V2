@@ -2,7 +2,6 @@ import { colors } from "@/constants/colors";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import {
-  KeyboardAvoidingView,
   Modal,
   ScrollView,
   StyleSheet,
@@ -106,8 +105,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
-    paddingHorizontal: 30,
-    paddingVertical: 50,
+    padding: 30,
   },
 
   titleContainer: {
