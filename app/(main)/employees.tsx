@@ -9,6 +9,7 @@ import { globalStyles } from "@/styles/globalStyle";
 import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import MainLayout from "./main-layout";
+import { Ionicons } from "@expo/vector-icons";
 
 const Employees = () => {
   const employeeSummaryData: SummaryItemProps[] = [
@@ -37,23 +38,54 @@ const Employees = () => {
     setFormVisible(true);
   };
 
-  // Add employee
+  // PMO Position
   const positions = [
+    "Administrative Officer II",
+    "Administrative Officer I",
+    "Senior Administrative Assistant I",
     "Administrative Assistant VI",
     "Administrative Assistant V",
     "Administrative Assistant IV",
     "Administrative Assistant III",
     "Administrative Assistant II",
     "Administrative Assistant I",
+    "Project Evaluation III",
+    "Project Evaluation II",
+    "Project Evaluation I",
+    "Project Development Officer III",
+    "Project Development Officer II",
+    "Project Developmemnt Officer I"
   ];
-
-  const departments = ["Technical", "Admin", "Monitoring", "Communication"];
+  // PMO Designation
+  const designations = [
+    "Deputy Program Manager",
+    "Admin and Finance Unit Head",
+    "Budget Officer",
+    "Planning Offer",
+    "Procurement Officer",
+    "Record Officer",
+    "Database Controller",
+    "Monitoring and Evaluation Unit Head",
+    "Monitoring Officer",
+    "Monioring and Communication Unit Head",
+    "Multimedia Officer",
+    "Communication Officer",
+    "Human Resource Management Focal Person",
+    "Assistant Information Officer",
+    "Liaison Officer"
+  ];
+  // PMO Department
+  const departments = ["General Service", "Monitoring", "Communication", "Technical", "Admin"];
+  // PMO Status
+  const statusOptions = ["Active", "Isactive"];
 
   const [firstName, setFirstName] = useState<string>("");
   const [middleName, setMiddleName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [position, setPosition] = useState<string>("");
+  const [designation, setDesignation] = useState<string>("");
   const [department, setDepartment] = useState<string>("");
+  const [status, setStatus] = useState<string>("")
 
   return (
     <MainLayout>
@@ -123,6 +155,15 @@ const Employees = () => {
             onValueChange={setPosition}
             items={positions}
             placeholder="Select position"
+            icon="briefcase-outline"
+          />
+          <Dropdown
+            label="DESIGNATION"
+            value={designation}
+            onValueChange={setDesignation}
+            items={designations}
+            placeholder="Select designation"
+            icon="ribbon-outline"
           />
           <Dropdown
             label="DEPARTMENT"
@@ -130,6 +171,15 @@ const Employees = () => {
             onValueChange={setDepartment}
             items={departments}
             placeholder="Select department"
+            icon="business-outline"
+          />
+          <Dropdown
+            label="STATUS"
+            value={status}
+            onValueChange={setStatus}
+            items={statusOptions}
+            placeholder="Select status"
+            icon="checkmark-circle-outline"
           />
         </View>
       </Form>

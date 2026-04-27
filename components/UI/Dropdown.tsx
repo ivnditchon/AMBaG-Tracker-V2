@@ -5,6 +5,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { Dropdown as RNDropdown } from "react-native-element-dropdown";
 
 type DropdownProps = {
+  icon?:React.ComponentProps<typeof Ionicons>["name"],
   label: string;
   value: string;
   onValueChange: (value: string) => void;
@@ -13,6 +14,7 @@ type DropdownProps = {
 };
 
 const Dropdown = ({
+  icon,
   label,
   value,
   onValueChange,
@@ -51,7 +53,7 @@ const Dropdown = ({
             color={isFocus ? colors.primary : colors.subtext}
           />
         )}
-        dropdownPosition="top"
+        dropdownPosition="auto"
       />
     </View>
   );
@@ -100,4 +102,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.text,
   },
+
+  iconLeft: {
+    marginRight: 8
+  }
 });
