@@ -3,7 +3,7 @@ import Button from "@/components/UI/Button";
 import { globalStyles } from "@/styles/globalStyle";
 import { useRouter } from "expo-router";
 import React from "react";
-import { Image, StyleSheet, View } from "react-native";
+import { Image, Platform, StyleSheet, View } from "react-native";
 
 const Home = () => {
   /** Login screen navigation */
@@ -21,7 +21,7 @@ const Home = () => {
       />
       <View style={styles.screenTitleContainer}>
         <ScreenTitle
-          title="Welcome, AMBaG PMO"
+          title="Welcome, Ivan Hanmaa"
           subTitle="Manage your tasks, track performance with ease and stay organized and keep everything in one place"
         />
       </View>
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
 
   image: {
     width: "100%",
-    height: 300,
+    height: Platform.OS === "ios" ? 300 : 250,
   },
 
   screenTitleContainer: {

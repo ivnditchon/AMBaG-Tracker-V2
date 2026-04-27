@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Platform, StyleSheet, Text, View } from "react-native";
 
 type ScreenTitleProps = {
   title: string;
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
 
   title: {
     fontFamily: "DINBold",
-    fontSize: 36,
+    fontSize: Platform.OS === "ios" ? 36 : 30,
     color: "#2C2C2C",
     letterSpacing: 0.2,
   },
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   subTitle: {
     textAlign: "center",
     fontFamily: "DINMedium",
-    fontSize: 16,
+    fontSize: Platform.OS === "ios" ? 16 : 12,
     color: "#2C2C2C",
     opacity: 0.5,
     lineHeight: 23,
