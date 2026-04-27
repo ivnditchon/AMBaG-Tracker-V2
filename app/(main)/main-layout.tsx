@@ -1,7 +1,13 @@
 import FooterMenu, { FooterMenuProps } from "@/components/Layout/FooterMenu";
 import { colors } from "@/constants/colors";
 import { usePathname, useRouter } from "expo-router";
-import { StyleSheet, TouchableWithoutFeedback, View, Keyboard} from "react-native";
+import {
+  Keyboard,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
+import { Provider as PaperProvider } from "react-native-paper"; // Snackbar
 
 type MainLayoutProps = {
   children: React.ReactNode;
@@ -95,31 +101,33 @@ export default function MainLayout({ children }: MainLayoutProps) {
   ];
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        {children}
-        {/** Footer section */}
-        <View style={styles.footer}>
-          {footerData.map((item) => (
-            <FooterMenu
-              key={item.label}
-              icon={item.icon}
-              isActive={item.isActive}
-              activeIcon={item.activeIcon}
-              labelFont={item.labelFont}
-              activeLabelFont={item.activeLabelFont}
-              labelColor={item.labelColor}
-              activeLabelColor={item.activeLabelColor}
-              color={item.color}
-              activeColor={item.activeColor}
-              size={item.size}
-              label={item.label}
-              onPress={item.onPress}
-            />
-          ))}
+    <PaperProvider>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.container}>
+          {children}
+          {/** Footer section */}
+          <View style={styles.footer}>
+            {footerData.map((item) => (
+              <FooterMenu
+                key={item.label}
+                icon={item.icon}
+                isActive={item.isActive}
+                activeIcon={item.activeIcon}
+                labelFont={item.labelFont}
+                activeLabelFont={item.activeLabelFont}
+                labelColor={item.labelColor}
+                activeLabelColor={item.activeLabelColor}
+                color={item.color}
+                activeColor={item.activeColor}
+                size={item.size}
+                label={item.label}
+                onPress={item.onPress}
+              />
+            ))}
+          </View>
         </View>
-      </View>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
+    </PaperProvider>
   );
 }
 

@@ -14,7 +14,6 @@ type DropdownProps = {
 };
 
 const Dropdown = ({
-  icon,
   label,
   value,
   onValueChange,

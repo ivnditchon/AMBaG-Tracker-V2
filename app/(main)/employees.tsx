@@ -9,6 +9,7 @@ import { colors } from "@/constants/colors";
 import { globalStyles } from "@/styles/globalStyle";
 import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { Snackbar } from "react-native-paper";
 import MainLayout from "./main-layout";
 
 type EmployeesProps = {
@@ -31,8 +32,9 @@ type ValidationErrorProps = {
 };
 
 const Employees = () => {
-  const [isFormVisible, setFormVisible] = useState(false);
-  const [employees, setEmployees] = useState<EmployeesProps[]>([]);
+  const [visible, setVisible] = useState(false); // Snackbar
+  const [isFormVisible, setFormVisible] = useState(false); // Form modal
+  const [employees, setEmployees] = useState<EmployeesProps[]>([]); // Data storage temporarily for Employees
   const [firstName, setFirstName] = useState<string>("");
   const [middleName, setMiddleName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
@@ -67,6 +69,7 @@ const Employees = () => {
     return errors;
   };
 
+  // Reset form after submission
   const resetForm = () => {
     setFirstName("");
     setMiddleName("");
@@ -96,7 +99,8 @@ const Employees = () => {
       setEmployees((prev) => [...prev, newEmployee]); // Get all employees from Employees and copy (...prev) all employees + new employee
       resetForm(); // Reset form after submission
       setValidationError({}); // Clear errrors
-      setFormVisible(false); // Closed the form
+      setFormVisible(false); // Closed the form modal
+      setVisible(true); // Show snackbar
     }
   };
 
@@ -216,6 +220,13 @@ const Employees = () => {
             onChangeText={(newText) => setSearch(newText)}
           />
         </View>
+        <Snackbar
+          visible={visible}
+          onDismiss={() => setVisible(false)}
+          duration={2000}
+        >
+          Employee added successfully ✅
+        </Snackbar>
       </View>
       <Form
         title="Add Employee"
