@@ -3,13 +3,13 @@ import Button from "@/components/UI/Button";
 import Dropdown from "@/components/UI/Dropdown";
 import Input from "@/components/UI/Input";
 import Form from "@/components/UI/Modal";
+import SearchBar from "@/components/UI/SearchBar";
 import SummaryItem, { SummaryItemProps } from "@/components/UI/SummaryItem";
 import { colors } from "@/constants/colors";
 import { globalStyles } from "@/styles/globalStyle";
 import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import MainLayout from "./main-layout";
-import SearchBar from "@/components/UI/SearchBar"
 
 type EmployeesProps = {
   firstName: string;
@@ -23,10 +23,11 @@ type EmployeesProps = {
 
 type ValidationErrorProps = {
   firstName?: string;
-  middleName?: string
+  middleName?: string;
   lastName?: string;
   position?: string;
   department?: string;
+  designation?: string;
 };
 
 const Employees = () => {
@@ -40,21 +41,30 @@ const Employees = () => {
   const [department, setDepartment] = useState<string>("");
   const [status, setStatus] = useState<"Active" | "Inactive">("Active"); // Union type - allow active and inactive only
   const [search, setSearch] = useState<string>("");
-  const [emptyFieldError, setValidationError] = useState<ValidationErrorProps>({});
-  
+  const [emptyFieldError, setValidationError] = useState<ValidationErrorProps>(
+    {},
+  );
+
   const validateForm = () => {
     const errors: ValidationErrorProps = {};
 
     if (firstName.trim() === "") {
       errors.firstName = "First name is required!";
-    } 
-
+    }
+    if (middleName.trim() === "") {
+      errors.middleName = "Middle name is required!";
+    }
     if (lastName.trim() === "") {
-      errors.middleName = "Last name is requred!";
+      errors.lastName = "Last name is requred!";
+    }
+    if (position === "") {
+      errors.position === "Position is required!";
+    }
+    if (designation === "") {
+      errors.designation === "Designation is required!";
     }
 
     return errors;
-
   };
 
   const resetForm = () => {
@@ -70,44 +80,44 @@ const Employees = () => {
   const handleAddemployee = () => {
     const errors = validateForm();
 
-    if(Object.keys(errors).length > 0) {
+    if (Object.keys(errors).length > 0) {
       setValidationError(errors);
     } else {
-        const newEmployee: EmployeesProps = {
-          firstName: firstName, // Comes from Props: Value(state)
-          middleName: middleName,
-          lastName: lastName,
-          position: position,
-          department: department,
-          designation: designation,
-          status: status
-        };
+      const newEmployee: EmployeesProps = {
+        firstName: firstName, // Comes from Props: Value(state)
+        middleName: middleName,
+        lastName: lastName,
+        position: position,
+        department: department,
+        designation: designation,
+        status: status,
+      };
 
-        setEmployees(prev => [...prev, newEmployee]); // Get all employees from Employees and copy (...prev) all employees + new employee
-        resetForm(); // Reset form after submission
-        setValidationError({}) // Clear errrors
-        setFormVisible(false); // Closed the form
+      setEmployees((prev) => [...prev, newEmployee]); // Get all employees from Employees and copy (...prev) all employees + new employee
+      resetForm(); // Reset form after submission
+      setValidationError({}); // Clear errrors
+      setFormVisible(false); // Closed the form
     }
-  }
+  };
 
   const employeeSummaryData: SummaryItemProps[] = [
     {
       value: employees.length,
       label: "Total",
       customValueStyle: colors.primaryLight,
-      showDivider: true
+      showDivider: true,
     },
     {
-      value: employees.filter(emp => emp.status === "Active").length,
+      value: employees.filter((emp) => emp.status === "Active").length,
       label: "Active",
       customValueStyle: colors.whiteFaded,
-      showDivider: true
+      showDivider: true,
     },
     {
-      value: employees.filter(emp => emp.status === "Inactive").length,
+      value: employees.filter((emp) => emp.status === "Inactive").length,
       label: "Inactive",
       customValueStyle: colors.dangerFaded,
-      showDivider: false
+      showDivider: false,
     },
   ];
 
@@ -131,7 +141,7 @@ const Employees = () => {
     "Project Evaluation I",
     "Project Development Officer III",
     "Project Development Officer II",
-    "Project Developmemnt Officer I"
+    "Project Developmemnt Officer I",
   ];
   // PMO Designation
   const designations = [
@@ -149,10 +159,16 @@ const Employees = () => {
     "Communication Officer",
     "Human Resource Management Focal Person",
     "Assistant Information Officer",
-    "Liaison Officer"
+    "Liaison Officer",
   ];
   // PMO Department
-  const departments = ["General Service", "Monitoring", "Communication", "Technical", "Admin"];
+  const departments = [
+    "General Service",
+    "Monitoring",
+    "Communication",
+    "Technical",
+    "Admin",
+  ];
   // PMO Status
   const statusOptions = ["Active", "Isactive"];
 
@@ -191,11 +207,13 @@ const Employees = () => {
             </View>
           }
         />
-        <View style={{padding: 20}}> {/** Content */}
+        <View style={{ padding: 20 }}>
+          {" "}
+          {/** Content */}
           <SearchBar
             value={search.trim()}
             placeHolder="Seach name, position, department..."
-            onChangeText={(newText) => setSearch(newText)}  
+            onChangeText={(newText) => setSearch(newText)}
           />
         </View>
       </View>
@@ -220,12 +238,14 @@ const Employees = () => {
             value={middleName.trim()}
             placeHolder="e.g Hanma"
             onChangeText={(newText) => setMiddleName(newText)}
+            error={emptyFieldError.middleName}
           />
           <Input
             label="LAST NAME"
             value={lastName.trim()}
             placeHolder="e.g Hanma"
             onChangeText={(newText) => setLastName(newText)}
+            error={emptyFieldError.lastName}
           />
           <Dropdown
             label="POSITION"

@@ -33,14 +33,14 @@ const Input = ({
   iconLeftActive,
   isPassword,
   iconRight,
-  iconRightActive,  
+  iconRightActive,
   onChangeText,
-  error
+  error,
 }: InputProps) => {
   const [isFocus, setFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const isError = !!error;  // true if error has value, false if empty
-  
+  const isError = !!error; // true if error has value, false if empty
+
   // Show password icon toggle
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
@@ -53,12 +53,29 @@ const Input = ({
         style={[
           styles.inputContainer,
           {
-            borderColor: isError ? colors.danger : showPassword ? colors.primary : isFocus ? colors.primary : colors.border,
-            borderWidth: isError ? 1.5 : showPassword ? 1.5 : isFocus ? 1.5 : 1,
-          }
+            borderColor: isError
+              ? colors.danger
+              : showPassword || isFocus
+                ? colors.primary
+                : colors.border,
+            borderWidth: isError || showPassword || isFocus ? 1.5 : 1,
+          },
         ]}
       >
-        {iconLeft && <Ionicons style={styles.icon} name={showPassword ? iconLeftActive : isFocus ? iconLeftActive : iconLeft} size={18} color={showPassword ? colors.primary : isFocus ? colors.primary : colors.placeholder} />}
+        {iconLeft && (
+          <Ionicons
+            style={styles.icon}
+            name={showPassword || isFocus ? iconLeftActive : iconLeft}
+            size={18}
+            color={
+              showPassword
+                ? colors.primary
+                : isFocus
+                  ? colors.primary
+                  : colors.placeholder
+            }
+          />
+        )}
         <TextInput
           value={value}
           placeholder={placeHolder}
@@ -70,8 +87,21 @@ const Input = ({
           secureTextEntry={isPassword ? !showPassword : false}
         />
         {isPassword && iconRight && (
-          <TouchableOpacity onPress={togglePasswordVisibility} disabled={value === ""}>
-            <Ionicons name={showPassword ? iconRightActive : iconRight} size={18} color={showPassword ? colors.primary : isFocus ? colors.primary : colors.placeholder} />
+          <TouchableOpacity
+            onPress={togglePasswordVisibility}
+            disabled={value === ""}
+          >
+            <Ionicons
+              name={showPassword ? iconRightActive : iconRight}
+              size={18}
+              color={
+                showPassword
+                  ? colors.primary
+                  : isFocus
+                    ? colors.primary
+                    : colors.placeholder
+              }
+            />
           </TouchableOpacity>
         )}
       </View>
@@ -122,6 +152,6 @@ const styles = StyleSheet.create({
     fontFamily: "DINMedium",
     fontSize: 14,
     color: colors.danger,
-    marginTop: 3
-  }
+    marginTop: 3,
+  },
 });

@@ -5,7 +5,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { Dropdown as RNDropdown } from "react-native-element-dropdown";
 
 type DropdownProps = {
-  icon?:React.ComponentProps<typeof Ionicons>["name"],
+  icon?: React.ComponentProps<typeof Ionicons>["name"];
   label: string;
   value: string;
   onValueChange: (value: string) => void;
@@ -64,7 +64,7 @@ export default Dropdown;
 const styles = StyleSheet.create({
   label: {
     fontFamily: "DINBold",
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 600,
     color: colors.text,
     marginBottom: 8,
@@ -104,6 +104,6 @@ const styles = StyleSheet.create({
   },
 
   iconLeft: {
-    marginRight: 8
-  }
+    marginRight: 8,
+  },
 });
