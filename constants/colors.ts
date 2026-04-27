@@ -17,4 +17,5 @@ export const colors = {
   footerIconDefault: "#a0a1a1",
   lightGray: "#f1f5f9",
   inputBg: "#f8fffe",
+  placeholder: '#d4d2d2'
 };

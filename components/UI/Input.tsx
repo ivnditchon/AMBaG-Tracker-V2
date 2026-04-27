@@ -1,4 +1,5 @@
 import { colors } from "@/constants/colors";
+import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
   StyleSheet,
@@ -12,8 +13,11 @@ type InputProps = {
   label: string;
   value: string;
   placeHolder: string;
-  iconLeft?: React.ReactNode;
-  iconRight?: React.ReactNode;
+  iconLeft?: React.ComponentProps<typeof Ionicons>["name"];
+  iconLeftActive?: React.ComponentProps<typeof Ionicons>["name"];
+  iconRight?: React.ComponentProps<typeof Ionicons>["name"];
+  iconRightActive?: React.ComponentProps<typeof Ionicons>["name"];
+  isPassword?: boolean;
   secureTextEntry?: boolean;
   onChangeText: (text: string) => void;
   onPress?: () => void;
@@ -24,12 +28,19 @@ const Input = ({
   value,
   placeHolder,
   iconLeft,
+  iconLeftActive,
+  isPassword,
   iconRight,
-  secureTextEntry,
+  iconRightActive,
   onChangeText,
-  onPress,
 }: InputProps) => {
   const [isFocus, setFocused] = useState(false);
+
+  // Show password icon toggle
+  const [showPassword, setShowPassword] = useState(false);
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   return (
     <View style={styles.container}>
@@ -38,12 +49,12 @@ const Input = ({
         style={[
           styles.inputContainer,
           {
-            borderColor: isFocus ? colors.primary : colors.border,
-            borderWidth: isFocus ? 1.5 : 1,
+            borderColor: showPassword ? colors.primary : isFocus ? colors.primary : colors.border,
+            borderWidth: showPassword ? 1.5 : isFocus ? 1.5 : 1,
           },
         ]}
       >
-        {iconLeft && <View style={styles.iconLeft}>{iconLeft}</View>}
+        {iconLeft && <Ionicons style={styles.icon} name={showPassword ? iconLeftActive : isFocus ? iconLeftActive : iconLeft} size={18} color={showPassword ? colors.primary : isFocus ? colors.primary : colors.placeholder} />}
         <TextInput
           value={value}
           placeholder={placeHolder}
@@ -52,10 +63,12 @@ const Input = ({
           onChangeText={onChangeText}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          secureTextEntry={secureTextEntry}
+          secureTextEntry={isPassword ? !showPassword : false}
         />
-        {iconRight && (
-          <TouchableOpacity onPress={onPress}>{iconRight}</TouchableOpacity>
+        {isPassword && iconRight && (
+          <TouchableOpacity onPress={togglePasswordVisibility} disabled={value === ""}>
+            <Ionicons name={showPassword ? iconRightActive : iconRight} size={18} color={showPassword ? colors.primary : isFocus ? colors.primary : colors.placeholder} />
+          </TouchableOpacity>
         )}
       </View>
     </View>
@@ -80,7 +93,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.inputBg,
   },
 
-  iconLeft: {
+  icon: {
     marginRight: 8,
   },
 

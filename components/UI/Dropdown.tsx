@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   placeholderStyle: {
     fontFamily: "DINRegular",
     fontSize: 16,
-    color: colors.subtext,
+    color: colors.placeholder,
   },
 
   selectedTextStyle: {

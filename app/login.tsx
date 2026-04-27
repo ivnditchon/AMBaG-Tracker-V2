@@ -4,7 +4,6 @@ import Button from "@/components/UI/Button";
 import Input from "@/components/UI/Input";
 import { colors } from "@/constants/colors";
 import { globalStyles } from "@/styles/globalStyle";
-import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -17,12 +16,6 @@ import {
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
-  // Show password icon toggle
-  const [showPassword, setShowPassword] = useState(false);
-  const togglePasswordVisibility = () => {
-    setShowPassword((prev) => !prev);
-  };
 
   // Navigate to Dashboard
   const router = useRouter();
@@ -44,9 +37,8 @@ const Login = () => {
               <Input
                 label="Username"
                 value={username.trim()}
-                iconLeft={
-                  <Ionicons name="person-outline" size={18} color="#D1D5DB" />
-                }
+                iconLeft="person-outline"
+                iconLeftActive="person"
                 placeHolder="Enter your username"
                 onChangeText={(newText) => {
                   setUsername(newText);
@@ -55,26 +47,15 @@ const Login = () => {
               <Input
                 label="Password"
                 value={password.trim()}
-                iconLeft={
-                  <Ionicons
-                    name="lock-closed-outline"
-                    size={18}
-                    color="#D1D5DB"
-                  />
-                }
+                iconLeft="lock-closed-outline"
+                iconLeftActive="lock-closed"
                 placeHolder="Enter your password"
-                iconRight={
-                  <Ionicons
-                    name={showPassword ? "eye-outline" : "eye-off-outline"}
-                    size={18}
-                    color="#D1D5DB"
-                  />
-                }
+                iconRight="eye-off-outline"
+                iconRightActive="eye"
                 onChangeText={(newText) => {
                   setPassword(newText);
                 }}
-                secureTextEntry={showPassword ? false : true}
-                onPress={togglePasswordVisibility}
+                isPassword={true}
               />
             </View>
             <Button
