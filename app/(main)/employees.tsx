@@ -60,10 +60,10 @@ const Employees = () => {
       errors.lastName = "Last name is requred!";
     }
     if (position === "") {
-      errors.position === "Position is required!";
+      errors.position = "Position is required!";
     }
     if (designation === "") {
-      errors.designation === "Designation is required!";
+      errors.designation = "Designation is required!";
     }
 
     return errors;
@@ -266,6 +266,7 @@ const Employees = () => {
             onValueChange={setPosition}
             items={positions}
             placeholder="Select position"
+            error={emptyFieldError.position}
           />
           <Dropdown
             label="DESIGNATION"
@@ -273,6 +274,7 @@ const Employees = () => {
             onValueChange={setDesignation}
             items={designations}
             placeholder="Select designation"
+            error={emptyFieldError.designation}
           />
           <Dropdown
             label="DEPARTMENT"
@@ -280,6 +282,7 @@ const Employees = () => {
             onValueChange={setDepartment}
             items={departments}
             placeholder="Select department"
+            error={emptyFieldError.department}
           />
           <Dropdown
             label="STATUS"
@@ -303,7 +306,6 @@ const styles = StyleSheet.create({
 
   mainContent: {
     padding: 20,
-    borderWidth: 1,
     flex: 1,
     alignItems: "center",
   },
@@ -321,7 +323,10 @@ const styles = StyleSheet.create({
   },
 
   inputContainer: {
+    flexDirection: "column",
+    gap: 20,
     marginTop: 30,
+    marginBottom: 10
   },
 
   snackbar: {

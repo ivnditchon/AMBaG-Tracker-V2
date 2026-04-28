@@ -11,6 +11,7 @@ type DropdownProps = {
   onValueChange: (value: string) => void;
   items: string[];
   placeholder?: string;
+  error?: string;
 };
 
 const Dropdown = ({
@@ -19,8 +20,10 @@ const Dropdown = ({
   onValueChange,
   items,
   placeholder,
+  error
 }: DropdownProps) => {
   const [isFocus, setIsFocus] = useState(false);
+  const isError = !!error; // true if error has value, false if empty
 
   // Convert string[] to { label, value }[] format required by the library
   const data = items.map((item) => ({ label: item, value: item }));
@@ -29,7 +32,13 @@ const Dropdown = ({
     <View>
       <Text style={styles.label}>{label}</Text>
       <RNDropdown
-        style={[styles.dropdown, isFocus && styles.dropDownFocused]}
+        style={[
+          styles.dropdown, 
+          isFocus && styles.dropDownFocused,
+          {
+            borderColor: isError ? colors.danger : colors.border
+          }
+        ]}
         data={data}
         labelField="label"
         valueField="value"
@@ -54,6 +63,7 @@ const Dropdown = ({
         )}
         dropdownPosition="auto"
       />
+      {error && <Text style={styles.dropDownError}>{error}</Text>}
     </View>
   );
 };
@@ -72,12 +82,10 @@ const styles = StyleSheet.create({
 
   dropdown: {
     borderWidth: 1,
-    borderColor: colors.border,
     borderRadius: 10,
     backgroundColor: colors.inputBg,
     paddingHorizontal: 10,
     height: 48,
-    marginBottom: 20,
   },
 
   dropDownFocused: {
@@ -105,4 +113,11 @@ const styles = StyleSheet.create({
   iconLeft: {
     marginRight: 8,
   },
+
+  dropDownError: {
+    fontFamily: "DINMedium",
+    fontSize: 14,
+    color: colors.danger,
+    marginTop: 3
+  }
 });

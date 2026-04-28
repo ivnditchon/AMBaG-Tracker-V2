@@ -22,7 +22,6 @@ type InputProps = {
   onChangeText: (text: string) => void;
   onPress?: () => void;
   error?: string;
-  isError?: boolean;
 };
 
 const Input = ({
@@ -68,11 +67,7 @@ const Input = ({
             name={showPassword || isFocus ? iconLeftActive : iconLeft}
             size={18}
             color={
-              showPassword
-                ? colors.primary
-                : isFocus
-                  ? colors.primary
-                  : colors.placeholder
+              showPassword || isFocus ? colors.primary : colors.placeholder
             }
           />
         )}
@@ -95,11 +90,7 @@ const Input = ({
               name={showPassword ? iconRightActive : iconRight}
               size={18}
               color={
-                showPassword
-                  ? colors.primary
-                  : isFocus
-                    ? colors.primary
-                    : colors.placeholder
+                showPassword || isFocus ? colors.primary : colors.placeholder
               }
             />
           </TouchableOpacity>
@@ -114,7 +105,7 @@ export default Input;
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 20,
+    flexDirection: 'column'
   },
 
   inputContainer: {
