@@ -103,7 +103,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
   return (
     <PaperProvider>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>  
+        <View style={styles.container}>
           <View style={styles.subContainer}>
             {children}
             {/** Footer section */}
@@ -135,7 +135,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
 
 export const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
 
   subContainer: {

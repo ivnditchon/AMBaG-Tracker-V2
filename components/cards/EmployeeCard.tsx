@@ -1,8 +1,7 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { Children } from 'react'
-import Avatar from '../UI/Avatar';
-import { Ionicons } from '@expo/vector-icons';
-import { colors } from '@/constants/colors';
+import { colors } from "@/constants/colors";
+import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 type EmployeeCardProps = {
   firstName: string;
@@ -13,35 +12,35 @@ type EmployeeCardProps = {
   onEdit: () => void;
   onDelete: () => void;
   children?: React.ReactNode;
-};  
+};
 
 const EmployeeCard = ({
-  firstName, 
-  lastName, 
+  firstName,
+  lastName,
   position,
-  department, 
-  status, 
-  onEdit, 
+  department,
+  status,
+  onEdit,
   onDelete,
-  children}: EmployeeCardProps) => { 
-
+  children,
+}: EmployeeCardProps) => {
   const getStatusStyles = (status: string) => {
-    switch(status) {
+    switch (status) {
       case "Active":
-        return {bg: colors.primaryLight, color: colors.primaryDark};
+        return { bg: colors.primaryLight, color: colors.primaryDark };
       case "Inactive":
-        return {bg: colors.dangerLight, color: colors.danger}
+        return { bg: colors.dangerLight, color: colors.danger };
       case "Pending":
-        return {bg: colors.warningLight, color: colors.warning}
+        return { bg: colors.warningLight, color: colors.warning };
       case "On Leave":
-        return {bg: colors.purpleLight, color: colors.purple} 
+        return { bg: colors.purpleLight, color: colors.purple };
       default:
-        return {bg: colors.lightGray, color: colors.gray}
+        return { bg: colors.lightGray, color: colors.gray };
     }
   };
-  
+
   const statusStyles = getStatusStyles(status);
-    
+
   return (
     <View style={styles.container}>
       {children}
@@ -54,31 +53,40 @@ const EmployeeCard = ({
           <Text style={styles.employeePositionText}>{position}</Text>
         </View>
         <Text style={styles.employeeDesignationText}>{department}</Text>
-        <View style={[styles.employeeStatusContainer,
-          {
-            backgroundColor: statusStyles.bg,
-          }
-        ]}>
-          <View style={[styles.employeeStatusMarked,
+        <View
+          style={[
+            styles.employeeStatusContainer,
             {
-              backgroundColor: statusStyles.color
-            }
-          ]}></View>
-          <Text style={[styles.employeeStatusText,
-            {
-              color: statusStyles.color 
-            }
-          ]}>
+              backgroundColor: statusStyles.bg,
+            },
+          ]}
+        >
+          <View
+            style={[
+              styles.employeeStatusMarked,
+              {
+                backgroundColor: statusStyles.color,
+              },
+            ]}
+          ></View>
+          <Text
+            style={[
+              styles.employeeStatusText,
+              {
+                color: statusStyles.color,
+              },
+            ]}
+          >
             {status}
           </Text>
         </View>
       </View>
       <View style={styles.employeeActionsContainer}>
         <TouchableOpacity activeOpacity={0.8} onPress={onEdit}>
-          <Ionicons name="create-outline" size={23} color={colors.primary}/>
+          <Ionicons name="create-outline" size={22} color={colors.primary} />
         </TouchableOpacity>
         <TouchableOpacity activeOpacity={0.8} onPress={onDelete}>
-          <Ionicons name="trash-outline" size={23} color={colors.danger} />
+          <Ionicons name="trash-outline" size={22} color={colors.danger} />
         </TouchableOpacity>
       </View>
     </View>
@@ -96,7 +104,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderWidth: 1,
     borderColor: colors.border,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 10,
     // iOS shadow
     shadowColor: colors.primary,
@@ -115,38 +123,37 @@ const styles = StyleSheet.create({
   employeeNameTextStyle: {
     fontFamily: "DINBold",
     fontSize: 17,
-    color: colors.text
+    color: colors.text,
   },
 
   employeePositionText: {
     fontFamily: "DINRegular",
     fontSize: 14,
-    color: colors.subtext
-
+    color: colors.subtext,
   },
 
   employeeNameContainer: {
-    flexDirection: "row"
+    flexDirection: "row",
   },
 
   employeePositionContainer: {
     flexDirection: "row",
     marginTop: 7,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
 
   employeeDepartmentText: {
     fontFamily: "DINRegular",
     fontSize: 14,
-    color: colors.subtext
+    color: colors.subtext,
   },
 
   employeeDesignationText: {
     fontFamily: "DINRegular",
     fontSize: 14,
     color: colors.subtext,
-    marginTop: 3
+    marginTop: 3,
   },
 
   employeeStatusContainer: {
@@ -158,16 +165,16 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderRadius: 10,
     marginTop: 14,
-    borderColor: colors.border
+    borderColor: colors.border,
   },
 
   employeeStatusMarked: {
     width: 6,
     height: 6,
     borderRadius: 100,
-    marginRight: 5
+    marginRight: 5,
   },
-  
+
   employeeStatusText: {
     fontFamily: "DINMedium",
     color: colors.primaryDark,
@@ -175,6 +182,6 @@ const styles = StyleSheet.create({
 
   employeeActionsContainer: {
     flexDirection: "column",
-    gap: 30
+    gap: 20,
   },
 });

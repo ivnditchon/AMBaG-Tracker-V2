@@ -1,3 +1,4 @@
+import EmployeeCard from "@/components/cards/EmployeeCard";
 import Header from "@/components/Layout/Header";
 import Button from "@/components/UI/Button";
 import Dropdown from "@/components/UI/Dropdown";
@@ -8,11 +9,9 @@ import SummaryItem, { SummaryItemProps } from "@/components/UI/SummaryItem";
 import { colors } from "@/constants/colors";
 import { globalStyles } from "@/styles/globalStyle";
 import React, { useState } from "react";
-import { FlatList, StyleSheet, Text, View, Image } from "react-native";
+import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 import { Snackbar } from "react-native-paper";
 import MainLayout from "./main-layout";
-import EmployeeCard from "@/components/cards/EmployeeCard";
-import Avatar from "@/components/UI/Avatar";
 
 type EmployeesProps = {
   id: string;
@@ -32,6 +31,30 @@ type ValidationErrorProps = {
   department?: string;
 };
 
+const getSummaryData = (employees: EmployeesProps[]): SummaryItemProps[] => [
+  // parameter of employees with a type of EmployeeProps[], return type - this function MUST return of SummaryItemProps[]
+  {
+    value: employees.length,
+    label: "Total",
+  },
+  {
+    value: employees.filter((emp) => emp.status === "Active").length,
+    label: "Active",
+  },
+  {
+    value: employees.filter((emp) => emp.status === "Inactive").length,
+    label: "Inactive",
+  },
+  {
+    value: employees.filter((emp) => emp.status === "Pending").length,
+    label: "Pending",
+  },
+  {
+    value: employees.filter((emp) => emp.status === "On Leave").length,
+    label: "On Leave",
+  },
+];
+
 const Employees = () => {
   const [visible, setVisible] = useState(false); // Snackbar
   const [isFormVisible, setFormVisible] = useState(false); // Form modal
@@ -41,11 +64,12 @@ const Employees = () => {
   const [lastName, setLastName] = useState<string>("");
   const [position, setPosition] = useState<string>("");
   const [department, setDepartment] = useState<string>("");
-  const [status, setStatus] = useState<"Active" | "Inactive" | "Pending" | "On Leave">("Active"); // Union type - allow active and inactive only
+  const [status, setStatus] = useState<"Active" | "Inactive">("Active"); // Union type - allow active and inactive only
   const [search, setSearch] = useState<string>("");
   const [emptyFieldError, setValidationError] = useState<ValidationErrorProps>(
     {},
   );
+  const employeeSummaryData = getSummaryData(employees);
 
   const validateForm = () => {
     const errors: ValidationErrorProps = {};
@@ -63,7 +87,7 @@ const Employees = () => {
       errors.position = "Position is required!";
     }
     if (department === "") {
-      errors.department = "Department is required!";
+      errors.department = "Position is required!";
     }
 
     return errors;
@@ -103,40 +127,6 @@ const Employees = () => {
     }
   };
 
-  /** 
-  const employeeSummaryData: SummaryItemProps[] = [
-    {
-      value: employees.length,
-      label: "Total",
-      customValueStyle: colors.primaryLight,
-      showDivider: false,
-    },
-    {
-      value: employees.filter((emp) => emp.status === "Active").length,
-      label: "Active",
-      customValueStyle: colors.whiteFaded,
-      showDivider: false,
-    },
-    {
-      value: employees.filter((emp) => emp.status === "Inactive").length,
-      label: "Inactive",
-      customValueStyle: colors.dangerFaded,
-      showDivider: false,
-    },
-    {
-      value: employees.filter((emp) => emp.status === "Pending").length,
-      label: "Pending",
-      customValueStyle: colors.warningFaded,
-      showDivider: false,
-    },
-    {
-      value: employees.filter((emp) => emp.status === "On Leave").length,
-      label: "On Leave",
-      customValueStyle: colors.purple,
-      showDivider: false,
-    },
-  ];} */
-
   const handleOpenAddForm = () => {
     setFormVisible(true);
   };
@@ -159,7 +149,6 @@ const Employees = () => {
     "Project Development Officer II",
     "Project Developmemnt Officer I",
   ];
-
   // PMO Department
   const departments = [
     "General Service",
@@ -168,9 +157,8 @@ const Employees = () => {
     "Technical",
     "Admin",
   ];
-
   // PMO Status
-  const statusOptions = ["Active", "Inactive", "Pending", "On Leave"];
+  const statusOptions = ["Active", "Inactive", "Pening", "On Leave"];
 
   return (
     <MainLayout>
@@ -194,17 +182,14 @@ const Employees = () => {
             />
           }
           bottomComponent={
-            <View style={globalStyles.summaryContainer}>
-              {employeeSummaryData.map((item) => (
-                <SummaryItem
-                  key={item.label}
-                  value={item.value}
-                  label={item.label}
-                  customValueStyle={item.customValueStyle}
-                  showDivider={item.showDivider}
-                />
-              ))}
-            </View>
+            <FlatList
+              contentContainerStyle={styles.headerContentContainerStyle}
+              data={employeeSummaryData}
+              keyExtractor={(_, index) => index.toString()}
+              renderItem={({ item }) => (
+                <SummaryItem value={item.value} label={item.label} />
+              )}
+            />
           }
         />
         <View style={styles.mainContent}>
@@ -214,38 +199,42 @@ const Employees = () => {
             placeHolder="Seach name, position, department..."
             onChangeText={(newText) => setSearch(newText)}
           />
-          <Text style={styles.employeeCount}>{employees.length} {employees.length === 1 ? "EMPLOYEE" : "EMPLOYEES"} FOUND</Text> 
-          {/** Employee info section */}
-          <View style={{width: "100%", flex: 1, marginTop: 20}}>
-            <FlatList 
-              data={employees}
-              keyExtractor={(item) => item.id}
-              renderItem={({item}) => (
-                <EmployeeCard 
-                  firstName={item.firstName}
-                  lastName={item.lastName}
-                  position={item.position}
-                  department={item.department}
-                  status={item.status}
-                  onEdit={() => console.log()}
-                  onDelete={() => console.log()}
+          <Text style={styles.employeeCount}>
+            {employees.length}{" "}
+            {employees.length === 1 ? "EMPLOYEE" : "EMPLOYEES"} FOUND
+          </Text>
+          {/** Employee list scrollable */}
+          <FlatList
+            data={employees}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <EmployeeCard
+                firstName={item.firstName}
+                lastName={item.lastName}
+                position={item.position}
+                department={item.department}
+                status={item.status}
+                onEdit={() => console.log()}
+                onDelete={() => console.log()}
+              />
+            )}
+            ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+            ListEmptyComponent={
+              <View style={styles.mainContentListEmptyComponent}>
+                <Image
+                  source={require("@/assets/images/Group-12.png")}
+                  resizeMode="contain"
+                  style={styles.mainContentFlatListImage}
                 />
-              )}
-              ItemSeparatorComponent={() => // Gap for every employee
-                <View style={styles.itemSeparatorComponentContainer} />} 
-              ListEmptyComponent={                                          // If employee is empty
-                <View style={styles.listEmptyComponentContainer}>
-                  <Image
-                    source={require("@/assets/images/Group-12.png")}
-                    resizeMode="contain"
-                    style={styles.listEmptyComponentImage}  
-                  />
-                  <Text style={styles.listEmptyComponentText}>No employees found.</Text>
-                </View>
-              }
-              contentContainerStyle={styles.contentContainerStyle}
-            />
-          </View>
+                <Text style={styles.mainContentListEmptyComponentText}>
+                  No employees found.
+                </Text>
+              </View>
+            }
+            contentContainerStyle={styles.mainContentContainerStyle}
+            showsVerticalScrollIndicator={false} // hides the scrollbar
+            style={styles.mainContentFlatListStyle} // 👈 takes remaining space
+          />
           <Snackbar
             visible={visible}
             onDismiss={() => setVisible(false)}
@@ -273,6 +262,7 @@ const Employees = () => {
             placeHolder="e.g Ivan"
             onChangeText={(newText) => setFirstName(newText)}
             error={emptyFieldError.firstName}
+            autoCapitalize="words"
           />
           <Input
             label="MIDDLE NAME"
@@ -280,6 +270,7 @@ const Employees = () => {
             placeHolder="e.g Hanma"
             onChangeText={(newText) => setMiddleName(newText)}
             error={emptyFieldError.middleName}
+            autoCapitalize="words"
           />
           <Input
             label="LAST NAME"
@@ -287,6 +278,7 @@ const Employees = () => {
             placeHolder="e.g Hanma"
             onChangeText={(newText) => setLastName(newText)}
             error={emptyFieldError.lastName}
+            autoCapitalize="words"
           />
           <Dropdown
             label="POSITION"
@@ -307,7 +299,7 @@ const Employees = () => {
           <Dropdown
             label="STATUS"
             value={status}
-            onValueChange={(value) => setStatus(value as "Active" | "Inactive" | "Pending" | "On Leave")}
+            onValueChange={(value) => setStatus(value as "Active" | "Inactive")}
             items={statusOptions}
             placeholder="Select status"
           />
@@ -331,22 +323,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  employeeCount: {
-    fontFamily: "DINBold",
-    fontSize: 16,
-    color: colors.subtext,
-    alignSelf: "flex-start",
-    marginTop: 20,
-    letterSpacing: 0.2
-  },
-
-  employeeInfoContainer: {
-    flex: 1,
-    flexDirection: "column", 
-    gap: 15,
-    marginTop: 20,
-  },
-
   buttonContainer: {
     height: 45,
     width: 150,
@@ -360,10 +336,8 @@ const styles = StyleSheet.create({
   },
 
   inputContainer: {
-    flexDirection: "column",
     gap: 20,
     marginTop: 30,
-    marginBottom: 10
   },
 
   snackbar: {
@@ -383,26 +357,51 @@ const styles = StyleSheet.create({
     color: colors.text,
     textAlign: "center",
   },
-  
-  itemSeparatorComponentContainer: {
-    height: 12
+
+  headerContentContainerStyle: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 20,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.25)",
+    borderRadius: 15,
+    backgroundColor: "rgba(255,255,255,0.05)",
+    paddingHorizontal: 10,
+    paddingVertical: 15,
   },
 
-  listEmptyComponentContainer: {
-    alignItems: 'center', 
-    marginTop: 40 
+  employeeCount: {
+    fontFamily: "DINBold",
+    color: colors.subtext,
+    alignSelf: "flex-start",
+    marginTop: 30,
+    fontSize: 16,
   },
 
-  listEmptyComponentImage: {
-    width: "100%", 
-    height: 200
+  mainContentContainerStyle: {
+    paddingBottom: 20,
+    paddingTop: 20,
   },
 
-  listEmptyComponentText: {
-    color: 'gray', marginTop: 12 
+  mainContentFlatListStyle: {
+    flex: 1,
+    width: "100%",
   },
 
-  contentContainerStyle: {
-    paddingBottom: 20
-  }
+  mainContentFlatListImage: {
+    width: "100%",
+    height: 200,
+  },
+
+  mainContentListEmptyComponent: {
+    alignItems: "center",
+    marginTop: 40,
+  },
+
+  mainContentListEmptyComponentText: {
+    fontFamily: "DINMedium",
+    fontSize: 16,
+    color: colors.subtext,
+    marginTop: 12,
+  },
 });

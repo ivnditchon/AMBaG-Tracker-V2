@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 55,
     backgroundColor: colors.primary,
-    marginTop: 30,
+    marginTop: 50,
   },
 
   buttonTitle: {

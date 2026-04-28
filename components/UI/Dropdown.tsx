@@ -20,7 +20,7 @@ const Dropdown = ({
   onValueChange,
   items,
   placeholder,
-  error
+  error,
 }: DropdownProps) => {
   const [isFocus, setIsFocus] = useState(false);
   const isError = !!error; // true if error has value, false if empty
@@ -33,11 +33,11 @@ const Dropdown = ({
       <Text style={styles.label}>{label}</Text>
       <RNDropdown
         style={[
-          styles.dropdown, 
+          styles.dropdown,
           isFocus && styles.dropDownFocused,
           {
-            borderColor: isError ? colors.danger : colors.border
-          }
+            borderColor: isError ? colors.danger : colors.border,
+          },
         ]}
         data={data}
         labelField="label"
@@ -118,6 +118,6 @@ const styles = StyleSheet.create({
     fontFamily: "DINMedium",
     fontSize: 14,
     color: colors.danger,
-    marginTop: 3
-  }
+    marginTop: 3,
+  },
 });

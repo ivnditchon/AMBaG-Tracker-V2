@@ -22,6 +22,7 @@ type InputProps = {
   onChangeText: (text: string) => void;
   onPress?: () => void;
   error?: string;
+  autoCapitalize: "none" | "sentences" | "words" | "characters";
 };
 
 const Input = ({
@@ -35,6 +36,7 @@ const Input = ({
   iconRightActive,
   onChangeText,
   error,
+  autoCapitalize,
 }: InputProps) => {
   const [isFocus, setFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -80,6 +82,7 @@ const Input = ({
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           secureTextEntry={isPassword ? !showPassword : false}
+          autoCapitalize={autoCapitalize}
         />
         {isPassword && iconRight && (
           <TouchableOpacity
@@ -105,7 +108,7 @@ export default Input;
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'column'
+    flexDirection: "column",
   },
 
   inputContainer: {
