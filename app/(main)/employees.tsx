@@ -9,6 +9,7 @@ import { globalStyles } from "@/styles/globalStyle";
 import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import MainLayout from "./main-layout";
+import SearchBar from "@/components/UI/SearchBar"
 
 type EmployeesProps = {
   firstName: string;
@@ -18,7 +19,15 @@ type EmployeesProps = {
   department: string;
   designation: string;
   status: "Active" | "Inactive";
-}
+};
+
+type ValidationErrorProps = {
+  firstName?: string;
+  middleName?: string
+  lastName?: string;
+  position?: string;
+  department?: string;
+};
 
 const Employees = () => {
   const [isFormVisible, setFormVisible] = useState(false);
@@ -29,21 +38,56 @@ const Employees = () => {
   const [position, setPosition] = useState<string>("");
   const [designation, setDesignation] = useState<string>("");
   const [department, setDepartment] = useState<string>("");
-  const [status, setStatus] = useState<"Active" | "Inactive">("Active"); // Union type - allows only active and inactive
+  const [status, setStatus] = useState<"Active" | "Inactive">("Active"); // Union type - allow active and inactive only
+  const [search, setSearch] = useState<string>("");
+  const [emptyFieldError, setValidationError] = useState<ValidationErrorProps>({});
+  
+  const validateForm = () => {
+    const errors: ValidationErrorProps = {};
 
-  const handleAddemployee = () => {
-    const newEmployee: EmployeesProps = {
-      firstName: firstName, // Comes from Props: Value(state)
-      middleName: middleName,
-      lastName: lastName,
-      position: position,
-      department: department,
-      designation: designation,
-      status: status
+    if (firstName.trim() === "") {
+      errors.firstName = "First name is required!";
+    } 
+
+    if (lastName.trim() === "") {
+      errors.middleName = "Last name is requred!";
     }
 
-    setEmployees(prev => [...prev, newEmployee]); // Get all employees from Employees and copy (...prev) all employees + new employee
-    setFormVisible(false);
+    return errors;
+
+  };
+
+  const resetForm = () => {
+    setFirstName("");
+    setMiddleName("");
+    setLastName("");
+    setPosition("");
+    setDesignation("");
+    setDepartment("");
+    setStatus("Active");
+  };
+
+  const handleAddemployee = () => {
+    const errors = validateForm();
+
+    if(Object.keys(errors).length > 0) {
+      setValidationError(errors);
+    } else {
+        const newEmployee: EmployeesProps = {
+          firstName: firstName, // Comes from Props: Value(state)
+          middleName: middleName,
+          lastName: lastName,
+          position: position,
+          department: department,
+          designation: designation,
+          status: status
+        };
+
+        setEmployees(prev => [...prev, newEmployee]); // Get all employees from Employees and copy (...prev) all employees + new employee
+        resetForm(); // Reset form after submission
+        setValidationError({}) // Clear errrors
+        setFormVisible(false); // Closed the form
+    }
   }
 
   const employeeSummaryData: SummaryItemProps[] = [
@@ -51,19 +95,19 @@ const Employees = () => {
       value: employees.length,
       label: "Total",
       customValueStyle: colors.primaryLight,
-      showDivider: true,
+      showDivider: true
     },
     {
       value: employees.filter(emp => emp.status === "Active").length,
       label: "Active",
       customValueStyle: colors.whiteFaded,
-      showDivider: true,
+      showDivider: true
     },
     {
       value: employees.filter(emp => emp.status === "Inactive").length,
       label: "Inactive",
       customValueStyle: colors.dangerFaded,
-      showDivider: false,
+      showDivider: false
     },
   ];
 
@@ -147,6 +191,13 @@ const Employees = () => {
             </View>
           }
         />
+        <View style={{padding: 20}}> {/** Content */}
+          <SearchBar
+            value={search.trim()}
+            placeHolder="Seach name, position, department..."
+            onChangeText={(newText) => setSearch(newText)}  
+          />
+        </View>
       </View>
       <Form
         title="Add Employee"
@@ -162,6 +213,7 @@ const Employees = () => {
             value={firstName.trim()}
             placeHolder="e.g Ivan"
             onChangeText={(newText) => setFirstName(newText)}
+            error={emptyFieldError.firstName}
           />
           <Input
             label="MIDDLE NAME"

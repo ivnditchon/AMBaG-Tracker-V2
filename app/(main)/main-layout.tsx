@@ -1,7 +1,7 @@
 import FooterMenu, { FooterMenuProps } from "@/components/Layout/FooterMenu";
 import { colors } from "@/constants/colors";
 import { usePathname, useRouter } from "expo-router";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableWithoutFeedback, View, Keyboard} from "react-native";
 
 type MainLayoutProps = {
   children: React.ReactNode;
@@ -95,29 +95,31 @@ export default function MainLayout({ children }: MainLayoutProps) {
   ];
 
   return (
-    <View style={styles.container}>
-      {children}
-      {/** Footer section */}
-      <View style={styles.footer}>
-        {footerData.map((item) => (
-          <FooterMenu
-            key={item.label}
-            icon={item.icon}
-            isActive={item.isActive}
-            activeIcon={item.activeIcon}
-            labelFont={item.labelFont}
-            activeLabelFont={item.activeLabelFont}
-            labelColor={item.labelColor}
-            activeLabelColor={item.activeLabelColor}
-            color={item.color}
-            activeColor={item.activeColor}
-            size={item.size}
-            label={item.label}
-            onPress={item.onPress}
-          />
-        ))}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        {children}
+        {/** Footer section */}
+        <View style={styles.footer}>
+          {footerData.map((item) => (
+            <FooterMenu
+              key={item.label}
+              icon={item.icon}
+              isActive={item.isActive}
+              activeIcon={item.activeIcon}
+              labelFont={item.labelFont}
+              activeLabelFont={item.activeLabelFont}
+              labelColor={item.labelColor}
+              activeLabelColor={item.activeLabelColor}
+              color={item.color}
+              activeColor={item.activeColor}
+              size={item.size}
+              label={item.label}
+              onPress={item.onPress}
+            />
+          ))}
+        </View>
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 

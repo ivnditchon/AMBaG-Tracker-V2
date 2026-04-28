@@ -21,6 +21,8 @@ type InputProps = {
   secureTextEntry?: boolean;
   onChangeText: (text: string) => void;
   onPress?: () => void;
+  error?: string;
+  isError?: boolean;
 };
 
 const Input = ({
@@ -31,13 +33,15 @@ const Input = ({
   iconLeftActive,
   isPassword,
   iconRight,
-  iconRightActive,
+  iconRightActive,  
   onChangeText,
+  error
 }: InputProps) => {
   const [isFocus, setFocused] = useState(false);
-
-  // Show password icon toggle
   const [showPassword, setShowPassword] = useState(false);
+  const isError = !!error;  // true if error has value, false if empty
+  
+  // Show password icon toggle
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
   };
@@ -49,9 +53,9 @@ const Input = ({
         style={[
           styles.inputContainer,
           {
-            borderColor: showPassword ? colors.primary : isFocus ? colors.primary : colors.border,
-            borderWidth: showPassword ? 1.5 : isFocus ? 1.5 : 1,
-          },
+            borderColor: isError ? colors.danger : showPassword ? colors.primary : isFocus ? colors.primary : colors.border,
+            borderWidth: isError ? 1.5 : showPassword ? 1.5 : isFocus ? 1.5 : 1,
+          }
         ]}
       >
         {iconLeft && <Ionicons style={styles.icon} name={showPassword ? iconLeftActive : isFocus ? iconLeftActive : iconLeft} size={18} color={showPassword ? colors.primary : isFocus ? colors.primary : colors.placeholder} />}
@@ -71,6 +75,7 @@ const Input = ({
           </TouchableOpacity>
         )}
       </View>
+      {error && <Text style={styles.inputError}>{error}</Text>}
     </View>
   );
 };
@@ -112,4 +117,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: colors.text,
   },
+
+  inputError: {
+    fontFamily: "DINMedium",
+    fontSize: 14,
+    color: colors.danger,
+    marginTop: 3
+  }
 });
