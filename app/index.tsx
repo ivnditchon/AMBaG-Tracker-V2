@@ -21,7 +21,7 @@ const Home = () => {
       />
       <View style={styles.screenTitleContainer}>
         <ScreenTitle
-          title="Welcome, Ivan Hanmaa"
+          title="Welcome, AMBaG PMO"
           subTitle="Manage your tasks, track performance with ease and stay organized and keep everything in one place"
         />
       </View>
