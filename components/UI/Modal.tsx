@@ -19,7 +19,7 @@ type FormProps = {
   onClose: () => void;
   onSubmit: () => void;
   children: React.ReactNode;
-  buttonTitle: "Add Employee" | "Edit Employee";
+  buttonTitle: "Add Employee" | "Update Employee";
 };
 
 const Form = ({
