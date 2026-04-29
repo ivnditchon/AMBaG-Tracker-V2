@@ -119,6 +119,13 @@ const Employees = () => {
     setSelectedEmployeeId(null);
   };
 
+  // Search
+  const filteredEmployees = employees.filter((emp) =>
+    `${emp.firstName} ${emp.middleName} ${emp.lastName} ${emp.position} ${emp.department} ${emp.status}`
+      .toLowerCase()
+      .includes(search.toLowerCase().trim()),
+  );
+
   const handleSubmitEmployee = () => {
     const errors = validateForm();
 
@@ -130,8 +137,8 @@ const Employees = () => {
     if (selectedEmployeeId) {
       // Update existing employee
       setEmployees((prev) =>
-        prev.map((emp) =>
-          emp.id === selectedEmployeeId ? { ...emp, ...form } : emp,
+        prev.map(
+          (emp) => (emp.id === selectedEmployeeId ? { ...emp, ...form } : emp), //...emp copy the original or existing data of employee(to prevent data loss of the employee), ...form overwrites the data of ...emp and merged the two (...emp + ...form)
         ),
       );
     } else {
@@ -247,7 +254,7 @@ const Employees = () => {
             <FlatList
               contentContainerStyle={styles.headerContentContainerStyle}
               data={employeeSummaryData}
-              keyExtractor={(_, index) => index.toString()}
+              keyExtractor={(_, index) => index.toString()} // There is no Id
               renderItem={({ item }) => (
                 <SummaryItem value={item.value} label={item.label} />
               )}
@@ -262,12 +269,12 @@ const Employees = () => {
             onChangeText={(newText) => setSearch(newText)}
           />
           <Text style={styles.employeeCount}>
-            {employees.length}{" "}
-            {employees.length === 1 ? "EMPLOYEE" : "EMPLOYEES"} FOUND
+            {filteredEmployees.length}{" "}
+            {filteredEmployees.length === 1 ? "EMPLOYEE" : "EMPLOYEES"} FOUND
           </Text>
           {/** Employee list scrollable */}
           <FlatList
-            data={employees}
+            data={filteredEmployees}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <EmployeeCard
