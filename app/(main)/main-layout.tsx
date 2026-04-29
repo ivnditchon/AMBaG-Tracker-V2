@@ -103,27 +103,29 @@ export default function MainLayout({ children }: MainLayoutProps) {
   return (
     <PaperProvider>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
-          {children}
-          {/** Footer section */}
-          <View style={styles.footer}>
-            {footerData.map((item) => (
-              <FooterMenu
-                key={item.label}
-                icon={item.icon}
-                isActive={item.isActive}
-                activeIcon={item.activeIcon}
-                labelFont={item.labelFont}
-                activeLabelFont={item.activeLabelFont}
-                labelColor={item.labelColor}
-                activeLabelColor={item.activeLabelColor}
-                color={item.color}
-                activeColor={item.activeColor}
-                size={item.size}
-                label={item.label}
-                onPress={item.onPress}
-              />
-            ))}
+        <View style={styles.container}>  
+          <View style={styles.subContainer}>
+            {children}
+            {/** Footer section */}
+            <View style={styles.footer}>
+              {footerData.map((item) => (
+                <FooterMenu
+                  key={item.label}
+                  icon={item.icon}
+                  isActive={item.isActive}
+                  activeIcon={item.activeIcon}
+                  labelFont={item.labelFont}
+                  activeLabelFont={item.activeLabelFont}
+                  labelColor={item.labelColor}
+                  activeLabelColor={item.activeLabelColor}
+                  color={item.color}
+                  activeColor={item.activeColor}
+                  size={item.size}
+                  label={item.label}
+                  onPress={item.onPress}
+                />
+              ))}
+            </View>
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -133,6 +135,10 @@ export default function MainLayout({ children }: MainLayoutProps) {
 
 export const styles = StyleSheet.create({
   container: {
+    flex: 1
+  },
+
+  subContainer: {
     flex: 1,
   },
 

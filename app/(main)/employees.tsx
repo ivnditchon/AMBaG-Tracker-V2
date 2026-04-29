@@ -8,18 +8,20 @@ import SummaryItem, { SummaryItemProps } from "@/components/UI/SummaryItem";
 import { colors } from "@/constants/colors";
 import { globalStyles } from "@/styles/globalStyle";
 import React, { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { FlatList, StyleSheet, Text, View, Image } from "react-native";
 import { Snackbar } from "react-native-paper";
 import MainLayout from "./main-layout";
+import EmployeeCard from "@/components/cards/EmployeeCard";
+import Avatar from "@/components/UI/Avatar";
 
 type EmployeesProps = {
+  id: string;
   firstName: string;
   middleName: string;
   lastName: string;
   position: string;
   department: string;
-  designation: string;
-  status: "Active" | "Inactive";
+  status: "Active" | "Inactive" | "Pending" | "On Leave";
 };
 
 type ValidationErrorProps = {
@@ -28,7 +30,6 @@ type ValidationErrorProps = {
   lastName?: string;
   position?: string;
   department?: string;
-  designation?: string;
 };
 
 const Employees = () => {
@@ -39,9 +40,8 @@ const Employees = () => {
   const [middleName, setMiddleName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [position, setPosition] = useState<string>("");
-  const [designation, setDesignation] = useState<string>("");
   const [department, setDepartment] = useState<string>("");
-  const [status, setStatus] = useState<"Active" | "Inactive">("Active"); // Union type - allow active and inactive only
+  const [status, setStatus] = useState<"Active" | "Inactive" | "Pending" | "On Leave">("Active"); // Union type - allow active and inactive only
   const [search, setSearch] = useState<string>("");
   const [emptyFieldError, setValidationError] = useState<ValidationErrorProps>(
     {},
@@ -62,8 +62,8 @@ const Employees = () => {
     if (position === "") {
       errors.position = "Position is required!";
     }
-    if (designation === "") {
-      errors.designation = "Designation is required!";
+    if (department === "") {
+      errors.department = "Department is required!";
     }
 
     return errors;
@@ -75,7 +75,6 @@ const Employees = () => {
     setMiddleName("");
     setLastName("");
     setPosition("");
-    setDesignation("");
     setDepartment("");
     setStatus("Active");
   };
@@ -87,12 +86,12 @@ const Employees = () => {
       setValidationError(errors);
     } else {
       const newEmployee: EmployeesProps = {
+        id: Date.now().toString(),
         firstName: firstName, // Comes from Props: Value(state)
         middleName: middleName,
         lastName: lastName,
         position: position,
         department: department,
-        designation: designation,
         status: status,
       };
 
@@ -104,18 +103,19 @@ const Employees = () => {
     }
   };
 
+  /** 
   const employeeSummaryData: SummaryItemProps[] = [
     {
       value: employees.length,
       label: "Total",
       customValueStyle: colors.primaryLight,
-      showDivider: true,
+      showDivider: false,
     },
     {
       value: employees.filter((emp) => emp.status === "Active").length,
       label: "Active",
       customValueStyle: colors.whiteFaded,
-      showDivider: true,
+      showDivider: false,
     },
     {
       value: employees.filter((emp) => emp.status === "Inactive").length,
@@ -123,7 +123,19 @@ const Employees = () => {
       customValueStyle: colors.dangerFaded,
       showDivider: false,
     },
-  ];
+    {
+      value: employees.filter((emp) => emp.status === "Pending").length,
+      label: "Pending",
+      customValueStyle: colors.warningFaded,
+      showDivider: false,
+    },
+    {
+      value: employees.filter((emp) => emp.status === "On Leave").length,
+      label: "On Leave",
+      customValueStyle: colors.purple,
+      showDivider: false,
+    },
+  ];} */
 
   const handleOpenAddForm = () => {
     setFormVisible(true);
@@ -147,24 +159,7 @@ const Employees = () => {
     "Project Development Officer II",
     "Project Developmemnt Officer I",
   ];
-  // PMO Designation
-  const designations = [
-    "Deputy Program Manager",
-    "Admin and Finance Unit Head",
-    "Budget Officer",
-    "Planning Offer",
-    "Procurement Officer",
-    "Record Officer",
-    "Database Controller",
-    "Monitoring and Evaluation Unit Head",
-    "Monitoring Officer",
-    "Monioring and Communication Unit Head",
-    "Multimedia Officer",
-    "Communication Officer",
-    "Human Resource Management Focal Person",
-    "Assistant Information Officer",
-    "Liaison Officer",
-  ];
+
   // PMO Department
   const departments = [
     "General Service",
@@ -173,8 +168,9 @@ const Employees = () => {
     "Technical",
     "Admin",
   ];
+
   // PMO Status
-  const statusOptions = ["Active", "Isactive"];
+  const statusOptions = ["Active", "Inactive", "Pending", "On Leave"];
 
   return (
     <MainLayout>
@@ -218,6 +214,38 @@ const Employees = () => {
             placeHolder="Seach name, position, department..."
             onChangeText={(newText) => setSearch(newText)}
           />
+          <Text style={styles.employeeCount}>{employees.length} {employees.length === 1 ? "EMPLOYEE" : "EMPLOYEES"} FOUND</Text> 
+          {/** Employee info section */}
+          <View style={{width: "100%", flex: 1, marginTop: 20}}>
+            <FlatList 
+              data={employees}
+              keyExtractor={(item) => item.id}
+              renderItem={({item}) => (
+                <EmployeeCard 
+                  firstName={item.firstName}
+                  lastName={item.lastName}
+                  position={item.position}
+                  department={item.department}
+                  status={item.status}
+                  onEdit={() => console.log()}
+                  onDelete={() => console.log()}
+                />
+              )}
+              ItemSeparatorComponent={() => // Gap for every employee
+                <View style={styles.itemSeparatorComponentContainer} />} 
+              ListEmptyComponent={                                          // If employee is empty
+                <View style={styles.listEmptyComponentContainer}>
+                  <Image
+                    source={require("@/assets/images/Group-12.png")}
+                    resizeMode="contain"
+                    style={styles.listEmptyComponentImage}  
+                  />
+                  <Text style={styles.listEmptyComponentText}>No employees found.</Text>
+                </View>
+              }
+              contentContainerStyle={styles.contentContainerStyle}
+            />
+          </View>
           <Snackbar
             visible={visible}
             onDismiss={() => setVisible(false)}
@@ -269,14 +297,6 @@ const Employees = () => {
             error={emptyFieldError.position}
           />
           <Dropdown
-            label="DESIGNATION"
-            value={designation}
-            onValueChange={setDesignation}
-            items={designations}
-            placeholder="Select designation"
-            error={emptyFieldError.designation}
-          />
-          <Dropdown
             label="DEPARTMENT"
             value={department}
             onValueChange={setDepartment}
@@ -287,7 +307,7 @@ const Employees = () => {
           <Dropdown
             label="STATUS"
             value={status}
-            onValueChange={(value) => setStatus(value as "Active" | "Inactive")}
+            onValueChange={(value) => setStatus(value as "Active" | "Inactive" | "Pending" | "On Leave")}
             items={statusOptions}
             placeholder="Select status"
           />
@@ -305,9 +325,26 @@ const styles = StyleSheet.create({
   },
 
   mainContent: {
-    padding: 20,
+    paddingTop: 25,
+    paddingHorizontal: 25,
     flex: 1,
     alignItems: "center",
+  },
+
+  employeeCount: {
+    fontFamily: "DINBold",
+    fontSize: 16,
+    color: colors.subtext,
+    alignSelf: "flex-start",
+    marginTop: 20,
+    letterSpacing: 0.2
+  },
+
+  employeeInfoContainer: {
+    flex: 1,
+    flexDirection: "column", 
+    gap: 15,
+    marginTop: 20,
   },
 
   buttonContainer: {
@@ -333,7 +370,7 @@ const styles = StyleSheet.create({
     width: "90%",
     position: "absolute",
     bottom: 20,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.primaryLight,
     borderRadius: 8,
     alignSelf: "center",
     justifyContent: "center",
@@ -343,7 +380,29 @@ const styles = StyleSheet.create({
   snackBarText: {
     fontFamily: "DINMedium",
     fontSize: 16,
-    color: colors.primaryLight,
+    color: colors.text,
     textAlign: "center",
   },
+  
+  itemSeparatorComponentContainer: {
+    height: 12
+  },
+
+  listEmptyComponentContainer: {
+    alignItems: 'center', 
+    marginTop: 40 
+  },
+
+  listEmptyComponentImage: {
+    width: "100%", 
+    height: 200
+  },
+
+  listEmptyComponentText: {
+    color: 'gray', marginTop: 12 
+  },
+
+  contentContainerStyle: {
+    paddingBottom: 20
+  }
 });

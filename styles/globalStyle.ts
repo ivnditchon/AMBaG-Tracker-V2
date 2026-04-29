@@ -30,12 +30,12 @@ export const globalStyles = StyleSheet.create({
   summaryContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 40,
+    marginTop: 20,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.25)",
     borderRadius: 15,
     backgroundColor: "rgba(255,255,255,0.05)",
-    paddingHorizontal: 15,
+    paddingHorizontal: 10,
     paddingVertical: 15,
   },
 

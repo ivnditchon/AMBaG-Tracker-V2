@@ -11,11 +11,16 @@ export const colors = {
   whiteFaded: "rgba(255, 255, 255, 0.60)",
   danger: "#ef4444",
   dangerFaded: "rgba(239, 68, 68, 0.8)",
+  dangerLight: "#ffe6e6",
   warning: "#f59e0b",
   warningFaded: "rgba(245, 158, 11, 0.9)",
+  warningLight: "#fff8e1",
   info: "#0ea5e9",
   footerIconDefault: "#a0a1a1",
   lightGray: "#f1f5f9",
+  gray: "#9e9e9e",
   inputBg: "#f8fffe",
   placeholder: "#d4d2d2",
+  purpleLight: "#ede7f6",
+  purple: "#6a1b9a"
 };

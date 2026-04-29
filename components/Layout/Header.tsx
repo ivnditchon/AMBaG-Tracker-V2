@@ -31,8 +31,8 @@ export default Header;
 
 const styles = StyleSheet.create({
 	mainContainer: {	
-		height: 250,
-		paddingHorizontal: 25,
+		width: "100%",
+		padding: 25,
 		justifyContent: 'center'
 	},
 

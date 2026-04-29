@@ -35,26 +35,18 @@ const Dashboard = () => {
     {
       value: 50,
       label: "Total Staff",
-      customValueStyle: colors.primaryLight,
-      showDivider: true,
     },
     {
       value: 42,
       label: "Present",
-      customValueStyle: colors.whiteFaded,
-      showDivider: true,
     },
     {
       value: 8,
       label: "Absent",
-      customValueStyle: colors.dangerFaded,
-      showDivider: true,
     },
     {
       value: 10,
       label: "Late",
-      customValueStyle: colors.warningFaded,
-      showDivider: false,
     },
   ];
 
@@ -90,8 +82,6 @@ const Dashboard = () => {
                   key={item.label}
                   value={item.value}
                   label={item.label}
-                  customValueStyle={item.customValueStyle}
-                  showDivider={item.showDivider}
                 />
               ))}
             </View>
