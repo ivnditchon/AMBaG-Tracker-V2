@@ -103,6 +103,7 @@ const Employees = () => {
     setStatus("Active");
   };
 
+  // Add employee
   const handleAddemployee = () => {
     const errors = validateForm();
 
@@ -125,6 +126,11 @@ const Employees = () => {
       setFormVisible(false); // Closed the form modal
       setVisible(true); // Show snackbar
     }
+  };
+
+  // Delete employee
+  const handleDeleteEmployee = (id: string) => {
+    setEmployees((prev) => prev.filter((emp) => emp.id !== id));
   };
 
   const handleOpenAddForm = () => {
@@ -215,7 +221,7 @@ const Employees = () => {
                 department={item.department}
                 status={item.status}
                 onEdit={() => console.log()}
-                onDelete={() => console.log()}
+                onDelete={() => handleDeleteEmployee(item.id)}
               />
             )}
             ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
@@ -238,7 +244,7 @@ const Employees = () => {
           <Snackbar
             visible={visible}
             onDismiss={() => setVisible(false)}
-            duration={3000}
+            duration={2000}
             style={styles.snackbar}
           >
             <Text style={styles.snackBarText}>
