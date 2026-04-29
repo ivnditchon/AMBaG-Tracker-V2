@@ -291,13 +291,14 @@ const Employees = () => {
                   style={styles.mainContentFlatListImage}
                 />
                 <Text style={styles.mainContentListEmptyComponentText}>
-                  No employees found.
+                  Whoops! No employees found.
                 </Text>
               </View>
             }
             contentContainerStyle={styles.mainContentContainerStyle}
             showsVerticalScrollIndicator={false} // hides the scrollbar
             style={styles.mainContentFlatListStyle} // 👈 takes remaining space
+            keyboardShouldPersistTaps="handled"
           />
           <Snackbar
             visible={visible}
