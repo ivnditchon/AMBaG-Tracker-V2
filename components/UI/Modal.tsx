@@ -19,6 +19,7 @@ type FormProps = {
   onClose: () => void;
   onSubmit: () => void;
   children: React.ReactNode;
+  buttonTitle: "Add Employee" | "Edit Employee";
 };
 
 const Form = ({
@@ -29,6 +30,7 @@ const Form = ({
   onClose,
   onSubmit,
   children,
+  buttonTitle,
 }: FormProps) => {
   return (
     <View>
@@ -56,7 +58,7 @@ const Form = ({
               <View style={styles.modalContent}>
                 {children}
                 <Button
-                  title="Add Employee"
+                  title={buttonTitle}
                   customContainerStyle={styles.buttonContainer}
                   customTitleStyle={styles.buttonTitle}
                   onPress={onSubmit}

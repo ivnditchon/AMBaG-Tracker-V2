@@ -9,7 +9,7 @@ import SummaryItem, { SummaryItemProps } from "@/components/UI/SummaryItem";
 import { colors } from "@/constants/colors";
 import { globalStyles } from "@/styles/globalStyle";
 import React, { useState } from "react";
-import { FlatList, Image, StyleSheet, Text, View } from "react-native";
+import { Alert, FlatList, Image, StyleSheet, Text, View } from "react-native";
 import { Snackbar } from "react-native-paper";
 import MainLayout from "./main-layout";
 
@@ -31,6 +31,7 @@ type ValidationErrorProps = {
   department?: string;
 };
 
+// Static data (outside component to prevent re-render)
 const getSummaryData = (employees: EmployeesProps[]): SummaryItemProps[] => [
   // parameter of employees with a type of EmployeeProps[], return type - this function MUST return of SummaryItemProps[]
   {
@@ -58,35 +59,46 @@ const getSummaryData = (employees: EmployeesProps[]): SummaryItemProps[] => [
 const Employees = () => {
   const [visible, setVisible] = useState(false); // Snackbar
   const [isFormVisible, setFormVisible] = useState(false); // Form modal
-  const [employees, setEmployees] = useState<EmployeesProps[]>([]); // Data storage temporarily for Employees
-  const [firstName, setFirstName] = useState<string>("");
-  const [middleName, setMiddleName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
-  const [position, setPosition] = useState<string>("");
-  const [department, setDepartment] = useState<string>("");
-  const [status, setStatus] = useState<"Active" | "Inactive">("Active"); // Union type - allow active and inactive only
+  const [employees, setEmployees] = useState<EmployeesProps[]>([]);
   const [search, setSearch] = useState<string>("");
   const [emptyFieldError, setValidationError] = useState<ValidationErrorProps>(
     {},
   );
+
+  // Select employee ID for edit (string if the user select employee which is the ID is string type and null is default or initial value
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(
+    null,
+  );
+
+  // This will be the initial value of input, empty string
+  const [form, setForm] = useState<EmployeesProps>({
+    id: "",
+    firstName: "",
+    middleName: "",
+    lastName: "",
+    position: "",
+    department: "",
+    status: "Active", // Default status
+  });
+
   const employeeSummaryData = getSummaryData(employees);
 
   const validateForm = () => {
     const errors: ValidationErrorProps = {};
 
-    if (firstName.trim() === "") {
+    if (form.firstName.trim() === "") {
       errors.firstName = "First name is required!";
     }
-    if (middleName.trim() === "") {
+    if (form.middleName.trim() === "") {
       errors.middleName = "Middle name is required!";
     }
-    if (lastName.trim() === "") {
+    if (form.lastName.trim() === "") {
       errors.lastName = "Last name is requred!";
     }
-    if (position === "") {
+    if (form.position === "") {
       errors.position = "Position is required!";
     }
-    if (department === "") {
+    if (form.department === "") {
       errors.department = "Position is required!";
     }
 
@@ -95,46 +107,90 @@ const Employees = () => {
 
   // Reset form after submission
   const resetForm = () => {
-    setFirstName("");
-    setMiddleName("");
-    setLastName("");
-    setPosition("");
-    setDepartment("");
-    setStatus("Active");
+    setForm({
+      id: "",
+      firstName: "",
+      middleName: "",
+      lastName: "",
+      position: "",
+      department: "",
+      status: "Active",
+    });
+    setSelectedEmployeeId(null);
   };
 
-  // Add employee
-  const handleAddemployee = () => {
+  const handleSubmitEmployee = () => {
     const errors = validateForm();
 
     if (Object.keys(errors).length > 0) {
       setValidationError(errors);
+      return;
+    }
+
+    if (selectedEmployeeId) {
+      // Update existing employee
+      setEmployees((prev) =>
+        prev.map((emp) =>
+          emp.id === selectedEmployeeId ? { ...emp, ...form } : emp,
+        ),
+      );
     } else {
+      // Add new employee
       const newEmployee: EmployeesProps = {
         id: Date.now().toString(),
-        firstName: firstName, // Comes from Props: Value(state)
-        middleName: middleName,
-        lastName: lastName,
-        position: position,
-        department: department,
-        status: status,
+        firstName: form.firstName, // Comes from Props: Value(state)
+        middleName: form.middleName,
+        lastName: form.lastName,
+        position: form.position,
+        department: form.department,
+        status: form.status,
       };
-
       setEmployees((prev) => [...prev, newEmployee]); // Get all employees from Employees and copy (...prev) all employees + new employee
-      resetForm(); // Reset form after submission
-      setValidationError({}); // Clear errrors
-      setFormVisible(false); // Closed the form modal
-      setVisible(true); // Show snackbar
     }
+    resetForm(); // Reset form after submission
+    setValidationError({}); // Clear errrors
+    setFormVisible(false); // Closed the form modal
+    setVisible(true); // Show snackbar
   };
 
   // Delete employee
-  const handleDeleteEmployee = (id: string) => {
-    setEmployees((prev) => prev.filter((emp) => emp.id !== id));
+  const handleDeleteEmployee = (
+    id: string,
+    firstName: string,
+    lastName: string,
+  ) => {
+    Alert.alert(
+      "Delete Employee", // Title
+      `Are you sure you want to delete ${firstName} ${lastName}?`, // Message
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          style: "destructive", // Shows red on iOS
+          onPress: () =>
+            setEmployees((prev) => prev.filter((emp) => emp.id !== id)),
+        },
+      ],
+    );
+  };
+
+  // Edit employee
+  const handleEditEmployee = (employee: EmployeesProps) => {
+    setForm(employee); // Copy all employee data into form
+    setSelectedEmployeeId(employee.id); // Get employee Id, this id will determine whos employee to be edited
+    setFormVisible(true); //
   };
 
   const handleOpenAddForm = () => {
     setFormVisible(true);
+  };
+
+  const handleClosedForm = () => {
+    setFormVisible(false);
+    resetForm();
   };
 
   // PMO Position
@@ -164,7 +220,7 @@ const Employees = () => {
     "Admin",
   ];
   // PMO Status
-  const statusOptions = ["Active", "Inactive", "Pening", "On Leave"];
+  const statusOptions = ["Active", "Inactive", "Pending", "On Leave"];
 
   return (
     <MainLayout>
@@ -220,8 +276,10 @@ const Employees = () => {
                 position={item.position}
                 department={item.department}
                 status={item.status}
-                onEdit={() => console.log()}
-                onDelete={() => handleDeleteEmployee(item.id)}
+                onEdit={() => handleEditEmployee(item)}
+                onDelete={() =>
+                  handleDeleteEmployee(item.id, item.firstName, item.lastName)
+                }
               />
             )}
             ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
@@ -248,64 +306,75 @@ const Employees = () => {
             style={styles.snackbar}
           >
             <Text style={styles.snackBarText}>
-              Employee added successfully ✅
+              {selectedEmployeeId
+                ? "Employee updated successfully ✅"
+                : "Employee added successfully ✅"}
             </Text>
           </Snackbar>
         </View>
       </View>
       <Form
-        title="Add Employee"
-        subTitle="Fill in the employee details below"
+        title={selectedEmployeeId ? "Edit Employee" : "Add Employee"}
+        subTitle={
+          selectedEmployeeId
+            ? "Edit the employee details below"
+            : "Fill in the employee details below"
+        }
         icon="person-add"
         visible={isFormVisible}
-        onClose={() => setFormVisible(false)}
-        onSubmit={handleAddemployee}
+        onClose={handleClosedForm}
+        onSubmit={handleSubmitEmployee}
+        buttonTitle={selectedEmployeeId ? "Update Employee" : "Add Employee"}
       >
         <View style={styles.inputContainer}>
           <Input
             label="FIRST NAME"
-            value={firstName.trim()}
+            value={form.firstName.trim()}
             placeHolder="e.g Ivan"
-            onChangeText={(newText) => setFirstName(newText)}
+            onChangeText={(newText) => setForm({ ...form, firstName: newText })} // Copy all the data from form (...form) then overwrites only the firstName
             error={emptyFieldError.firstName}
             autoCapitalize="words"
           />
           <Input
             label="MIDDLE NAME"
-            value={middleName.trim()}
+            value={form.middleName.trim()}
             placeHolder="e.g Hanma"
-            onChangeText={(newText) => setMiddleName(newText)}
+            onChangeText={(newText) =>
+              setForm({ ...form, middleName: newText })
+            }
             error={emptyFieldError.middleName}
             autoCapitalize="words"
           />
           <Input
             label="LAST NAME"
-            value={lastName.trim()}
+            value={form.lastName.trim()}
             placeHolder="e.g Hanma"
-            onChangeText={(newText) => setLastName(newText)}
+            onChangeText={(newText) => setForm({ ...form, lastName: newText })}
             error={emptyFieldError.lastName}
             autoCapitalize="words"
           />
           <Dropdown
             label="POSITION"
-            value={position}
-            onValueChange={setPosition}
+            value={form.position}
+            onValueChange={(value) => setForm({ ...form, position: value })}
             items={positions}
             placeholder="Select position"
             error={emptyFieldError.position}
           />
           <Dropdown
             label="DEPARTMENT"
-            value={department}
-            onValueChange={setDepartment}
+            value={form.department}
+            onValueChange={(value) => setForm({ ...form, department: value })}
             items={departments}
             placeholder="Select department"
             error={emptyFieldError.department}
           />
           <Dropdown
             label="STATUS"
-            value={status}
-            onValueChange={(value) => setStatus(value as "Active" | "Inactive")}
+            value={form.status}
+            onValueChange={(value) =>
+              setForm({ ...form, status: value as EmployeesProps["status"] })
+            }
             items={statusOptions}
             placeholder="Select status"
           />
