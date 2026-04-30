@@ -105,8 +105,9 @@ export default function MainLayout({ children }: MainLayoutProps) {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
           <View style={styles.subContainer}>
+            {/** Main Content */}
             {children}
-            {/** Footer section */}
+            {/** Footer section (fixed in every screen) */}
             <View style={styles.footer}>
               {footerData.map((item) => (
                 <FooterMenu

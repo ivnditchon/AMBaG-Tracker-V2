@@ -8,7 +8,8 @@ import SearchBar from "@/components/UI/SearchBar";
 import SummaryItem, { SummaryItemProps } from "@/components/UI/SummaryItem";
 import { colors } from "@/constants/colors";
 import { globalStyles } from "@/styles/globalStyle";
-import React, { useState } from "react";
+import { getEmployees, saveEmployees } from "@/utils/storage";
+import React, { useEffect, useState } from "react";
 import { Alert, FlatList, Image, StyleSheet, Text, View } from "react-native";
 import { Snackbar } from "react-native-paper";
 import MainLayout from "./main-layout";
@@ -57,6 +58,7 @@ const getSummaryData = (employees: EmployeesProps[]): SummaryItemProps[] => [
 ];
 
 const Employees = () => {
+  // 1. useState declaration
   const [visible, setVisible] = useState(false); // Snackbar
   const [isFormVisible, setFormVisible] = useState(false); // Form modal
   const [employees, setEmployees] = useState<EmployeesProps[]>([]);
@@ -64,6 +66,22 @@ const Employees = () => {
   const [emptyFieldError, setValidationError] = useState<ValidationErrorProps>(
     {},
   );
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+
+  // 2. useEffect declaration
+  // Load employees when screen opens
+  useEffect(() => {
+    const loadEmployees = async () => {
+      const data = await getEmployees();
+      setEmployees(data);
+    };
+    loadEmployees();
+  }, []);
+
+  // 3. useEffect for saving
+  useEffect(() => {
+    saveEmployees(employees);
+  }, [employees]);
 
   // Select employee ID for edit (string if the user select employee which is the ID is string type and null is default or initial value
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(
@@ -188,10 +206,12 @@ const Employees = () => {
   const handleEditEmployee = (employee: EmployeesProps) => {
     setForm(employee); // Copy all employee data into form
     setSelectedEmployeeId(employee.id); // Get employee Id, this id will determine whos employee to be edited
-    setFormVisible(true); //
+    setIsEditing(true); // Set editing flag
+    setFormVisible(true);
   };
 
   const handleOpenAddForm = () => {
+    setIsEditing(false); // Not editing
     setFormVisible(true);
   };
 
@@ -314,7 +334,7 @@ const Employees = () => {
             style={styles.snackbar}
           >
             <Text style={styles.snackBarText}>
-              {selectedEmployeeId
+              {isEditing
                 ? "Employee updated successfully ✅"
                 : "Employee added successfully ✅"}
             </Text>
