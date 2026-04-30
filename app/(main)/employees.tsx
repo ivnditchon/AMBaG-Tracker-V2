@@ -222,21 +222,21 @@ const Employees = () => {
 
   // PMO Position
   const positions = [
-    "Administrative Officer II",
-    "Administrative Officer I",
-    "Senior Administrative Assistant I",
-    "Administrative Assistant VI",
-    "Administrative Assistant V",
-    "Administrative Assistant IV",
-    "Administrative Assistant III",
-    "Administrative Assistant II",
-    "Administrative Assistant I",
-    "Project Evaluation III",
-    "Project Evaluation II",
-    "Project Evaluation I",
-    "Project Development Officer III",
-    "Project Development Officer II",
     "Project Developmemnt Officer I",
+    "Project Development Officer II",
+    "Project Development Officer III",
+    "Project Evaluation I",
+    "Project Evaluation II",
+    "Project Evaluation III",
+    "Administrative Officer I",
+    "Administrative Officer II",
+    "Senior Administrative Assistant I",
+    "Administrative Assistant I",
+    "Administrative Assistant II",
+    "Administrative Assistant III",
+    "Administrative Assistant IV",
+    "Administrative Assistant V",
+    "Administrative Assistant VI",
   ];
   // PMO Department
   const departments = [
