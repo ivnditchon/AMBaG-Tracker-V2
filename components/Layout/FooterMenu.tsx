@@ -7,7 +7,6 @@ export type FooterMenuProps = {
   activeIcon: React.ComponentProps<typeof Ionicons>["name"];
   color: string;
   activeColor: string;
-  size: number;
   label: string;
   labelColor: string;
   activeLabelColor: string;
@@ -26,7 +25,6 @@ const FooterMenu = ({
   activeLabelColor,
   labelFont,
   activeLabelFont,
-  size,
   label,
   onPress,
   isActive,
@@ -35,7 +33,7 @@ const FooterMenu = ({
     <TouchableOpacity onPress={onPress} style={styles.container}>
       <Ionicons
         name={isActive ? activeIcon : icon}
-        size={size}
+        size={isActive ? 23 : 22}
         color={isActive ? activeColor : color}
       />
       <Text
@@ -44,6 +42,11 @@ const FooterMenu = ({
           {
             color: isActive ? activeLabelColor : labelColor,
             fontFamily: isActive ? activeLabelFont : labelFont,
+            transform: [
+              {
+                scale: isActive ? 1.2 : 1.0,
+              },
+            ],
           },
         ]}
       >

@@ -30,7 +30,6 @@ export default function MainLayout({ children }: MainLayoutProps) {
     {
       icon: "grid-outline",
       activeIcon: "grid",
-      size: 22,
       color: colors.subtext,
       labelFont: "DINRegular",
       activeLabelFont: "DINBold",
@@ -45,7 +44,6 @@ export default function MainLayout({ children }: MainLayoutProps) {
     {
       icon: "people-outline",
       activeIcon: "people",
-      size: 22,
       color: colors.subtext,
       labelFont: "DINRegular",
       activeLabelFont: "DINBold",
@@ -60,7 +58,6 @@ export default function MainLayout({ children }: MainLayoutProps) {
     {
       icon: "calendar-outline",
       activeIcon: "calendar",
-      size: 22,
       color: colors.subtext,
       labelFont: "DINRegular",
       activeLabelFont: "DINBold",
@@ -74,7 +71,6 @@ export default function MainLayout({ children }: MainLayoutProps) {
     {
       icon: "shirt-outline",
       activeIcon: "shirt",
-      size: 22,
       color: colors.subtext,
       labelFont: "DINRegular",
       activeLabelFont: "DINBold",
@@ -88,7 +84,6 @@ export default function MainLayout({ children }: MainLayoutProps) {
     {
       icon: "document-text-outline",
       activeIcon: "document-text",
-      size: 22,
       color: colors.subtext,
       labelFont: "DINRegular",
       activeLabelFont: "DINBold",
@@ -121,7 +116,6 @@ export default function MainLayout({ children }: MainLayoutProps) {
                   activeLabelColor={item.activeLabelColor}
                   color={item.color}
                   activeColor={item.activeColor}
-                  size={item.size}
                   label={item.label}
                   onPress={item.onPress}
                 />
