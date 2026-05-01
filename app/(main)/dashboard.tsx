@@ -2,20 +2,33 @@ import Header from "@/components/Layout/Header";
 import Avatar from "@/components/UI/Avatar";
 import SummaryItem, { SummaryItemProps } from "@/components/UI/SummaryItem";
 import { colors } from "@/constants/colors";
+import { useEmployees } from "@/context/EmployeeContext";
 import { globalStyles } from "@/styles/globalStyle";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import MainLayout from "./main-layout";
 
+type EmployeesProps = {
+  ID: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  position: string;
+  department: string;
+  status: "Active" | "Inactive" | "Pending" | "On Leave";
+};
+
 // Static data (outside component to prevent re-render)
-const dashboardSummaryData: SummaryItemProps[] = [
+const getDashboardSummaryData = (
+  employees: EmployeesProps[],
+): SummaryItemProps[] => [
   {
-    value: 50,
+    value: employees.length,
     label: "Total Staff",
   },
   {
-    value: 42,
+    value: 40,
     label: "Present",
   },
   {
@@ -28,7 +41,14 @@ const dashboardSummaryData: SummaryItemProps[] = [
   },
 ];
 
+// Main component
 const Dashboard = () => {
+  const { employees, loading } = useEmployees();
+
+  if (loading) return null;
+
+  const dashboardSummaryData = getDashboardSummaryData(employees);
+
   const getGreeting = () => {
     const hour = new Date().getHours();
 
