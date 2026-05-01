@@ -7,15 +7,15 @@ import Form from "@/components/UI/Modal";
 import SearchBar from "@/components/UI/SearchBar";
 import SummaryItem, { SummaryItemProps } from "@/components/UI/SummaryItem";
 import { colors } from "@/constants/colors";
+import { useEmployees } from "@/context/EmployeeContext";
 import { globalStyles } from "@/styles/globalStyle";
-import { getEmployees, saveEmployees } from "@/utils/storage";
-import React, { useEffect, useState } from "react";
-import { Alert, FlatList, Image, StyleSheet, Text, View } from "react-native";
+import React, { useState } from "react";
+import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 import { Snackbar } from "react-native-paper";
 import MainLayout from "./main-layout";
 
 type EmployeesProps = {
-  id: string;
+  ID: string;
   firstName: string;
   middleName: string;
   lastName: string;
@@ -58,39 +58,18 @@ const getSummaryData = (employees: EmployeesProps[]): SummaryItemProps[] => [
 ];
 
 const Employees = () => {
-  // 1. useState declaration
+  const { employees, loading, addEmployee, editEmployee, removeEmployee } =
+    useEmployees();
+  const employeeSummaryData = getSummaryData(employees); // Pass the static array data
   const [visible, setVisible] = useState(false); // Snackbar
   const [isFormVisible, setFormVisible] = useState(false); // Form modal
-  const [employees, setEmployees] = useState<EmployeesProps[]>([]);
   const [search, setSearch] = useState<string>("");
   const [emptyFieldError, setValidationError] = useState<ValidationErrorProps>(
     {},
   );
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-
-  // 2. useEffect declaration
-  // Load employees when screen opens
-  useEffect(() => {
-    const loadEmployees = async () => {
-      const data = await getEmployees();
-      setEmployees(data);
-    };
-    loadEmployees();
-  }, []);
-
-  // 3. useEffect for saving
-  useEffect(() => {
-    saveEmployees(employees);
-  }, [employees]);
-
-  // Select employee ID for edit (string if the user select employee which is the ID is string type and null is default or initial value
-  const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(
-    null,
-  );
-
   // This will be the initial value of input, empty string
   const [form, setForm] = useState<EmployeesProps>({
-    id: "",
+    ID: "",
     firstName: "",
     middleName: "",
     lastName: "",
@@ -98,8 +77,13 @@ const Employees = () => {
     department: "",
     status: "Active", // Default status
   });
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  // Select employee ID for edit (string if the user select employee which is the ID is string type and null is default or initial value
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(
+    null,
+  );
 
-  const employeeSummaryData = getSummaryData(employees);
+  if (loading) return null;
 
   const validateForm = () => {
     const errors: ValidationErrorProps = {};
@@ -123,10 +107,17 @@ const Employees = () => {
     return errors;
   };
 
+  // Search
+  const filteredEmployees = employees.filter((emp: EmployeesProps) =>
+    `${emp.firstName} ${emp.middleName} ${emp.lastName} ${emp.department} ${emp.position} ${emp.status}`
+      .toLowerCase()
+      .includes(search.toLocaleLowerCase().trim()),
+  );
+
   // Reset form after submission
   const resetForm = () => {
     setForm({
-      id: "",
+      ID: "",
       firstName: "",
       middleName: "",
       lastName: "",
@@ -137,13 +128,6 @@ const Employees = () => {
     setSelectedEmployeeId(null);
   };
 
-  // Search
-  const filteredEmployees = employees.filter((emp) =>
-    `${emp.firstName} ${emp.middleName} ${emp.lastName} ${emp.position} ${emp.department} ${emp.status}`
-      .toLowerCase()
-      .includes(search.toLowerCase().trim()),
-  );
-
   const handleSubmitEmployee = () => {
     const errors = validateForm();
 
@@ -153,24 +137,18 @@ const Employees = () => {
     }
 
     if (selectedEmployeeId) {
-      // Update existing employee
-      setEmployees((prev) =>
-        prev.map(
-          (emp) => (emp.id === selectedEmployeeId ? { ...emp, ...form } : emp), //...emp copy the original or existing data of employee(to prevent data loss of the employee), ...form overwrites the data of ...emp and merged the two (...emp + ...form)
-        ),
-      );
+      editEmployee(selectedEmployeeId, form);
     } else {
-      // Add new employee
-      const newEmployee: EmployeesProps = {
-        id: Date.now().toString(),
-        firstName: form.firstName, // Comes from Props: Value(state)
+      // Add new Employee
+      addEmployee({
+        ID: Date.now().toString(),
+        firstName: form.firstName,
         middleName: form.middleName,
         lastName: form.lastName,
         position: form.position,
         department: form.department,
         status: form.status,
-      };
-      setEmployees((prev) => [...prev, newEmployee]); // Get all employees from Employees and copy (...prev) all employees + new employee
+      });
     }
     resetForm(); // Reset form after submission
     setValidationError({}); // Clear errrors
@@ -178,34 +156,10 @@ const Employees = () => {
     setVisible(true); // Show snackbar
   };
 
-  // Delete employee
-  const handleDeleteEmployee = (
-    id: string,
-    firstName: string,
-    lastName: string,
-  ) => {
-    Alert.alert(
-      "Delete Employee", // Title
-      `Are you sure you want to delete ${firstName} ${lastName}?`, // Message
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-        {
-          text: "Delete",
-          style: "destructive", // Shows red on iOS
-          onPress: () =>
-            setEmployees((prev) => prev.filter((emp) => emp.id !== id)),
-        },
-      ],
-    );
-  };
-
   // Edit employee
   const handleEditEmployee = (employee: EmployeesProps) => {
     setForm(employee); // Copy all employee data into form
-    setSelectedEmployeeId(employee.id); // Get employee Id, this id will determine whos employee to be edited
+    setSelectedEmployeeId(employee.ID); // Get employee Id, this id will determine whos employee to be edited
     setIsEditing(true); // Set editing flag
     setFormVisible(true);
   };
@@ -272,9 +226,9 @@ const Employees = () => {
           }
           bottomComponent={
             <FlatList
-              contentContainerStyle={styles.headerContentContainerStyle}
+              contentContainerStyle={globalStyles.headerBottomSummaryContainer}
               data={employeeSummaryData}
-              keyExtractor={(_, index) => index.toString()} // There is no Id
+              keyExtractor={(item) => item.label} // There is no Id
               renderItem={({ item }) => (
                 <SummaryItem value={item.value} label={item.label} />
               )}
@@ -290,12 +244,12 @@ const Employees = () => {
           />
           <Text style={styles.employeeCount}>
             {filteredEmployees.length}{" "}
-            {filteredEmployees.length === 1 ? "EMPLOYEE" : "EMPLOYEES"} FOUND
+            {filteredEmployees.lenght === 1 ? "EMPLOYEE" : "EMPLOYEES"} FOUND
           </Text>
           {/** Employee list scrollable */}
           <FlatList
-            data={filteredEmployees}
-            keyExtractor={(item) => item.id}
+            data={employees}
+            keyExtractor={(item) => item.ID}
             renderItem={({ item }) => (
               <EmployeeCard
                 firstName={item.firstName}
@@ -305,7 +259,7 @@ const Employees = () => {
                 status={item.status}
                 onEdit={() => handleEditEmployee(item)}
                 onDelete={() =>
-                  handleDeleteEmployee(item.id, item.firstName, item.lastName)
+                  removeEmployee(item.ID, item.firstName, item.lastName)
                 }
               />
             )}
@@ -324,7 +278,7 @@ const Employees = () => {
             }
             contentContainerStyle={styles.mainContentContainerStyle}
             showsVerticalScrollIndicator={false} // hides the scrollbar
-            style={styles.mainContentFlatListStyle} // 👈 takes remaining space
+            style={styles.mainContentFlatListStyle} // takes remaining space
             keyboardShouldPersistTaps="handled"
           />
           <Snackbar

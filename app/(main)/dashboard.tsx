@@ -5,8 +5,28 @@ import { colors } from "@/constants/colors";
 import { globalStyles } from "@/styles/globalStyle";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import MainLayout from "./main-layout";
+
+// Static data (outside component to prevent re-render)
+const dashboardSummaryData: SummaryItemProps[] = [
+  {
+    value: 50,
+    label: "Total Staff",
+  },
+  {
+    value: 42,
+    label: "Present",
+  },
+  {
+    value: 8,
+    label: "Absent",
+  },
+  {
+    value: 10,
+    label: "Late",
+  },
+];
 
 const Dashboard = () => {
   const getGreeting = () => {
@@ -30,25 +50,7 @@ const Dashboard = () => {
     day: "numeric",
   });
 
-  // Summary pill data
-  const dashboardSummaryData: SummaryItemProps[] = [
-    {
-      value: 50,
-      label: "Total Staff",
-    },
-    {
-      value: 42,
-      label: "Present",
-    },
-    {
-      value: 8,
-      label: "Absent",
-    },
-    {
-      value: 10,
-      label: "Late",
-    },
-  ];
+  // Load employees when dashboard screen opens
 
   return (
     <MainLayout>
@@ -76,15 +78,14 @@ const Dashboard = () => {
             </View>
           }
           bottomComponent={
-            <View style={globalStyles.summaryContainer}>
-              {dashboardSummaryData.map((item) => (
-                <SummaryItem
-                  key={item.label}
-                  value={item.value}
-                  label={item.label}
-                />
-              ))}
-            </View>
+            <FlatList
+              contentContainerStyle={globalStyles.headerBottomSummaryContainer}
+              data={dashboardSummaryData}
+              keyExtractor={(_, index) => index.toString()} // There is no Id
+              renderItem={({ item }) => (
+                <SummaryItem value={item.value} label={item.label} />
+              )}
+            />
           }
         />
       </View>

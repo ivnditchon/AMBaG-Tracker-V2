@@ -1,11 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const EMPPLOYEE_KEY = "ambag_employees"; // Unique key
+const EMPLOYEE_KEY = "ambag_employees"; // Unique key
 
 // Save Employees
 export const saveEmployees = async (employees: any[]) => {
   try {
-    await AsyncStorage.setItem(EMPPLOYEE_KEY, JSON.stringify(employees));
+    await AsyncStorage.setItem(EMPLOYEE_KEY, JSON.stringify(employees));
   } catch (error) {
     console.error("Error saving employees:", error);
   }
@@ -14,7 +14,7 @@ export const saveEmployees = async (employees: any[]) => {
 // Get Employees
 export const getEmployees = async () => {
   try {
-    const data = await AsyncStorage.getItem(EMPPLOYEE_KEY);
+    const data = await AsyncStorage.getItem(EMPLOYEE_KEY);
     return data ? JSON.parse(data) : [];
   } catch (error) {
     console.error("Error getting employees:", error);
@@ -25,7 +25,7 @@ export const getEmployees = async () => {
 // Clear Employees
 export const clearEmployees = async () => {
   try {
-    await AsyncStorage.removeItem(EMPPLOYEE_KEY);
+    await AsyncStorage.removeItem(EMPLOYEE_KEY);
   } catch (error) {
     console.error("Error clearing employees:", error);
   }

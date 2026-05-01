@@ -27,6 +27,18 @@ export const globalStyles = StyleSheet.create({
     paddingVertical: 5,
   },
 
+  headerBottomSummaryContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 20,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.25)",
+    borderRadius: 15,
+    backgroundColor: "rgba(255,255,255,0.05)",
+    paddingHorizontal: 15,
+    paddingVertical: 15,
+  },
+
   buttonContainer: {
     width: "100%",
     height: 55,
