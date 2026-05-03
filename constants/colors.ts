@@ -22,5 +22,5 @@ export const colors = {
   inputBg: "#f8fffe",
   placeholder: "#d4d2d2",
   purpleLight: "#ede7f6",
-  purple: "#6a1b9a"
+  purple: "#6a1b9a",
 };

@@ -131,6 +131,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.background,
   },
 
   subContainer: {

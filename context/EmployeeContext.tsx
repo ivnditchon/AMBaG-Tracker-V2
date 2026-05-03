@@ -1,26 +1,37 @@
+import { DeskOfficer, ProjectManagementOfficer } from "@/types/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Alert } from "react-native";
 
-const EMPLOYEE_KEY = "ambag_employees";
-const EmployeeContext = createContext({} as any);
+// Define a union type for the state
+export type UnifiedEmployee = ProjectManagementOfficer | DeskOfficer;
 
-type EmployeeProps = {
-  ID: string;
-  firstName: string;
-  middleName: string;
-  lastName: string;
-  position: string;
-  department: string;
-  status: "Active" | "Inactive" | "Pending" | "On Leave";
-};
+// Define shape of the context
+interface EmployeeContextType {
+  employees: UnifiedEmployee[];
+  loading: boolean;
+  addEmployee: (employee: UnifiedEmployee) => void;
+  editEmployee: (id: string, form: UnifiedEmployee) => void;
+  removeEmployee: (id: string, firstName: string, lastName: string) => void;
+}
+
+// Create the context with a default value
+const EmployeeContext = createContext<EmployeeContextType>({
+  employees: [],
+  loading: true,
+  addEmployee: () => {},
+  editEmployee: () => {},
+  removeEmployee: () => {},
+});
+
+const EMPLOYEE_KEY = "ambag_employees";
 
 type ChildrenProps = {
   children: React.ReactNode;
 };
 
 export const EmployeeProvider = ({ children }: ChildrenProps) => {
-  const [employees, setEmployees] = useState<EmployeeProps[]>([]);
+  const [employees, setEmployees] = useState<UnifiedEmployee[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Load from AsyncStorage (once)
@@ -50,19 +61,18 @@ export const EmployeeProvider = ({ children }: ChildrenProps) => {
         console.error("Error saving employees", error);
       }
     };
-
     saveEmployees();
   }, [employees]);
 
   // Add employee
-  const addEmployee = (employee: EmployeeProps) => {
+  const addEmployee = (employee: UnifiedEmployee) => {
     setEmployees((prev) => [...prev, employee]);
   };
 
   // Edit employee
-  const editEmployee = (id: string | null, form: EmployeeProps) => {
+  const editEmployee = (id: string | null, form: UnifiedEmployee) => {
     setEmployees((prev) =>
-      prev.map((emp) => (emp.ID === id ? { ...emp, ...form } : emp)),
+      prev.map((emp) => (emp.id === id ? { ...emp, ...form } : emp)),
     );
   };
 
@@ -80,7 +90,7 @@ export const EmployeeProvider = ({ children }: ChildrenProps) => {
           text: "Delete",
           style: "destructive", // Show red on iOS
           onPress: () => {
-            setEmployees((prev) => prev.filter((emp) => emp.ID !== id));
+            setEmployees((prev) => prev.filter((emp) => emp.id !== id));
           },
         },
       ],

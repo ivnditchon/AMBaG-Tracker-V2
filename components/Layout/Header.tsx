@@ -14,12 +14,12 @@ const Header = ({
   bottomComponent,
 }: HeaderProps) => {
   return (
-    <View>
+    <View style={styles.headerContainer}>
       <LinearGradient
         colors={["#007A56", "#00956A", "#00C588"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={styles.mainContainer}
+        style={styles.headerSubContainer}
       >
         <View style={styles.subContainer}>
           {leftComponent}
@@ -34,8 +34,12 @@ const Header = ({
 export default Header;
 
 const styles = StyleSheet.create({
-  mainContainer: {
+  headerContainer: {
+    height: 230,
+  },
+  headerSubContainer: {
     padding: 25,
+    flex: 1,
   },
 
   subContainer: {

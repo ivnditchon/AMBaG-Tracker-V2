@@ -1,4 +1,5 @@
 import { colors } from "@/constants/colors";
+import { FormProps } from "@/types/types";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import {
@@ -10,17 +11,6 @@ import {
   View,
 } from "react-native";
 import Button from "./Button";
-
-type FormProps = {
-  visible: boolean;
-  title: string;
-  subTitle: string;
-  icon: React.ComponentProps<typeof Ionicons>["name"];
-  onClose: () => void;
-  onSubmit: () => void;
-  children: React.ReactNode;
-  buttonTitle: "Add Employee" | "Update Employee";
-};
 
 const Form = ({
   visible,

@@ -2,179 +2,189 @@ import EmployeeCard from "@/components/cards/EmployeeCard";
 import Header from "@/components/Layout/Header";
 import Button from "@/components/UI/Button";
 import Dropdown from "@/components/UI/Dropdown";
+import Form from "@/components/UI/FormModal";
 import Input from "@/components/UI/Input";
-import Form from "@/components/UI/Modal";
 import SearchBar from "@/components/UI/SearchBar";
-import SummaryItem, { SummaryItemProps } from "@/components/UI/SummaryItem";
+import SummaryItem from "@/components/UI/SummaryItem";
 import { colors } from "@/constants/colors";
 import { useEmployees } from "@/context/EmployeeContext";
 import { globalStyles } from "@/styles/globalStyle";
+import {
+  EmployeeDepartment,
+  EmployeeFormState,
+  EmployeeSummaryData,
+  PartnerHospitals,
+  UnifiedEmployee,
+  ValidationError,
+} from "@/types/types";
 import React, { useState } from "react";
-import { FlatList, Image, StyleSheet, Text, View } from "react-native";
-import { Snackbar } from "react-native-paper";
+import { FlatList, Platform, StyleSheet, Text, View } from "react-native";
 import MainLayout from "./main-layout";
 
-type EmployeesProps = {
-  ID: string;
-  firstName: string;
-  middleName: string;
-  lastName: string;
-  position: string;
-  department: string;
-  status: "Active" | "Inactive" | "Pending" | "On Leave";
-};
-
-type ValidationErrorProps = {
-  firstName?: string;
-  middleName?: string;
-  lastName?: string;
-  position?: string;
-  department?: string;
-};
-
-// Static data (outside component to prevent re-render)
-const getSummaryData = (employees: EmployeesProps[]): SummaryItemProps[] => [
-  // parameter of employees with a type of EmployeeProps[], return type - this function MUST return of SummaryItemProps[]
+// Static object data
+const getEmployeesSummaryData = (): EmployeeSummaryData[] => [
   {
-    value: employees.length,
-    label: "Total",
+    value: "100",
+    label: "TOTAL",
+    isMainSummary: true,
   },
   {
-    value: employees.filter((emp) => emp.status === "Active").length,
-    label: "Active",
+    value: "50",
+    label: "PMO",
+    isMainSummary: true,
   },
   {
-    value: employees.filter((emp) => emp.status === "Inactive").length,
-    label: "Inactive",
-  },
-  {
-    value: employees.filter((emp) => emp.status === "Pending").length,
-    label: "Pending",
-  },
-  {
-    value: employees.filter((emp) => emp.status === "On Leave").length,
-    label: "On Leave",
+    value: "50",
+    label: "DO",
+    isMainSummary: true,
   },
 ];
 
-const Employees = () => {
-  const { employees, loading, addEmployee, editEmployee, removeEmployee } =
-    useEmployees();
-  const employeeSummaryData = getSummaryData(employees); // Pass the static array data
-  const [visible, setVisible] = useState(false); // Snackbar
-  const [isFormVisible, setFormVisible] = useState(false); // Form modal
+const getPmoSummaryData = (): EmployeeSummaryData[] => [
+  {
+    value: "36",
+    label: "Active",
+    isMainSummary: false,
+  },
+  {
+    value: "36",
+    label: "Inactive",
+    isMainSummary: false,
+  },
+  {
+    value: "36",
+    label: "Pending",
+    isMainSummary: false,
+  },
+  {
+    value: "36",
+    label: "On Leave",
+    isMainSummary: false,
+  },
+];
+
+const getDoSummaryData = (): EmployeeSummaryData[] => [
+  {
+    value: "3",
+    label: "Active",
+    isMainSummary: false,
+  },
+  {
+    value: "3",
+    label: "Inactive",
+    isMainSummary: false,
+  },
+  {
+    value: "3",
+    label: "Pending",
+    isMainSummary: false,
+  },
+  {
+    value: "3",
+    label: "On Leave",
+    isMainSummary: false,
+  },
+];
+
+const employees = () => {
+  const { employees, addEmployee, loading } = useEmployees();
+
+  if (loading) return null;
+
+  const [activeRole, setActiveRole] = useState<"PMO" | "DO">("PMO");
   const [search, setSearch] = useState<string>("");
-  const [emptyFieldError, setValidationError] = useState<ValidationErrorProps>(
-    {},
-  );
-  // This will be the initial value of input, empty string
-  const [form, setForm] = useState<EmployeesProps>({
-    ID: "",
+  const [isFormVissible, setFormVissible] = useState<boolean>(false);
+  const [formValidationError, setFormValidationError] =
+    useState<ValidationError>({});
+
+  // Pick one of the employee(default)
+  const initialState: EmployeeFormState = {
+    id: "",
     firstName: "",
     middleName: "",
     lastName: "",
     position: "",
+    status: "Active",
     department: "",
-    status: "Active", // Default status
-  });
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-  // Select employee ID for edit (string if the user select employee which is the ID is string type and null is default or initial value
-  const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(
-    null,
-  );
+    assignedHospital: "",
+  };
 
-  if (loading) return null;
+  const [form, setForm] = useState<EmployeeFormState>(initialState);
 
-  const validateForm = () => {
-    const errors: ValidationErrorProps = {};
+  const employeeSummaryData = getEmployeesSummaryData();
+  const pmoSummaryData = getPmoSummaryData();
+  const doSummaryData = getDoSummaryData();
 
-    if (form.firstName.trim() === "") {
-      errors.firstName = "First name is required!";
+  const handlePmo = () => setActiveRole("PMO");
+  const handleDo = () => setActiveRole("DO");
+
+  const handleOpenForm = () => {
+    setForm(initialState); // Reset the form to initial empty values
+    setFormVissible(true); // Open the form
+  };
+
+  const handleClosedForm = () => {
+    setForm(initialState);
+    setFormVissible(false); // Close the form
+  };
+
+  const formValidation = () => {
+    const errors: ValidationError = {};
+    if (!form.firstName) {
+      errors.firstName = "Firstname is required!";
     }
-    if (form.middleName.trim() === "") {
-      errors.middleName = "Middle name is required!";
+    if (!form.middleName) {
+      errors.middleName = "Middlename is required!";
     }
-    if (form.lastName.trim() === "") {
-      errors.lastName = "Last name is requred!";
+    if (!form.lastName) {
+      errors.lastName = "Lastname is required!";
     }
-    if (form.position === "") {
+    if (!form.position) {
       errors.position = "Position is required!";
     }
-    if (form.department === "") {
-      errors.department = "Position is required!";
+    if (activeRole === "PMO") {
+      if (!form.department) {
+        errors.department = "Department is required!";
+      }
+    } else {
+      if (!form.assignedHospital) {
+        errors.assignedHospital = "Assigned Hospital is required!";
+      }
     }
 
     return errors;
   };
 
-  // Search
-  const filteredEmployees = employees.filter((emp: EmployeesProps) =>
-    `${emp.firstName} ${emp.middleName} ${emp.lastName} ${emp.department} ${emp.position} ${emp.status}`
-      .toLowerCase()
-      .includes(search.toLocaleLowerCase().trim()),
-  );
-
-  // Reset form after submission
-  const resetForm = () => {
-    setForm({
-      ID: "",
-      firstName: "",
-      middleName: "",
-      lastName: "",
-      position: "",
-      department: "",
-      status: "Active",
-    });
-    setSelectedEmployeeId(null);
-  };
-
   const handleSubmitEmployee = () => {
-    const errors = validateForm();
+    const errors = formValidation();
 
     if (Object.keys(errors).length > 0) {
-      setValidationError(errors);
-      return;
-    }
-
-    if (selectedEmployeeId) {
-      editEmployee(selectedEmployeeId, form);
+      setFormValidationError(errors);
+      return; // Stop execution if there is an error
     } else {
-      // Add new Employee
-      addEmployee({
-        ID: Date.now().toString(),
+      // Base data
+      const baseData = {
+        id: Date.now().toString(), // Generate temp Id
         firstName: form.firstName,
         middleName: form.middleName,
         lastName: form.lastName,
         position: form.position,
-        department: form.department,
         status: form.status,
-      });
+      };
+
+      const newEmployee: UnifiedEmployee = {
+        ...form,
+        id: Date.now().toString(),
+        firstName: form.firstName.trim(),
+        lastName: form.lastName.trim(),
+        role: activeRole, // Add the role explicitly here
+      } as UnifiedEmployee;
+      addEmployee(newEmployee);
+      handleClosedForm(); // Reset and close the form
     }
-    resetForm(); // Reset form after submission
-    setValidationError({}); // Clear errrors
-    setFormVisible(false); // Closed the form modal
-    setVisible(true); // Show snackbar
   };
 
-  // Edit employee
-  const handleEditEmployee = (employee: EmployeesProps) => {
-    setForm(employee); // Copy all employee data into form
-    setSelectedEmployeeId(employee.ID); // Get employee Id, this id will determine whos employee to be edited
-    setIsEditing(true); // Set editing flag
-    setFormVisible(true);
-  };
-
-  const handleOpenAddForm = () => {
-    setIsEditing(false); // Not editing
-    setFormVisible(true);
-  };
-
-  const handleClosedForm = () => {
-    setFormVisible(false);
-    resetForm();
-  };
-
-  // PMO Position
+  // PMO positions
   const positions = [
     "Project Developmemnt Officer I",
     "Project Development Officer II",
@@ -192,7 +202,8 @@ const Employees = () => {
     "Administrative Assistant V",
     "Administrative Assistant VI",
   ];
-  // PMO Department
+
+  // PMO departments
   const departments = [
     "General Service",
     "Monitoring",
@@ -200,7 +211,17 @@ const Employees = () => {
     "Technical",
     "Admin",
   ];
-  // PMO Status
+
+  // Partner hospitals
+  const partnerHospital = [
+    "Cotabato Regional and Medical Center",
+    "Datu Halun Sakinlan Memorial Hospital",
+    "Buluan District Hospital",
+    "Wao District Hospital",
+    "Cotabato Sanitarium and General Hospital",
+  ];
+
+  // Status options
   const statusOptions = ["Active", "Inactive", "Pending", "On Leave"];
 
   return (
@@ -208,223 +229,311 @@ const Employees = () => {
       <View style={styles.container}>
         <Header
           leftComponent={
-            <View style={globalStyles.headerLeftComponentContainer}>
-              <Text style={globalStyles.headerScreenLabel}>Manage</Text>
-              <Text style={globalStyles.headerScreenTitle}>Employees</Text>
+            <View>
+              <Text style={globalStyles.headerLabel}>Manage</Text>
+              <Text style={globalStyles.headerTitle}>Employees</Text>
             </View>
           }
           rightComponent={
-            <Button
-              title="Add Employee"
-              icon="add"
-              iconSize={22}
-              iconColor={colors.primary}
-              customContainerStyle={styles.buttonContainer}
-              customTitleStyle={styles.buttonTitle}
-              onPress={handleOpenAddForm}
-            />
+            <View style={styles.headerButtonMainContainer}>
+              {/** PMO */}
+              <Button
+                title="PMO"
+                icon={
+                  activeRole === "PMO"
+                    ? "people-circle"
+                    : "people-circle-outline"
+                }
+                iconSize={Platform.OS === "ios" ? 22 : 18}
+                iconColor={activeRole === "PMO" ? colors.white : colors.primary}
+                customContainerStyle={[
+                  styles.headerButtonContainer,
+                  {
+                    backgroundColor:
+                      activeRole === "PMO"
+                        ? colors.primary
+                        : colors.primaryLight,
+                  },
+                ]}
+                customTitleStyle={[
+                  styles.headerButtonTitle,
+                  {
+                    color: activeRole === "PMO" ? colors.white : colors.primary,
+                  },
+                ]}
+                onPress={handlePmo}
+              />
+              {/** DO */}
+              <Button
+                title="DO"
+                icon={
+                  activeRole === "DO"
+                    ? "people-circle"
+                    : "people-circle-outline"
+                }
+                iconSize={Platform.OS === "ios" ? 22 : 18}
+                iconColor={activeRole === "DO" ? colors.white : colors.primary}
+                customContainerStyle={[
+                  styles.headerButtonContainer,
+                  {
+                    backgroundColor:
+                      activeRole === "DO"
+                        ? colors.primary
+                        : colors.primaryLight,
+                  },
+                ]}
+                customTitleStyle={[
+                  styles.headerButtonTitle,
+                  {
+                    color: activeRole === "DO" ? colors.white : colors.primary,
+                  },
+                ]}
+                onPress={handleDo}
+              />
+            </View>
           }
           bottomComponent={
             <FlatList
-              contentContainerStyle={globalStyles.headerBottomSummaryContainer}
+              contentContainerStyle={globalStyles.mainSummaryContainer}
               data={employeeSummaryData}
               keyExtractor={(item) => item.label} // There is no Id
               renderItem={({ item }) => (
-                <SummaryItem value={item.value} label={item.label} />
+                <SummaryItem
+                  value={item.value}
+                  label={item.label}
+                  isMainSummary={true}
+                />
               )}
             />
           }
         />
-        <View style={styles.mainContent}>
-          {/** Content */}
-          <SearchBar
-            value={search.trim()}
-            placeHolder="Seach name, position, department..."
-            onChangeText={(newText) => setSearch(newText)}
-          />
-          <Text style={styles.employeeCount}>
-            {filteredEmployees.length}{" "}
-            {filteredEmployees.lenght === 1 ? "EMPLOYEE" : "EMPLOYEES"} FOUND
-          </Text>
-          {/** Employee list scrollable */}
+        <View style={styles.subSummaryContainer}>
           <FlatList
-            data={employees}
-            keyExtractor={(item) => item.ID}
+            contentContainerStyle={globalStyles.subSummaryContainer}
+            data={activeRole === "PMO" ? pmoSummaryData : doSummaryData}
+            keyExtractor={(item) => item.label} // There is no Id
             renderItem={({ item }) => (
-              <EmployeeCard
-                firstName={item.firstName}
-                lastName={item.lastName}
-                position={item.position}
-                department={item.department}
-                status={item.status}
-                onEdit={() => handleEditEmployee(item)}
-                onDelete={() =>
-                  removeEmployee(item.ID, item.firstName, item.lastName)
-                }
+              <SummaryItem
+                value={item.value}
+                label={item.label}
+                isMainSummary={false}
               />
             )}
-            ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-            ListEmptyComponent={
-              <View style={styles.mainContentListEmptyComponent}>
-                <Image
-                  source={require("@/assets/images/Group-12.png")}
-                  resizeMode="contain"
-                  style={styles.mainContentFlatListImage}
-                />
-                <Text style={styles.mainContentListEmptyComponentText}>
-                  Whoops! No employees found.
-                </Text>
-              </View>
-            }
-            contentContainerStyle={styles.mainContentContainerStyle}
-            showsVerticalScrollIndicator={false} // hides the scrollbar
-            style={styles.mainContentFlatListStyle} // takes remaining space
-            keyboardShouldPersistTaps="handled"
           />
-          <Snackbar
-            visible={visible}
-            onDismiss={() => setVisible(false)}
-            duration={2000}
-            style={styles.snackbar}
+        </View>
+        {/** Main Content */}
+        <View style={styles.mainContent}>
+          <View style={styles.searchContainer}>
+            <SearchBar
+              value={search.trim()}
+              placeholder="Seach name, position..."
+              onChangeText={(newText) => setSearch(newText)}
+            />
+            <Button
+              icon="add"
+              iconColor={colors.white}
+              iconSize={18}
+              title={activeRole === "PMO" ? "Add PMO" : "Add DO"}
+              customContainerStyle={styles.mainContentButtonContainer}
+              customTitleStyle={styles.mainButtonTitle}
+              onPress={handleOpenForm}
+            />
+          </View>
+          <Text style={styles.employeeCount}>
+            {employees.length}{" "}
+            {employees.length === 1 ? "EMPLOYEE" : "EMPLOYEES"} FOUND
+          </Text>
+          <View>
+            <FlatList<UnifiedEmployee>
+              data={
+                activeRole === "PMO"
+                  ? employees.filter((e) => e.role === "PMO")
+                  : employees.filter((e) => e.role === "DO")
+              }
+              renderItem={({ item }) => (
+                <EmployeeCard
+                  firstName={item.firstName}
+                  lastName={item.lastName}
+                  position={item.position}
+                  department={
+                    item.role === "PMO"
+                      ? item.department
+                      : item.assignedHospital // Pass hospital if it's a DO
+                  }
+                  status={item.status}
+                  onEdit={() => console.log()}
+                  onDelete={() => console.log()}
+                />
+              )}
+            />
+          </View>
+          <Form
+            visible={isFormVissible}
+            onClose={handleClosedForm}
+            title={
+              activeRole === "PMO"
+                ? "Add PMO"
+                : activeRole === "DO"
+                  ? "Add Desk Officer"
+                  : "Add PMO"
+            }
+            subTitle="Fill in the PMO details below"
+            icon="person-add"
+            onSubmit={handleSubmitEmployee}
+            buttonTitle={
+              activeRole === "PMO"
+                ? "Add PMO"
+                : activeRole === "DO"
+                  ? "Add Desk Officer"
+                  : "Add PMO"
+            }
           >
-            <Text style={styles.snackBarText}>
-              {isEditing
-                ? "Employee updated successfully ✅"
-                : "Employee added successfully ✅"}
-            </Text>
-          </Snackbar>
+            <View style={styles.inputContainer}>
+              <Input
+                label="FIRST NAME"
+                value={form.firstName}
+                placeHolder="e.g Ivan"
+                onChangeText={(newText) =>
+                  setForm({ ...form, firstName: newText })
+                } // Copy all the data from form (...form) then overwrites only the firstName
+                autoCapitalize="words"
+                error={formValidationError.firstName}
+              />
+              <Input
+                label="MIDDLE NAME"
+                value={form.middleName.trim()}
+                placeHolder="e.g Hanma"
+                onChangeText={(newText) =>
+                  setForm({ ...form, middleName: newText })
+                }
+                autoCapitalize="words"
+                error={formValidationError.middleName}
+              />
+              <Input
+                label="LAST NAME"
+                value={form.lastName.trim()}
+                placeHolder="e.g Hanma"
+                onChangeText={(newText) =>
+                  setForm({ ...form, lastName: newText })
+                }
+                autoCapitalize="words"
+                error={formValidationError.lastName}
+              />
+              <Dropdown
+                label="POSITION"
+                value={form.position}
+                onValueChange={(value) =>
+                  setForm({
+                    ...form,
+                    position: value,
+                  })
+                }
+                items={positions}
+                placeholder="Select position"
+                error={formValidationError.position}
+              />
+
+              {activeRole === "PMO" ? (
+                <Dropdown
+                  label="DEPARTMENT"
+                  value={form.department}
+                  onValueChange={(value) =>
+                    setForm({
+                      ...form,
+                      department: value as EmployeeDepartment,
+                    })
+                  }
+                  items={departments}
+                  placeholder="Select department"
+                  error={formValidationError.department}
+                />
+              ) : (
+                <Dropdown
+                  label="ASSIGNED HOSPITAL"
+                  value={form.assignedHospital}
+                  onValueChange={(value) =>
+                    setForm({
+                      ...form,
+                      assignedHospital: value as PartnerHospitals,
+                    })
+                  }
+                  items={departments}
+                  placeholder="Select assigned hospital"
+                />
+              )}
+              <Dropdown
+                label="STATUS"
+                value={form.status}
+                onValueChange={(value) =>
+                  setForm({
+                    ...form,
+                    status: value as EmployeeFormState["status"],
+                  })
+                }
+                items={statusOptions}
+                placeholder="Select status"
+              />
+            </View>
+          </Form>
         </View>
       </View>
-      <Form
-        title={selectedEmployeeId ? "Edit Employee" : "Add Employee"}
-        subTitle={
-          selectedEmployeeId
-            ? "Edit the employee details below"
-            : "Fill in the employee details below"
-        }
-        icon="person-add"
-        visible={isFormVisible}
-        onClose={handleClosedForm}
-        onSubmit={handleSubmitEmployee}
-        buttonTitle={selectedEmployeeId ? "Update Employee" : "Add Employee"}
-      >
-        <View style={styles.inputContainer}>
-          <Input
-            label="FIRST NAME"
-            value={form.firstName.trim()}
-            placeHolder="e.g Ivan"
-            onChangeText={(newText) => setForm({ ...form, firstName: newText })} // Copy all the data from form (...form) then overwrites only the firstName
-            error={emptyFieldError.firstName}
-            autoCapitalize="words"
-          />
-          <Input
-            label="MIDDLE NAME"
-            value={form.middleName.trim()}
-            placeHolder="e.g Hanma"
-            onChangeText={(newText) =>
-              setForm({ ...form, middleName: newText })
-            }
-            error={emptyFieldError.middleName}
-            autoCapitalize="words"
-          />
-          <Input
-            label="LAST NAME"
-            value={form.lastName.trim()}
-            placeHolder="e.g Hanma"
-            onChangeText={(newText) => setForm({ ...form, lastName: newText })}
-            error={emptyFieldError.lastName}
-            autoCapitalize="words"
-          />
-          <Dropdown
-            label="POSITION"
-            value={form.position}
-            onValueChange={(value) => setForm({ ...form, position: value })}
-            items={positions}
-            placeholder="Select position"
-            error={emptyFieldError.position}
-          />
-          <Dropdown
-            label="DEPARTMENT"
-            value={form.department}
-            onValueChange={(value) => setForm({ ...form, department: value })}
-            items={departments}
-            placeholder="Select department"
-            error={emptyFieldError.department}
-          />
-          <Dropdown
-            label="STATUS"
-            value={form.status}
-            onValueChange={(value) =>
-              setForm({ ...form, status: value as EmployeesProps["status"] })
-            }
-            items={statusOptions}
-            placeholder="Select status"
-          />
-        </View>
-      </Form>
     </MainLayout>
   );
 };
 
-export default Employees;
+export default employees;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
 
-  mainContent: {
-    paddingTop: 25,
-    paddingHorizontal: 25,
-    flex: 1,
-    alignItems: "center",
+  headerButtonMainContainer: {
+    flexDirection: "row",
+    gap: 10,
   },
 
-  buttonContainer: {
-    height: 45,
-    width: 150,
+  headerButtonContainer: {
+    height: Platform.OS === "ios" ? 35 : 32,
+    width: 70,
     backgroundColor: colors.primaryLight,
   },
 
-  buttonTitle: {
-    fontSize: 16,
-    color: colors.primary,
+  headerButtonTitle: {
+    fontSize: Platform.OS === "ios" ? 14 : 12,
+    marginLeft: 5,
+  },
+
+  subSummaryContainer: {
+    paddingHorizontal: 25,
+    paddingVertical: 15,
+  },
+
+  mainContent: {
+    flex: 1,
+    paddingHorizontal: 25,
+  },
+
+  searchContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 10,
+  },
+
+  mainContentButtonContainer: {
+    height: Platform.OS === "ios" ? 35 : 40,
+    backgroundColor: colors.primary,
+    paddingHorizontal: 12,
+  },
+
+  mainButtonTitle: {
+    fontSize: Platform.OS === "ios" ? 14 : 12,
     marginLeft: 5,
   },
 
   inputContainer: {
-    gap: 20,
-    marginTop: 30,
-  },
-
-  snackbar: {
-    width: "90%",
-    position: "absolute",
-    bottom: 20,
-    backgroundColor: colors.primaryLight,
-    borderRadius: 8,
-    alignSelf: "center",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  snackBarText: {
-    fontFamily: "DINMedium",
-    fontSize: 16,
-    color: colors.text,
-    textAlign: "center",
-  },
-
-  headerContentContainerStyle: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 20,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.25)",
-    borderRadius: 15,
-    backgroundColor: "rgba(255,255,255,0.05)",
-    paddingHorizontal: 10,
-    paddingVertical: 15,
+    marginTop: 15,
+    gap: 10,
   },
 
   employeeCount: {
@@ -433,32 +542,5 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     marginTop: 30,
     fontSize: 16,
-  },
-
-  mainContentContainerStyle: {
-    paddingBottom: 20,
-    paddingTop: 20,
-  },
-
-  mainContentFlatListStyle: {
-    flex: 1,
-    width: "100%",
-  },
-
-  mainContentFlatListImage: {
-    width: "100%",
-    height: 200,
-  },
-
-  mainContentListEmptyComponent: {
-    alignItems: "center",
-    marginTop: 40,
-  },
-
-  mainContentListEmptyComponentText: {
-    fontFamily: "DINMedium",
-    fontSize: 16,
-    color: colors.subtext,
-    marginTop: 12,
   },
 });

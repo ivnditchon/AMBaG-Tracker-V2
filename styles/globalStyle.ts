@@ -1,5 +1,5 @@
 import { colors } from "@/constants/colors";
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 
 export const globalStyles = StyleSheet.create({
   headerLeftComponentContainer: {
@@ -10,24 +10,24 @@ export const globalStyles = StyleSheet.create({
     flexDirection: "row",
   },
 
-  headerScreenLabel: {
+  headerLabel: {
     fontFamily: "DINMedium",
-    fontSize: 20,
+    fontSize: Platform.OS === "ios" ? 20 : 18,
     color: "rgba(255,255,255,0.6)",
     letterSpacing: 0.5,
     fontWeight: 600,
   },
 
-  headerScreenTitle: {
+  headerTitle: {
     fontFamily: "DINBold",
     color: colors.white,
-    fontSize: 32,
+    fontSize: Platform.OS === "ios" ? 32 : 24,
     letterSpacing: 0.5,
     marginVertical: 8,
     paddingVertical: 5,
   },
 
-  headerBottomSummaryContainer: {
+  mainSummaryContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: 20,
@@ -35,8 +35,19 @@ export const globalStyles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.25)",
     borderRadius: 15,
     backgroundColor: "rgba(255,255,255,0.05)",
-    paddingHorizontal: 15,
+    paddingHorizontal: 20,
     paddingVertical: 15,
+  },
+
+  subSummaryContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 15,
+    backgroundColor: "rgba(255,255,255,0.05)",
+    paddingHorizontal: 17,
+    paddingVertical: 12,
   },
 
   buttonContainer: {
@@ -44,6 +55,7 @@ export const globalStyles = StyleSheet.create({
     height: 55,
     backgroundColor: colors.primary,
   },
+
   buttonTitle: {
     fontSize: 22,
   },

@@ -1,19 +1,47 @@
 import { colors } from "@/constants/colors";
+import { EmployeeSummaryData } from "@/types/types";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Platform, StyleSheet, Text, View } from "react-native";
 
-export type SummaryItemProps = {
-  value: number;
-  label: string;
-  customValueStyle?: string;
-  showDivider?: boolean;
-};
-
-const SummaryItem = ({ value, label }: SummaryItemProps) => {
+const SummaryItem = ({ value, label, isMainSummary }: EmployeeSummaryData) => {
   return (
     <View style={styles.summaryItem}>
-      <Text style={styles.value}>{value}</Text>
-      <Text style={styles.label}>{label}</Text>
+      <Text
+        style={[
+          styles.value,
+          {
+            color: isMainSummary ? colors.white : colors.text,
+            fontSize:
+              Platform.OS === "ios"
+                ? isMainSummary
+                  ? 25
+                  : 22
+                : isMainSummary
+                  ? 22
+                  : 16,
+          },
+        ]}
+      >
+        {value}
+      </Text>
+      <Text
+        style={[
+          styles.label,
+          {
+            color: isMainSummary ? "rgba(255,255,255, 0.7)" : colors.subtext,
+            fontSize:
+              Platform.OS === "ios"
+                ? isMainSummary
+                  ? 25
+                  : 22
+                : isMainSummary
+                  ? 10
+                  : 10,
+          },
+        ]}
+      >
+        {label}
+      </Text>
     </View>
   );
 };
@@ -29,15 +57,12 @@ const styles = StyleSheet.create({
 
   value: {
     fontFamily: "DINBold",
-    fontSize: 32,
     color: colors.primaryLight,
   },
 
   label: {
-    marginTop: 5,
+    marginTop: 7,
     fontFamily: "DINMedium",
-    fontSize: 13,
-    color: "rgba(255,255,255, 0.7)",
     fontWeight: 600,
   },
 });
