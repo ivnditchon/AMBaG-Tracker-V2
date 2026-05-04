@@ -22,68 +22,55 @@ import { FlatList, Platform, StyleSheet, Text, View } from "react-native";
 import MainLayout from "./main-layout";
 
 // Static object data
-const getEmployeesSummaryData = (): EmployeeSummaryData[] => [
-  {
-    value: "100",
-    label: "TOTAL",
-    isMainSummary: true,
-  },
-  {
-    value: "50",
-    label: "PMO",
-    isMainSummary: true,
-  },
-  {
-    value: "50",
-    label: "DO",
-    isMainSummary: true,
-  },
-];
-
-const getPmoSummaryData = (): EmployeeSummaryData[] => [
-  {
-    value: "36",
-    label: "Active",
-    isMainSummary: false,
-  },
-  {
-    value: "36",
-    label: "Inactive",
-    isMainSummary: false,
-  },
-  {
-    value: "36",
-    label: "Pending",
-    isMainSummary: false,
-  },
-  {
-    value: "36",
-    label: "On Leave",
-    isMainSummary: false,
-  },
-];
-
-const getDoSummaryData = (): EmployeeSummaryData[] => [
-  {
-    value: "3",
-    label: "Active",
-    isMainSummary: false,
-  },
-  {
-    value: "3",
-    label: "Inactive",
-    isMainSummary: false,
-  },
-  {
-    value: "3",
-    label: "Pending",
-    isMainSummary: false,
-  },
-  {
-    value: "3",
-    label: "On Leave",
-    isMainSummary: false,
-  },
+const getEmployeesSummaryData = (
+  employees: UnifiedEmployee[],
+  isMainSummary: boolean,
+  activeRole: string,
+): EmployeeSummaryData[] => [
+  ...(isMainSummary
+    ? [
+        {
+          value: employees.length.toString(),
+          label: "TOTAL",
+          isMainSummary: false,
+        },
+        { value: "5", label: "DO", isMainSummary: false },
+        { value: "5", label: "PMO", isMainSummary: false },
+      ]
+    : [
+        {
+          value: employees
+            .filter((e) => e.status === "Active")
+            .length.toString(),
+          label: "Active",
+          isMainSummary: true,
+        },
+        {
+          value: employees
+            .filter((e) => e.status === "Inactive")
+            .length.toString(),
+          label: "Inactive",
+          isMainSummary: true,
+        },
+        {
+          value: employees
+            .filter((e) => e.status === "Pending")
+            .length.toString(),
+          label: "Pending",
+          isMainSummary: true,
+        },
+        ...(activeRole === "PMO"
+          ? [
+              {
+                value: employees
+                  .filter((e) => e.status === "On Leave")
+                  .length.toString(),
+                label: "On Leave",
+                isMainSummary: true,
+              },
+            ]
+          : []),
+      ]),
 ];
 
 const employees = () => {
@@ -111,9 +98,16 @@ const employees = () => {
 
   const [form, setForm] = useState<EmployeeFormState>(initialState);
 
-  const employeeSummaryData = getEmployeesSummaryData();
-  const pmoSummaryData = getPmoSummaryData();
-  const doSummaryData = getDoSummaryData();
+  const employeeMainSummaryData = getEmployeesSummaryData(
+    employees,
+    true,
+    activeRole,
+  );
+  const employeeSubSummaryData = getEmployeesSummaryData(
+    employees,
+    false,
+    activeRole,
+  );
 
   const handlePmo = () => setActiveRole("PMO");
   const handleDo = () => setActiveRole("DO");
@@ -295,7 +289,7 @@ const employees = () => {
           bottomComponent={
             <FlatList
               contentContainerStyle={globalStyles.mainSummaryContainer}
-              data={employeeSummaryData}
+              data={employeeMainSummaryData}
               keyExtractor={(item) => item.label} // There is no Id
               renderItem={({ item }) => (
                 <SummaryItem
@@ -310,7 +304,7 @@ const employees = () => {
         <View style={styles.subSummaryContainer}>
           <FlatList
             contentContainerStyle={globalStyles.subSummaryContainer}
-            data={activeRole === "PMO" ? pmoSummaryData : doSummaryData}
+            data={employeeSubSummaryData}
             keyExtractor={(item) => item.label} // There is no Id
             renderItem={({ item }) => (
               <SummaryItem
@@ -350,6 +344,7 @@ const employees = () => {
                   ? employees.filter((e) => e.role === "PMO")
                   : employees.filter((e) => e.role === "DO")
               }
+              contentContainerStyle={styles.employeeListContainer}
               renderItem={({ item }) => (
                 <EmployeeCard
                   firstName={item.firstName}
@@ -521,7 +516,7 @@ const styles = StyleSheet.create({
   },
 
   mainContentButtonContainer: {
-    height: Platform.OS === "ios" ? 35 : 40,
+    height: Platform.OS === "ios" ? 45 : 40,
     backgroundColor: colors.primary,
     paddingHorizontal: 12,
   },
@@ -540,7 +535,12 @@ const styles = StyleSheet.create({
     fontFamily: "DINBold",
     color: colors.subtext,
     alignSelf: "flex-start",
-    marginTop: 30,
-    fontSize: 16,
+    marginTop: 20,
+    fontSize: 14,
+  },
+
+  employeeListContainer: {
+    marginTop: 20,
+    gap: 10,
   },
 });

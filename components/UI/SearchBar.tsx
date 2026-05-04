@@ -40,13 +40,13 @@ export default SearchBar;
 const styles = StyleSheet.create({
   searchBarContainer: {
     flex: 1,
-    height: Platform.OS === "ios" ? 50 : 40,
+    height: Platform.OS === "ios" ? 45 : 40,
     //borderColor: '#D1D5DB',
     borderRadius: 10,
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 10,
-    backgroundColor: colors.inputBg,
+    backgroundColor: colors.white,
   },
 
   icon: {

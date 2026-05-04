@@ -47,7 +47,7 @@ export type EmployeeFormState = Employee & {
 export interface EmployeeSummaryData {
   value: string;
   label: string;
-  isMainSummary?: boolean;
+  isMainSummary: boolean;
 }
 
 export interface SearchEmployee {
