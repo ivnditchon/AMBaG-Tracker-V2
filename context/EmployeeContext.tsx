@@ -1,7 +1,6 @@
 import { DeskOfficer, ProjectManagementOfficer } from "@/types/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { Alert } from "react-native";
 
 // Define a union type for the state
 export type UnifiedEmployee = ProjectManagementOfficer | DeskOfficer;
@@ -12,7 +11,7 @@ interface EmployeeContextType {
   loading: boolean;
   addEmployee: (employee: UnifiedEmployee) => void;
   editEmployee: (id: string, form: UnifiedEmployee) => void;
-  removeEmployee: (id: string, firstName: string, lastName: string) => void;
+  removeEmployee: (id: string) => void;
 }
 
 // Create the context with a default value
@@ -77,24 +76,8 @@ export const EmployeeProvider = ({ children }: ChildrenProps) => {
   };
 
   // Remove employee
-  const removeEmployee = (id: string, firstName: string, lastName: string) => {
-    Alert.alert(
-      "Delete Employee", // Title
-      `Are you sure you want to delete employee ${firstName} ${lastName}?`, // Message
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-        {
-          text: "Delete",
-          style: "destructive", // Show red on iOS
-          onPress: () => {
-            setEmployees((prev) => prev.filter((emp) => emp.id !== id));
-          },
-        },
-      ],
-    );
+  const removeEmployee = (id: string) => {
+    setEmployees((prev) => prev.filter((emp) => emp.id !== id));
   };
 
   return (

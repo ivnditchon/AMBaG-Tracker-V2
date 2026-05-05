@@ -14,7 +14,11 @@ const SummaryItem = ({ value, label, isMainSummary }: EmployeeSummaryData) => {
             fontSize:
               Platform.OS === "ios"
                 ? isMainSummary
+<<<<<<< HEAD
                   ? 28
+=======
+                  ? 25
+>>>>>>> b2fcf1208aaffc0f06fd3cc5bae8c06f3a36e8db
                   : 20
                 : isMainSummary
                   ? 22
