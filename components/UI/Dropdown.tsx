@@ -13,6 +13,7 @@ type DropdownProps = {
   placeholder?: string;
   error?: string;
   disable?: boolean;
+  dropdownPosition?: "top" | "bottom";
 };
 
 const Dropdown = ({
@@ -23,12 +24,14 @@ const Dropdown = ({
   placeholder,
   error,
   disable,
+  dropdownPosition,
 }: DropdownProps) => {
   const [isFocus, setIsFocus] = useState(false);
   const isError = !!error; // true if error has value, false if empty
 
   // Convert string[] to { label, value }[] format required by the library
-  const data = items.map((item) => ({ label: item, value: item }));
+  // If items is undefined/null, it defaults to an empty array []
+  const data = (items ?? []).map((item) => ({ label: item, value: item }));
 
   return (
     <View>
@@ -63,7 +66,7 @@ const Dropdown = ({
             color={isFocus ? colors.primary : colors.subtext}
           />
         )}
-        dropdownPosition="auto"
+        dropdownPosition={dropdownPosition}
         disable={disable}
       />
       {error && <Text style={styles.dropDownError}>{error}</Text>}

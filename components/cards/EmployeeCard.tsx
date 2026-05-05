@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
   employeePositionContainer: {
     flexDirection: "row",
     marginTop: 7,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
   },
 

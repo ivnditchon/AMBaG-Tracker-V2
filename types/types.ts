@@ -1,16 +1,31 @@
 import { Ionicons } from "@expo/vector-icons";
 
 export type EmploymentStatus = "Active" | "Inactive" | "Pending" | "On Leave";
+
+export const PMO_STATUSES: EmploymentStatus[] = [
+  "Active",
+  "Inactive",
+  "Pending",
+  "On Leave",
+];
+export const DO_STATUSES: EmploymentStatus[] = [
+  "Active",
+  "Inactive",
+  "Pending",
+];
+
 export type EmployeePosition =
   | "Adminitistrative Assistant I"
   | "Adminitistrative Assistant II"
   | "Adminitistrative Assistant III";
+
 export type EmployeeDepartment =
   | "Admin"
   | "Technical"
   | "Communication"
   | "Monitoring"
   | "General Services";
+
 export type PartnerHospitals =
   | "Aleosan District Hospital"
   | "Buluan District Hospital"
@@ -19,30 +34,24 @@ export type PartnerHospitals =
 export type UnifiedEmployee = ProjectManagementOfficer | DeskOfficer;
 
 // Base
-export interface Employee {
+export type Employee = {
   id: string;
   firstName: string;
   middleName: string;
   lastName: string;
   position: string;
   status: EmploymentStatus;
-}
+  department: EmployeeDepartment | "";
+};
 
 export interface ProjectManagementOfficer extends Employee {
   role: "PMO";
-  department: EmployeeDepartment;
 }
 
 export interface DeskOfficer extends Employee {
   role: "DO";
-  assignedHospital: PartnerHospitals;
-}
-
-// PMO and DO with different prop combined
-export type EmployeeFormState = Employee & {
-  department: EmployeeDepartment | "";
   assignedHospital: PartnerHospitals | "";
-};
+}
 
 export interface EmployeeSummaryData {
   value: string;

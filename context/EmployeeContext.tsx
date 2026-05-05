@@ -1,9 +1,6 @@
-import { DeskOfficer, ProjectManagementOfficer } from "@/types/types";
+import { UnifiedEmployee } from "@/types/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { createContext, useContext, useEffect, useState } from "react";
-
-// Define a union type for the state
-export type UnifiedEmployee = ProjectManagementOfficer | DeskOfficer;
 
 // Define shape of the context
 interface EmployeeContextType {

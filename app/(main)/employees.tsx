@@ -10,10 +10,13 @@ import { colors } from "@/constants/colors";
 import { useEmployees } from "@/context/EmployeeContext";
 import { globalStyles } from "@/styles/globalStyle";
 import {
+  DeskOfficer,
+  DO_STATUSES,
   EmployeeDepartment,
-  EmployeeFormState,
   EmployeeSummaryData,
+  EmploymentStatus,
   PartnerHospitals,
+  PMO_STATUSES,
   UnifiedEmployee,
   ValidationError,
 } from "@/types/types";
@@ -40,35 +43,6 @@ const getEmployeesSummaryData = (
         {
           value: employees.length.toString(),
           label: "TOTAL",
-<<<<<<< HEAD
-          isMainSummary: false,
-        },
-        { value: "5", label: "DO", isMainSummary: false },
-        { value: "5", label: "PMO", isMainSummary: false },
-      ]
-    : [
-        {
-          value: employees
-            .filter((e) => e.status === "Active")
-            .length.toString(),
-          label: "Active",
-          isMainSummary: true,
-        },
-        {
-          value: employees
-            .filter((e) => e.status === "Inactive")
-            .length.toString(),
-          label: "Inactive",
-          isMainSummary: true,
-        },
-        {
-          value: employees
-            .filter((e) => e.status === "Pending")
-            .length.toString(),
-          label: "Pending",
-          isMainSummary: true,
-        },
-=======
           isMainSummary: true,
         },
         {
@@ -83,20 +57,10 @@ const getEmployeesSummaryData = (
         },
       ]
     : [
->>>>>>> b2fcf1208aaffc0f06fd3cc5bae8c06f3a36e8db
         ...(activeRole === "PMO"
           ? [
               {
                 value: employees
-<<<<<<< HEAD
-                  .filter((e) => e.status === "On Leave")
-                  .length.toString(),
-                label: "On Leave",
-                isMainSummary: true,
-              },
-            ]
-          : []),
-=======
                   .filter((e) => e.role === activeRole && e.status === "Active")
                   .length.toString(),
                 label: "Active",
@@ -157,7 +121,6 @@ const getEmployeesSummaryData = (
                 isMainSummary: false,
               },
             ]),
->>>>>>> b2fcf1208aaffc0f06fd3cc5bae8c06f3a36e8db
       ]),
 ];
 
@@ -174,33 +137,38 @@ const employees = () => {
   const [isDropdownActive, setDropDownActive] = useState<boolean>(false);
 
   // Pick one of the employee(default)
-  const initialState: EmployeeFormState = {
-    id: "",
-    firstName: "",
-    middleName: "",
-    lastName: "",
-    position: "",
-    status: "Active",
-    department: activeRole === "DO" ? "Admin" : "",
-    assignedHospital: "",
-  };
+  const initialState: UnifiedEmployee =
+    activeRole === "PMO"
+      ? {
+          id: "",
+          firstName: "",
+          middleName: "",
+          lastName: "",
+          position: "",
+          status: "Active",
+          department: "",
+          role: activeRole,
+        }
+      : {
+          id: "",
+          firstName: "",
+          middleName: "",
+          lastName: "",
+          position: "",
+          status: "Active",
+          department: "Admin",
+          assignedHospital: "",
+          role: activeRole,
+        };
 
-  const [form, setForm] = useState<EmployeeFormState>(initialState);
+  const [form, setForm] = useState<UnifiedEmployee>(initialState);
 
-<<<<<<< HEAD
-  const employeeMainSummaryData = getEmployeesSummaryData(
-=======
   const employeesMainSummaryData = getEmployeesSummaryData(
->>>>>>> b2fcf1208aaffc0f06fd3cc5bae8c06f3a36e8db
     employees,
     true,
     activeRole,
   );
-<<<<<<< HEAD
-  const employeeSubSummaryData = getEmployeesSummaryData(
-=======
   const employeesSubSummaryData = getEmployeesSummaryData(
->>>>>>> b2fcf1208aaffc0f06fd3cc5bae8c06f3a36e8db
     employees,
     false,
     activeRole,
@@ -236,13 +204,14 @@ const employees = () => {
     if (!form.position) {
       errors.position = "Position is required!";
     }
-    if (activeRole === "PMO") {
+    if (form.role === "PMO") {
       if (!form.department) {
         errors.department = "Department is required!";
       }
-    } else {
+    }
+    if (form.role === "DO") {
       if (!form.assignedHospital) {
-        errors.assignedHospital = "Assigned Hospital is required!";
+        errors.assignedHospital = "Partner hospital is required!";
       }
     }
 
@@ -285,7 +254,7 @@ const employees = () => {
     lastName: string,
   ) => {
     Alert.alert(
-      "Delete Employee", // Title
+      `${activeRole === "PMO" ? "Delete PMO" : "Delete Desk Officer"}`, // Title
       `Are you sure you want to delete employee ${firstName} ${lastName}?`, // Message
       [
         {
@@ -341,7 +310,7 @@ const employees = () => {
   ];
 
   // Status options
-  const statusOptions = ["Active", "Inactive", "Pending", "On Leave"];
+  const statusOptions = ["On Leave", "Pending", "Inactive", "Active"];
 
   return (
     <MainLayout>
@@ -414,11 +383,7 @@ const employees = () => {
           bottomComponent={
             <FlatList
               contentContainerStyle={globalStyles.mainSummaryContainer}
-<<<<<<< HEAD
-              data={employeeMainSummaryData}
-=======
               data={employeesMainSummaryData}
->>>>>>> b2fcf1208aaffc0f06fd3cc5bae8c06f3a36e8db
               keyExtractor={(item) => item.label} // There is no Id
               renderItem={({ item }) => (
                 <SummaryItem
@@ -433,11 +398,7 @@ const employees = () => {
         <View style={styles.subSummaryContainer}>
           <FlatList
             contentContainerStyle={globalStyles.subSummaryContainer}
-<<<<<<< HEAD
-            data={employeeSubSummaryData}
-=======
             data={employeesSubSummaryData}
->>>>>>> b2fcf1208aaffc0f06fd3cc5bae8c06f3a36e8db
             keyExtractor={(item) => item.label} // There is no Id
             renderItem={({ item }) => (
               <SummaryItem
@@ -475,44 +436,42 @@ const employees = () => {
               : `${activeRole}`}{" "}
             FOUND
           </Text>
-          <View style={styles.employeeListContainer}>
-            <FlatList<UnifiedEmployee>
-              data={
-                activeRole === "PMO"
-                  ? employees.filter((e) => e.role === "PMO")
-                  : employees.filter((e) => e.role === "DO")
-              }
-              contentContainerStyle={styles.employeesListContentContainerStyle}
-              renderItem={({ item }) => (
-                <EmployeeCard
-                  firstName={item.firstName}
-                  lastName={item.lastName}
-                  position={item.position}
-                  department={
-                    item.role === "PMO"
-                      ? item.department
-                      : item.assignedHospital // Pass hospital if it's a DO
-                  }
-                  status={item.status}
-                  onEdit={() => console.log()}
-                  onDelete={() => {
-                    handleRemoveEmployee(
-                      item.id,
-                      item.firstName,
-                      item.lastName,
-                    );
-                  }}
-                />
-              )}
-              ListEmptyComponent={
+          <FlatList<UnifiedEmployee>
+            data={employees.filter((e) => e.role === activeRole)}
+            contentContainerStyle={
+              employees.length === 0
+                ? { flexGrow: 1 }
+                : styles.employeesListContentContainerStyle
+            } // No need to wrap Flatlist if this is present
+            renderItem={({ item }) => (
+              <EmployeeCard
+                firstName={item.firstName}
+                lastName={item.lastName}
+                position={item.position}
+                department={
+                  item.role === "PMO" ? item.department : item.assignedHospital // Pass hospital if it's a DO
+                }
+                status={item.status}
+                onEdit={() => console.log()}
+                onDelete={() => {
+                  handleRemoveEmployee(item.id, item.firstName, item.lastName);
+                }}
+              />
+            )}
+            ListEmptyComponent={
+              <View style={styles.employeeListEmptyComponentStyle}>
                 <Image
                   source={require("@/assets/images/Group-12.png")}
                   resizeMode="contain"
                   style={styles.image}
                 />
-              }
-            />
-          </View>
+                <Text style={styles.employeeListEmptyComponentTextStyle}>
+                  No employees yet. Tap Add {activeRole} to get started 🚀
+                </Text>
+              </View>
+            }
+          />
+          {/** FORM */}
           <Form
             visible={isFormVissible}
             onClose={handleClosedForm}
@@ -578,29 +537,27 @@ const employees = () => {
                 placeholder="Select position"
                 error={formValidationError.position}
               />
-
-              {activeRole === "DO" ? (
-                <Dropdown
-                  disable={isDropdownActive}
-                  label="DEPARTMENT"
-                  value={form.department}
-                  onValueChange={(value) =>
-                    setForm({
-                      ...form,
-                      department: value as EmployeeDepartment,
-                    })
-                  }
-                  items={departments}
-                  placeholder="Select department"
-                  error={formValidationError.department}
-                />
-              ) : (
+              <Dropdown
+                disable={activeRole === "DO" && isDropdownActive}
+                label="DEPARTMENT"
+                value={form.department}
+                onValueChange={(value) =>
+                  setForm({
+                    ...form,
+                    department: value as EmployeeDepartment,
+                  })
+                }
+                items={departments}
+                placeholder="Select department"
+                error={formValidationError.department}
+              />
+              {activeRole === "DO" && (
                 <Dropdown
                   label="ASSIGNED HOSPITAL"
-                  value={form.assignedHospital}
+                  value={form.role === "DO" ? form.assignedHospital : ""}
                   onValueChange={(value) =>
                     setForm({
-                      ...form,
+                      ...(form as DeskOfficer),
                       assignedHospital: value as PartnerHospitals,
                     })
                   }
@@ -614,11 +571,12 @@ const employees = () => {
                 onValueChange={(value) =>
                   setForm({
                     ...form,
-                    status: value as EmployeeFormState["status"],
+                    status: value as EmploymentStatus,
                   })
                 }
-                items={statusOptions}
+                items={activeRole === "PMO" ? PMO_STATUSES : DO_STATUSES}
                 placeholder="Select status"
+                dropdownPosition="top"
               />
             </View>
           </Form>
@@ -680,7 +638,7 @@ const styles = StyleSheet.create({
 
   inputContainer: {
     marginTop: 15,
-    gap: 10,
+    gap: 20,
   },
 
   employeeCount: {
@@ -691,19 +649,27 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
 
-  employeeListContainer: {
-    flex: 1,
+  employeesListContentContainerStyle: {
+    gap: 10,
+    paddingVertical: 20,
   },
 
-  employeesListContentContainerStyle: {
+  employeeListEmptyComponentStyle: {
     flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  employeeListEmptyComponentTextStyle: {
+    fontFamily: "DINRegular",
+    fontSize: 14,
     marginTop: 10,
-    gap: 10,
+    color: colors.subtext,
   },
 
   image: {
     width: "100%",
-    height: 220,
+    height: 200,
     marginTop: 50,
   },
 });
