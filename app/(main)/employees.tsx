@@ -482,11 +482,7 @@ const employees = () => {
                   ? employees.filter((e) => e.role === "PMO")
                   : employees.filter((e) => e.role === "DO")
               }
-<<<<<<< HEAD
-              contentContainerStyle={styles.employeeListContainer}
-=======
               contentContainerStyle={styles.employeesListContentContainerStyle}
->>>>>>> b2fcf1208aaffc0f06fd3cc5bae8c06f3a36e8db
               renderItem={({ item }) => (
                 <EmployeeCard
                   firstName={item.firstName}
@@ -692,14 +688,6 @@ const styles = StyleSheet.create({
     color: colors.subtext,
     alignSelf: "flex-start",
     marginTop: 20,
-<<<<<<< HEAD
-    fontSize: 14,
-  },
-
-  employeeListContainer: {
-    marginTop: 20,
-    gap: 10,
-=======
     fontSize: 15,
   },
 
@@ -717,6 +705,5 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 220,
     marginTop: 50,
->>>>>>> b2fcf1208aaffc0f06fd3cc5bae8c06f3a36e8db
   },
 });
