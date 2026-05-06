@@ -18,7 +18,15 @@ import {
   ValidationError,
 } from "@/types/types";
 import React, { useState } from "react";
-import { FlatList, Platform, StyleSheet, Text, View } from "react-native";
+import {
+  Alert,
+  FlatList,
+  Image,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import MainLayout from "./main-layout";
 
 // Static object data
@@ -34,27 +42,87 @@ const getEmployeesSummaryData = (
           label: "TOTAL",
           isMainSummary: true,
         },
-        { value: "50", label: "PMO", isMainSummary: true },
-        { value: "50", label: "DO", isMainSummary: true },
+        {
+          value: employees.filter((e) => e.role === "PMO").length.toString(),
+          label: "PMO",
+          isMainSummary: true,
+        },
+        {
+          value: employees.filter((e) => e.role === "DO").length.toString(),
+          label: "DO",
+          isMainSummary: true,
+        },
       ]
     : [
-        { value: "50", label: "Active", isMainSummary: false },
-        { value: "50", label: "Inactive", isMainSummary: false },
-        { value: "50", label: "Pending", isMainSummary: false },
         ...(activeRole === "PMO"
           ? [
               {
-                value: "50",
+                value: employees
+                  .filter((e) => e.role === activeRole && e.status === "Active")
+                  .length.toString(),
+                label: "Active",
+                isMainSummary: false,
+              },
+              {
+                value: employees
+                  .filter(
+                    (e) => e.role === activeRole && e.status === "Inactive",
+                  )
+                  .length.toString(),
+                label: "Inactive",
+                isMainSummary: false,
+              },
+              {
+                value: employees
+                  .filter(
+                    (e) => e.role === activeRole && e.status === "Pending",
+                  )
+                  .length.toString(),
+                label: "Pending",
+                isMainSummary: false,
+              },
+              {
+                value: employees
+                  .filter(
+                    (e) => e.role === activeRole && e.status === "On Leave",
+                  )
+                  .length.toString(),
                 label: "On Leave",
                 isMainSummary: false,
               },
             ]
-          : []),
+          : [
+              {
+                value: employees
+                  .filter((e) => e.role === activeRole && e.status === "Active")
+                  .length.toString(),
+                label: "Active",
+                isMainSummary: false,
+              },
+              {
+                value: employees
+                  .filter(
+                    (e) => e.role === activeRole && e.status === "Inactive",
+                  )
+                  .length.toString(),
+                label: "Inactive",
+                isMainSummary: false,
+              },
+              {
+                value: employees
+                  .filter(
+                    (e) => e.role === activeRole && e.status === "Pending",
+                  )
+                  .length.toString(),
+                label: "Pending",
+                isMainSummary: false,
+              },
+            ]),
       ]),
 ];
 
 const employees = () => {
-  const { employees, addEmployee, loading } = useEmployees();
+  const { employees, addEmployee, removeEmployee, loading } = useEmployees();
 
   if (loading) return null;
 
@@ -156,6 +224,31 @@ const employees = () => {
       addEmployee(newEmployee);
       handleClosedForm(); // Reset and close the form
     }
+  };
+
+  // Remove employee
+  const handleRemoveEmployee = (
+    id: string,
+    firstName: string,
+    lastName: string,
+  ) => {
+    Alert.alert(
+      "Delete Employee", // Title
+      `Are you sure you want to delete employee ${firstName} ${lastName}?`, // Message
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          style: "destructive", // Show red on iOS
+          onPress: () => {
+            removeEmployee(id);
+          },
+        },
+      ],
+    );
   };
 
   // PMO positions
@@ -322,14 +415,14 @@ const employees = () => {
               : `${activeRole}`}{" "}
             FOUND
           </Text>
-          <View>
+          <View style={styles.employeeListContainer}>
             <FlatList<UnifiedEmployee>
               data={
                 activeRole === "PMO"
                   ? employees.filter((e) => e.role === "PMO")
                   : employees.filter((e) => e.role === "DO")
               }
-              contentContainerStyle={styles.employeesListContainer}
+              contentContainerStyle={styles.employeesListContentContainerStyle}
               renderItem={({ item }) => (
                 <EmployeeCard
                   firstName={item.firstName}
@@ -342,9 +435,22 @@ const employees = () => {
                   }
                   status={item.status}
                   onEdit={() => console.log()}
-                  onDelete={() => console.log()}
+                  onDelete={() => {
+                    handleRemoveEmployee(
+                      item.id,
+                      item.firstName,
+                      item.lastName,
+                    );
+                  }}
                 />
               )}
+              ListEmptyComponent={
+                <Image
+                  source={require("@/assets/images/Group-12.png")}
+                  resizeMode="contain"
+                  style={styles.image}
+                />
+              }
             />
           </View>
           <Form
@@ -524,8 +630,19 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
 
-  employeesListContainer: {
+  employeeListContainer: {
+    flex: 1,
+  },
+
+  employeesListContentContainerStyle: {
+    flex: 1,
     marginTop: 10,
     gap: 10,
+  },
+
+  image: {
+    width: "100%",
+    height: 220,
+    marginTop: 50,
   },
 });

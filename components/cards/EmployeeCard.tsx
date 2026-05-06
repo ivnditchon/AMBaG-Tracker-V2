@@ -83,7 +83,7 @@ const EmployeeCard = ({
       </View>
       <View style={styles.employeeActionsContainer}>
         <TouchableOpacity activeOpacity={0.8} onPress={onEdit}>
-          <Ionicons name="create-outline" size={22} color={colors.primary} />
+          <Ionicons name="create-outline" size={22} color={colors.warning} />
         </TouchableOpacity>
         <TouchableOpacity activeOpacity={0.8} onPress={onDelete}>
           <Ionicons name="trash-outline" size={22} color={colors.danger} />
