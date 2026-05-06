@@ -537,6 +537,7 @@ const employees = () => {
                 placeholder="Select position"
                 error={formValidationError.position}
               />
+<<<<<<< Updated upstream
               <Dropdown
                 disable={activeRole === "DO" && isDropdownActive}
                 label="DEPARTMENT"
@@ -552,6 +553,25 @@ const employees = () => {
                 error={formValidationError.department}
               />
               {activeRole === "DO" && (
+=======
+
+              {activeRole === "PMO" || "DO" ? (
+                <Dropdown
+                  disable={activeRole === "DO" && isDropdownActive}
+                  label="DEPARTMENT"
+                  value={form.department}
+                  onValueChange={(value) =>
+                    setForm({
+                      ...form,
+                      department: value as EmployeeDepartment,
+                    })
+                  }
+                  items={departments}
+                  placeholder="Select department"
+                  error={formValidationError.department}
+                />
+              ) : (
+>>>>>>> Stashed changes
                 <Dropdown
                   label="ASSIGNED HOSPITAL"
                   value={form.role === "DO" ? form.assignedHospital : ""}
