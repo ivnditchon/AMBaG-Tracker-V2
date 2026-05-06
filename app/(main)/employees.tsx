@@ -20,7 +20,7 @@ import {
   UnifiedEmployee,
   ValidationError,
 } from "@/types/types";
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   Alert,
   FlatList,
@@ -293,6 +293,30 @@ const employees = () => {
     );
   };
 
+  const displayData = useMemo(() => {
+    return filteredEmployees.filter((e) => e.role === activeRole);
+  }, [filteredEmployees, activeRole]);
+
+  // Compute data outside FlatList - Prevent from lag
+  const renderItem = useCallback(
+    ({ item }: { item: UnifiedEmployee }) => (
+      <EmployeeCard
+        firstName={item.firstName}
+        lastName={item.lastName}
+        position={item.position}
+        department={
+          item.role === "PMO" ? item.department : item.assignedHospital
+        }
+        status={item.status}
+        onEdit={() => handleEditEmployee(item)}
+        onDelete={() =>
+          handleRemoveEmployee(item.id, item.firstName, item.lastName)
+        }
+      />
+    ),
+    [handleEditEmployee, handleRemoveEmployee],
+  );
+
   // PMO positions
   const positions = [
     "Project Developmemnt Officer I",
@@ -459,27 +483,19 @@ const employees = () => {
             FOUND
           </Text>
           <FlatList<UnifiedEmployee>
-            data={filteredEmployees.filter((e) => e.role === activeRole)}
+            data={displayData}
+            keyExtractor={(item) => item.id}
             contentContainerStyle={
               filteredEmployees.length === 0
                 ? { flexGrow: 1 }
                 : styles.employeesListContentContainerStyle
             } // No need to wrap Flatlist if this is present
-            renderItem={({ item }) => (
-              <EmployeeCard
-                firstName={item.firstName}
-                lastName={item.lastName}
-                position={item.position}
-                department={
-                  item.role === "PMO" ? item.department : item.assignedHospital // Pass hospital if it's a DO
-                }
-                status={item.status}
-                onEdit={() => handleEditEmployee(item)}
-                onDelete={() => {
-                  handleRemoveEmployee(item.id, item.firstName, item.lastName);
-                }}
-              />
-            )}
+            renderItem={renderItem}
+            // Performance props
+            initialNumToRender={10}
+            maxToRenderPerBatch={5}
+            windowSize={5}
+            removeClippedSubviews={true} // For android lag
             ListEmptyComponent={
               <View style={styles.employeeListEmptyComponentStyle}>
                 <Image
