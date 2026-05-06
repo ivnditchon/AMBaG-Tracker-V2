@@ -131,6 +131,7 @@ const employees = () => {
   const [isFormVissible, setFormVissible] = useState<boolean>(false);
   const [formValidationError, setFormValidationError] =
     useState<ValidationError>({});
+  const [isDropdownActive, setDropDownActive] = useState<boolean>(false);
 
   // Pick one of the employee(default)
   const initialState: EmployeeFormState = {
@@ -140,7 +141,7 @@ const employees = () => {
     lastName: "",
     position: "",
     status: "Active",
-    department: "",
+    department: activeRole === "DO" ? "Admin" : "",
     assignedHospital: "",
   };
 
@@ -158,7 +159,10 @@ const employees = () => {
   );
 
   const handlePmo = () => setActiveRole("PMO");
-  const handleDo = () => setActiveRole("DO");
+  const handleDo = () => {
+    setActiveRole("DO");
+    setDropDownActive(true);
+  };
 
   const handleOpenForm = () => {
     setForm(initialState); // Reset the form to initial empty values
@@ -519,8 +523,9 @@ const employees = () => {
                 error={formValidationError.position}
               />
 
-              {activeRole === "PMO" ? (
+              {activeRole === "DO" ? (
                 <Dropdown
+                  disable={isDropdownActive}
                   label="DEPARTMENT"
                   value={form.department}
                   onValueChange={(value) =>

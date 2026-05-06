@@ -12,6 +12,7 @@ type DropdownProps = {
   items: string[];
   placeholder?: string;
   error?: string;
+  disable?: boolean;
 };
 
 const Dropdown = ({
@@ -21,6 +22,7 @@ const Dropdown = ({
   items,
   placeholder,
   error,
+  disable,
 }: DropdownProps) => {
   const [isFocus, setIsFocus] = useState(false);
   const isError = !!error; // true if error has value, false if empty
@@ -62,6 +64,7 @@ const Dropdown = ({
           />
         )}
         dropdownPosition="auto"
+        disable={disable}
       />
       {error && <Text style={styles.dropDownError}>{error}</Text>}
     </View>
