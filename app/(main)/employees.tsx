@@ -125,16 +125,18 @@ const getEmployeesSummaryData = (
 ];
 
 const employees = () => {
-  const { employees, addEmployee, removeEmployee, loading } = useEmployees();
+  const { employees, addEmployee, editEmployee, removeEmployee, loading } =
+    useEmployees();
 
   if (loading) return null;
 
   const [activeRole, setActiveRole] = useState<"PMO" | "DO">("PMO");
-  const [search, setSearch] = useState<string>("");
+  const [searchQuery, setSearch] = useState<string>("");
   const [isFormVissible, setFormVissible] = useState<boolean>(false);
   const [formValidationError, setFormValidationError] =
     useState<ValidationError>({});
   const [isDropdownActive, setDropDownActive] = useState<boolean>(false);
+  const [isEditActive, setEditActive] = useState<boolean>(false);
 
   // Pick one of the employee(default)
   const initialState: UnifiedEmployee =
@@ -188,6 +190,7 @@ const employees = () => {
   const handleClosedForm = () => {
     setForm(initialState);
     setFormVissible(false); // Close the form
+    setEditActive(false);
   };
 
   const formValidation = () => {
@@ -218,12 +221,22 @@ const employees = () => {
     return errors;
   };
 
+  const filteredEmployees = employees.filter((emp) => {
+    const data =
+      `${emp.firstName} ${emp.middleName} ${emp.lastName} ${emp.department} ${emp.status}`.toLowerCase();
+    return data.includes(searchQuery.toLowerCase());
+  });
+
   const handleSubmitEmployee = () => {
     const errors = formValidation();
 
     if (Object.keys(errors).length > 0) {
       setFormValidationError(errors);
       return; // Stop execution if there is an error
+    }
+
+    if (form.id) {
+      editEmployee(form.id, { ...form });
     } else {
       // Base data
       const baseData = {
@@ -243,8 +256,16 @@ const employees = () => {
         role: activeRole, // Add the role explicitly here
       } as UnifiedEmployee;
       addEmployee(newEmployee);
-      handleClosedForm(); // Reset and close the form
     }
+    handleClosedForm(); // Reset and close the form
+  };
+
+  // Edit employee
+  const handleEditEmployee = (employee: UnifiedEmployee) => {
+    setActiveRole(employee.role);
+    setForm(employee);
+    setFormVissible(true);
+    setEditActive(true);
   };
 
   // Remove employee
@@ -413,7 +434,7 @@ const employees = () => {
         <View style={styles.mainContent}>
           <View style={styles.searchContainer}>
             <SearchBar
-              value={search.trim()}
+              value={searchQuery.trim()}
               placeholder="Seach name, position..."
               onChangeText={(newText) => setSearch(newText)}
             />
@@ -429,17 +450,18 @@ const employees = () => {
           </View>
           <Text style={styles.employeeCount}>
             {activeRole === "PMO"
-              ? employees.filter((e) => e.role === activeRole).length
-              : employees.filter((e) => e.role === activeRole).length}{" "}
-            {employees.filter((e) => e.role === activeRole).length > 1
+              ? filteredEmployees.filter((e) => e.role === activeRole).length
+              : filteredEmployees.filter((e) => e.role === activeRole)
+                  .length}{" "}
+            {filteredEmployees.filter((e) => e.role === activeRole).length > 1
               ? `${activeRole}'S`
               : `${activeRole}`}{" "}
             FOUND
           </Text>
           <FlatList<UnifiedEmployee>
-            data={employees.filter((e) => e.role === activeRole)}
+            data={filteredEmployees.filter((e) => e.role === activeRole)}
             contentContainerStyle={
-              employees.length === 0
+              filteredEmployees.length === 0
                 ? { flexGrow: 1 }
                 : styles.employeesListContentContainerStyle
             } // No need to wrap Flatlist if this is present
@@ -452,7 +474,7 @@ const employees = () => {
                   item.role === "PMO" ? item.department : item.assignedHospital // Pass hospital if it's a DO
                 }
                 status={item.status}
-                onEdit={() => console.log()}
+                onEdit={() => handleEditEmployee(item)}
                 onDelete={() => {
                   handleRemoveEmployee(item.id, item.firstName, item.lastName);
                 }}
@@ -475,23 +497,11 @@ const employees = () => {
           <Form
             visible={isFormVissible}
             onClose={handleClosedForm}
-            title={
-              activeRole === "PMO"
-                ? "Add PMO"
-                : activeRole === "DO"
-                  ? "Add Desk Officer"
-                  : "Add PMO"
-            }
-            subTitle="Fill in the PMO details below"
+            title={`${isEditActive ? "Edit" : "Add"} ${activeRole === "PMO" ? "PMO" : "DO"}`}
+            subTitle={`${isEditActive ? "Edit the" : "Fill in the"} ${activeRole === "PMO" ? "PMO details below" : "DO details below"}`}
             icon="person-add"
             onSubmit={handleSubmitEmployee}
-            buttonTitle={
-              activeRole === "PMO"
-                ? "Add PMO"
-                : activeRole === "DO"
-                  ? "Add Desk Officer"
-                  : "Add PMO"
-            }
+            buttonTitle={`${isEditActive ? "Update" : "Add"} ${activeRole === "PMO" ? "PMO" : "DO"}`}
           >
             <View style={styles.inputContainer}>
               <Input
@@ -537,7 +547,6 @@ const employees = () => {
                 placeholder="Select position"
                 error={formValidationError.position}
               />
-<<<<<<< Updated upstream
               <Dropdown
                 disable={activeRole === "DO" && isDropdownActive}
                 label="DEPARTMENT"
@@ -553,25 +562,6 @@ const employees = () => {
                 error={formValidationError.department}
               />
               {activeRole === "DO" && (
-=======
-
-              {activeRole === "PMO" || "DO" ? (
-                <Dropdown
-                  disable={activeRole === "DO" && isDropdownActive}
-                  label="DEPARTMENT"
-                  value={form.department}
-                  onValueChange={(value) =>
-                    setForm({
-                      ...form,
-                      department: value as EmployeeDepartment,
-                    })
-                  }
-                  items={departments}
-                  placeholder="Select department"
-                  error={formValidationError.department}
-                />
-              ) : (
->>>>>>> Stashed changes
                 <Dropdown
                   label="ASSIGNED HOSPITAL"
                   value={form.role === "DO" ? form.assignedHospital : ""}

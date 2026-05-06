@@ -1,31 +1,28 @@
 import { Ionicons } from "@expo/vector-icons";
 
 export type EmploymentStatus = "Active" | "Inactive" | "Pending" | "On Leave";
-
 export const PMO_STATUSES: EmploymentStatus[] = [
-  "Active",
-  "Inactive",
-  "Pending",
   "On Leave",
+  "Pending",
+  "Inactive",
+  "Active",
 ];
 export const DO_STATUSES: EmploymentStatus[] = [
-  "Active",
-  "Inactive",
   "Pending",
+  "Inactive",
+  "Active",
 ];
 
 export type EmployeePosition =
   | "Adminitistrative Assistant I"
   | "Adminitistrative Assistant II"
   | "Adminitistrative Assistant III";
-
 export type EmployeeDepartment =
   | "Admin"
   | "Technical"
   | "Communication"
   | "Monitoring"
   | "General Services";
-
 export type PartnerHospitals =
   | "Aleosan District Hospital"
   | "Buluan District Hospital"
@@ -34,7 +31,7 @@ export type PartnerHospitals =
 export type UnifiedEmployee = ProjectManagementOfficer | DeskOfficer;
 
 // Base
-export type Employee = {
+export interface Employee {
   id: string;
   firstName: string;
   middleName: string;
@@ -42,7 +39,7 @@ export type Employee = {
   position: string;
   status: EmploymentStatus;
   department: EmployeeDepartment | "";
-};
+}
 
 export interface ProjectManagementOfficer extends Employee {
   role: "PMO";
@@ -56,7 +53,7 @@ export interface DeskOfficer extends Employee {
 export interface EmployeeSummaryData {
   value: string;
   label: string;
-  isMainSummary: boolean;
+  isMainSummary?: boolean;
 }
 
 export interface SearchEmployee {
@@ -73,10 +70,7 @@ export interface FormProps {
   onClose: () => void;
   onSubmit: () => void;
   children: React.ReactNode;
-  buttonTitle:
-    | "Add PMO"
-    | "Add Desk Officer"
-    | "Update PMO | Update Desk Officer";
+  buttonTitle: string;
 }
 
 export interface ValidationError {
