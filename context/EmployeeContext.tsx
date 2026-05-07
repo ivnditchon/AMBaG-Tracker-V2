@@ -66,9 +66,9 @@ export const EmployeeProvider = ({ children }: ChildrenProps) => {
   };
 
   // Edit employee
-  const editEmployee = (id: string | null, form: UnifiedEmployee) => {
+  const editEmployee = (id: string, updatedEmployee: UnifiedEmployee) => {
     setEmployees((prev) =>
-      prev.map((emp) => (emp.id === id ? { ...emp, ...form } : emp)),
+      prev.map((emp) => (emp.id === id ? updatedEmployee : emp)),
     );
   };
 

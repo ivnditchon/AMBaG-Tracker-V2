@@ -238,16 +238,6 @@ const employees = () => {
     if (form.id) {
       editEmployee(form.id, { ...form });
     } else {
-      // Base data
-      const baseData = {
-        id: Date.now().toString(), // Generate temp Id
-        firstName: form.firstName,
-        middleName: form.middleName,
-        lastName: form.lastName,
-        position: form.position,
-        status: form.status,
-      };
-
       const newEmployee: UnifiedEmployee = {
         ...form,
         id: Date.now().toString(),
