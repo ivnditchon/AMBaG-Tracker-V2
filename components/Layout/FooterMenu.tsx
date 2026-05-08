@@ -30,7 +30,10 @@ const FooterMenu = ({
   isActive,
 }: FooterMenuProps) => {
   return (
-    <TouchableOpacity onPress={onPress} style={styles.container}>
+    <TouchableOpacity
+      onPress={onPress}
+      style={[styles.container, { marginBottom: isActive ? 7 : 0 }]}
+    >
       <Ionicons
         name={isActive ? activeIcon : icon}
         size={isActive ? 23 : 22}

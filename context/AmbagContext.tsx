@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 // Define shape of the context
-interface EmployeeContextType {
+interface AmbagContextType {
   employees: UnifiedEmployee[];
   loading: boolean;
   addEmployee: (employee: UnifiedEmployee) => void;
@@ -12,7 +12,7 @@ interface EmployeeContextType {
 }
 
 // Create the context with a default value
-const EmployeeContext = createContext<EmployeeContextType>({
+const AmbagContext = createContext<AmbagContextType>({
   employees: [],
   loading: true,
   addEmployee: () => {},
@@ -26,7 +26,7 @@ type ChildrenProps = {
   children: React.ReactNode;
 };
 
-export const EmployeeProvider = ({ children }: ChildrenProps) => {
+export const AmbagProvider = ({ children }: ChildrenProps) => {
   const [employees, setEmployees] = useState<UnifiedEmployee[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -83,7 +83,7 @@ export const EmployeeProvider = ({ children }: ChildrenProps) => {
   };
 
   return (
-    <EmployeeContext.Provider
+    <AmbagContext.Provider
       value={{
         employees,
         loading,
@@ -93,8 +93,8 @@ export const EmployeeProvider = ({ children }: ChildrenProps) => {
       }}
     >
       {children}
-    </EmployeeContext.Provider>
+    </AmbagContext.Provider>
   );
 };
 
-export const useEmployees = () => useContext(EmployeeContext);
+export const useAmbag = () => useContext(AmbagContext);

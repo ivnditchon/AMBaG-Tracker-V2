@@ -1,9 +1,10 @@
 import Header from "@/components/Layout/Header";
 import Avatar from "@/components/UI/Avatar";
-import SummaryItem, { SummaryItemProps } from "@/components/UI/SummaryItem";
+import SummaryItem from "@/components/UI/SummaryItem";
 import { colors } from "@/constants/colors";
-import { useEmployees } from "@/context/EmployeeContext";
+import { useAmbag } from "@/context/AmbagContext";
 import { globalStyles } from "@/styles/globalStyle";
+import { EmployeeSummaryData, UnifiedEmployee } from "@/types/types";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
@@ -21,29 +22,30 @@ type EmployeesProps = {
 
 // Static data (outside component to prevent re-render)
 const getDashboardSummaryData = (
-  employees: EmployeesProps[],
-): SummaryItemProps[] => [
+  employees: UnifiedEmployee[],
+): EmployeeSummaryData[] => [
   {
-    value: employees.length,
+    value: employees.length.toString(),
     label: "Total Staff",
+    isMainSummary: true,
   },
   {
-    value: 40,
+    value: "40",
     label: "Present",
   },
   {
-    value: 8,
+    value: "40",
     label: "Absent",
   },
   {
-    value: 10,
+    value: "40",
     label: "Late",
   },
 ];
 
 // Main component
 const Dashboard = () => {
-  const { employees, loading } = useEmployees();
+  const { employees, loading } = useAmbag();
 
   if (loading) return null;
 
@@ -78,8 +80,8 @@ const Dashboard = () => {
         <Header
           leftComponent={
             <View style={globalStyles.headerLeftComponentContainer}>
-              <Text style={globalStyles.headerScreenLabel}>{greeting}</Text>
-              <Text style={globalStyles.headerScreenTitle}>Admin Panel</Text>
+              <Text style={globalStyles.headerLabel}>{greeting}</Text>
+              <Text style={globalStyles.headerTitle}>Admin Panel</Text>
               <Text style={styles.dateText}>{getToday}</Text>
             </View>
           }
@@ -99,7 +101,7 @@ const Dashboard = () => {
           }
           bottomComponent={
             <FlatList
-              contentContainerStyle={globalStyles.headerBottomSummaryContainer}
+              contentContainerStyle={globalStyles.mainSummaryContainer}
               data={dashboardSummaryData}
               keyExtractor={(_, index) => index.toString()} // There is no Id
               renderItem={({ item }) => (

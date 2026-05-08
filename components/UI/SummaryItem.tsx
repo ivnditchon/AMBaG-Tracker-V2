@@ -14,7 +14,7 @@ const SummaryItem = ({ value, label, isMainSummary }: EmployeeSummaryData) => {
             fontSize:
               Platform.OS === "ios"
                 ? isMainSummary
-                  ? 25
+                  ? 28
                   : 20
                 : isMainSummary
                   ? 22
@@ -32,7 +32,7 @@ const SummaryItem = ({ value, label, isMainSummary }: EmployeeSummaryData) => {
             fontSize:
               Platform.OS === "ios"
                 ? isMainSummary
-                  ? 14
+                  ? 13
                   : 12
                 : isMainSummary
                   ? 10
@@ -58,11 +58,13 @@ const styles = StyleSheet.create({
   value: {
     fontFamily: "DINBold",
     color: colors.primaryLight,
+    letterSpacing: 0.1,
   },
 
   label: {
     marginTop: 7,
     fontFamily: "DINMedium",
     fontWeight: 600,
+    letterSpacing: 0.2,
   },
 });

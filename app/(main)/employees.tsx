@@ -7,7 +7,7 @@ import Input from "@/components/UI/Input";
 import SearchBar from "@/components/UI/SearchBar";
 import SummaryItem from "@/components/UI/SummaryItem";
 import { colors } from "@/constants/colors";
-import { useEmployees } from "@/context/EmployeeContext";
+import { useAmbag } from "@/context/AmbagContext";
 import { globalStyles } from "@/styles/globalStyle";
 import {
   DeskOfficer,
@@ -126,7 +126,7 @@ const getEmployeesSummaryData = (
 
 const employees = () => {
   const { employees, addEmployee, editEmployee, removeEmployee, loading } =
-    useEmployees();
+    useAmbag();
   const [activeRole, setActiveRole] = useState<"PMO" | "DO">("PMO");
   const initialState: UnifiedEmployee =
     activeRole === "PMO"

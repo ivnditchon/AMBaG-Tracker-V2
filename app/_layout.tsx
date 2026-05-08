@@ -1,4 +1,4 @@
-import { EmployeeProvider } from "@/context/EmployeeContext";
+import { AmbagProvider } from "@/context/AmbagContext";
 import { useFonts } from "expo-font";
 import { Slot } from "expo-router";
 import React from "react";
@@ -18,11 +18,11 @@ const RootLayout = () => {
   if (!loaded) return null;
 
   return (
-    <EmployeeProvider>
+    <AmbagProvider>
       <SafeAreaView style={styles.container}>
         <Slot />
       </SafeAreaView>
-    </EmployeeProvider>
+    </AmbagProvider>
   );
 };
 
