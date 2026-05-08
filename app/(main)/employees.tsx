@@ -238,9 +238,8 @@ const employees = () => {
     if (form.id) {
       editEmployee(form.id, { ...form });
     } else {
-      const newEmployee: UnifiedEmployee = {
+      const newEmployee = {
         ...form,
-        id: Date.now().toString(),
         firstName: form.firstName.trim(),
         lastName: form.lastName.trim(),
         role: activeRole, // Add the role explicitly here

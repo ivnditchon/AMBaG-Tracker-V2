@@ -41,12 +41,12 @@ export const EmployeeProvider = ({ children }: ChildrenProps) => {
       } catch (error) {
         console.error("Error loading employees", error);
       } finally {
-        setLoading(false);
+        setLoading(false); // No matter what happen
       }
     };
 
     loadEmployees();
-  }, []);
+  }, []); // Dependeny array (prevent infinite loop, and tells that run or load this only once, when the app is open)
 
   // Save to AsyncStorage whenever employees change
   useEffect(() => {
@@ -58,11 +58,15 @@ export const EmployeeProvider = ({ children }: ChildrenProps) => {
       }
     };
     saveEmployees();
-  }, [employees]);
+  }, [employees]); // Save employees whenever employees change (add, edit, delete and update)
 
   // Add employee
-  const addEmployee = (employee: UnifiedEmployee) => {
-    setEmployees((prev) => [...prev, employee]);
+  const addEmployee = (employee: Omit<UnifiedEmployee, "id">) => {
+    const employeeWithId = {
+      ...employee,
+      id: Date.now().toString(),
+    } as UnifiedEmployee;
+    setEmployees((prev) => [...prev, employeeWithId]);
   };
 
   // Edit employee
