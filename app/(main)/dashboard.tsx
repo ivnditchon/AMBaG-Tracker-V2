@@ -26,28 +26,29 @@ const getDashboardSummaryData = (
 ): EmployeeSummaryData[] => [
   {
     value: employees.length.toString(),
-    label: "Total Staff",
+    label: "Total",
     isMainSummary: true,
   },
   {
     value: "40",
     label: "Present",
+    isMainSummary: true,
   },
   {
     value: "40",
     label: "Absent",
+    isMainSummary: true,
   },
   {
     value: "40",
     label: "Late",
+    isMainSummary: true,
   },
 ];
 
 // Main component
 const Dashboard = () => {
   const { employees, loading } = useAmbag();
-
-  if (loading) return null;
 
   const dashboardSummaryData = getDashboardSummaryData(employees);
 
@@ -72,12 +73,13 @@ const Dashboard = () => {
     day: "numeric",
   });
 
-  // Load employees when dashboard screen opens
+  if (loading) return null;
 
   return (
     <MainLayout>
       <View style={styles.content}>
         <Header
+          customHeaderContainer={styles.headerContainer}
           leftComponent={
             <View style={globalStyles.headerLeftComponentContainer}>
               <Text style={globalStyles.headerLabel}>{greeting}</Text>
@@ -103,9 +105,13 @@ const Dashboard = () => {
             <FlatList
               contentContainerStyle={globalStyles.mainSummaryContainer}
               data={dashboardSummaryData}
-              keyExtractor={(_, index) => index.toString()} // There is no Id
+              keyExtractor={(item) => item.label} // There is no Id
               renderItem={({ item }) => (
-                <SummaryItem value={item.value} label={item.label} />
+                <SummaryItem
+                  value={item.value}
+                  label={item.label}
+                  isMainSummary={true}
+                />
               )}
             />
           }
@@ -123,12 +129,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
+  headerContainer: {
+    height: 255,
+  },
+
   dateText: {
     fontFamily: "DINMedium",
     fontSize: 14,
     color: "rgba(255,255,255,0.6)",
     letterSpacing: 0.5,
     fontWeight: 600,
+    marginTop: 8,
   },
   // End
 

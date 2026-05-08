@@ -347,6 +347,7 @@ const employees = () => {
     <MainLayout>
       <View style={styles.container}>
         <Header
+          customHeaderContainer={styles.headerContainer}
           leftComponent={
             <View>
               <Text style={globalStyles.headerLabel}>Manage</Text>
@@ -604,6 +605,10 @@ export default employees;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+
+  headerContainer: {
+    height: 225,
   },
 
   headerButtonMainContainer: {

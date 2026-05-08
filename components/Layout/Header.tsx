@@ -1,20 +1,22 @@
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 
 type HeaderProps = {
   leftComponent?: React.ReactNode;
   rightComponent?: React.ReactNode;
   bottomComponent?: React.ReactNode;
+  customHeaderContainer: StyleProp<ViewStyle>;
 };
 
 const Header = ({
   leftComponent,
   rightComponent,
   bottomComponent,
+  customHeaderContainer,
 }: HeaderProps) => {
   return (
-    <View style={styles.headerContainer}>
+    <View style={customHeaderContainer}>
       <LinearGradient
         colors={["#03573e", "#037c5a", "#07ad79"]}
         start={{ x: 0, y: 0 }}
@@ -34,9 +36,6 @@ const Header = ({
 export default Header;
 
 const styles = StyleSheet.create({
-  headerContainer: {
-    height: 230,
-  },
   headerSubContainer: {
     padding: 25,
     flex: 1,

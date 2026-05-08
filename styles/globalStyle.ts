@@ -23,14 +23,13 @@ export const globalStyles = StyleSheet.create({
     color: colors.white,
     fontSize: Platform.OS === "ios" ? 32 : 24,
     letterSpacing: 0.5,
-    marginVertical: 8,
     paddingVertical: 5,
   },
 
   mainSummaryContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 20,
+    marginTop: 30,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.25)",
     borderRadius: 15,
