@@ -28,8 +28,6 @@ export type PartnerHospitals =
   | "Buluan District Hospital"
   | "Cotabato Regional and Medical Center";
 
-export type UnifiedEmployee = ProjectManagementOfficer | DeskOfficer;
-
 // Base
 export interface Employee {
   id: string;
@@ -38,17 +36,15 @@ export interface Employee {
   lastName: string;
   position: string;
   status: EmploymentStatus;
-  department: EmployeeDepartment | "";
+  department: EmployeeDepartment | string;
+  assignedHospital: PartnerHospitals | string;
 }
 
-export interface ProjectManagementOfficer extends Employee {
+export type ProjectManagementOfficer = Omit<Employee, "assignedHospital"> & {
   role: "PMO";
-}
-
-export interface DeskOfficer extends Employee {
-  role: "DO";
-  assignedHospital: PartnerHospitals | "";
-}
+};
+export type DeskOfficer = Employee & { role: "DO" };
+export type UnifiedEmployee = ProjectManagementOfficer | DeskOfficer;
 
 export interface EmployeeSummaryData {
   value: string;

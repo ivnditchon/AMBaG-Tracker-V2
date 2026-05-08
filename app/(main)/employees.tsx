@@ -127,18 +127,7 @@ const getEmployeesSummaryData = (
 const employees = () => {
   const { employees, addEmployee, editEmployee, removeEmployee, loading } =
     useEmployees();
-
-  if (loading) return null;
-
   const [activeRole, setActiveRole] = useState<"PMO" | "DO">("PMO");
-  const [searchQuery, setSearch] = useState<string>("");
-  const [isFormVissible, setFormVissible] = useState<boolean>(false);
-  const [formValidationError, setFormValidationError] =
-    useState<ValidationError>({});
-  const [isDropdownActive, setDropDownActive] = useState<boolean>(false);
-  const [isEditActive, setEditActive] = useState<boolean>(false);
-
-  // Pick one of the employee(default)
   const initialState: UnifiedEmployee =
     activeRole === "PMO"
       ? {
@@ -162,8 +151,78 @@ const employees = () => {
           assignedHospital: "",
           role: activeRole,
         };
-
   const [form, setForm] = useState<UnifiedEmployee>(initialState);
+  const [searchQuery, setSearch] = useState<string>("");
+  const [isFormVissible, setFormVissible] = useState<boolean>(false);
+  const [formValidationError, setFormValidationError] =
+    useState<ValidationError>({});
+  const [isDropdownActive, setDropDownActive] = useState<boolean>(false);
+  const [isEditActive, setEditActive] = useState<boolean>(false);
+
+  const filteredEmployees = employees.filter((emp) => {
+    const data =
+      `${emp.firstName} ${emp.middleName} ${emp.lastName} ${emp.department} ${emp.status}`.toLowerCase();
+    return data.includes(searchQuery.toLowerCase());
+  });
+
+  const displayData = useMemo(() => {
+    return filteredEmployees.filter((e) => e.role === activeRole);
+  }, [filteredEmployees, activeRole]);
+
+  // Edit employee
+  const handleEditEmployee = (employee: UnifiedEmployee) => {
+    setActiveRole(employee.role);
+    setForm(employee);
+    setFormVissible(true);
+    setEditActive(true);
+  };
+
+  // Remove employee
+  const handleRemoveEmployee = (
+    id: string,
+    firstName: string,
+    lastName: string,
+  ) => {
+    Alert.alert(
+      `${activeRole === "PMO" ? "Delete PMO" : "Delete Desk Officer"}`, // Title
+      `Are you sure you want to delete employee ${firstName} ${lastName}?`, // Message
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          style: "destructive", // Show red on iOS
+          onPress: () => {
+            removeEmployee(id);
+          },
+        },
+      ],
+    );
+  };
+
+  // Compute data outside FlatList - Prevent from lag
+  const renderItem = useCallback(
+    ({ item }: { item: UnifiedEmployee }) => (
+      <EmployeeCard
+        firstName={item.firstName}
+        lastName={item.lastName}
+        position={item.position}
+        department={
+          item.role === "PMO" ? item.department : item.assignedHospital
+        }
+        status={item.status}
+        onEdit={() => handleEditEmployee(item)}
+        onDelete={() =>
+          handleRemoveEmployee(item.id, item.firstName, item.lastName)
+        }
+      />
+    ),
+    [handleEditEmployee, handleRemoveEmployee],
+  );
+
+  if (loading) return null;
 
   const employeesMainSummaryData = getEmployeesSummaryData(
     employees,
@@ -221,12 +280,6 @@ const employees = () => {
     return errors;
   };
 
-  const filteredEmployees = employees.filter((emp) => {
-    const data =
-      `${emp.firstName} ${emp.middleName} ${emp.lastName} ${emp.department} ${emp.status}`.toLowerCase();
-    return data.includes(searchQuery.toLowerCase());
-  });
-
   const handleSubmitEmployee = () => {
     const errors = formValidation();
 
@@ -238,73 +291,17 @@ const employees = () => {
     if (form.id) {
       editEmployee(form.id, { ...form });
     } else {
-      const newEmployee = {
+      const newEmployeeData = {
         ...form,
         firstName: form.firstName.trim(),
+        middleName: form.middleName.trim(),
         lastName: form.lastName.trim(),
-        role: activeRole, // Add the role explicitly here
+        role: activeRole, // This role will identify the data either DO or PMO (activeRole === DO | PMO)
       } as UnifiedEmployee;
-      addEmployee(newEmployee);
+      addEmployee(newEmployeeData);
     }
     handleClosedForm(); // Reset and close the form
   };
-
-  // Edit employee
-  const handleEditEmployee = (employee: UnifiedEmployee) => {
-    setActiveRole(employee.role);
-    setForm(employee);
-    setFormVissible(true);
-    setEditActive(true);
-  };
-
-  // Remove employee
-  const handleRemoveEmployee = (
-    id: string,
-    firstName: string,
-    lastName: string,
-  ) => {
-    Alert.alert(
-      `${activeRole === "PMO" ? "Delete PMO" : "Delete Desk Officer"}`, // Title
-      `Are you sure you want to delete employee ${firstName} ${lastName}?`, // Message
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-        {
-          text: "Delete",
-          style: "destructive", // Show red on iOS
-          onPress: () => {
-            removeEmployee(id);
-          },
-        },
-      ],
-    );
-  };
-
-  const displayData = useMemo(() => {
-    return filteredEmployees.filter((e) => e.role === activeRole);
-  }, [filteredEmployees, activeRole]);
-
-  // Compute data outside FlatList - Prevent from lag
-  const renderItem = useCallback(
-    ({ item }: { item: UnifiedEmployee }) => (
-      <EmployeeCard
-        firstName={item.firstName}
-        lastName={item.lastName}
-        position={item.position}
-        department={
-          item.role === "PMO" ? item.department : item.assignedHospital
-        }
-        status={item.status}
-        onEdit={() => handleEditEmployee(item)}
-        onDelete={() =>
-          handleRemoveEmployee(item.id, item.firstName, item.lastName)
-        }
-      />
-    ),
-    [handleEditEmployee, handleRemoveEmployee],
-  );
 
   // PMO positions
   const positions = [
@@ -373,7 +370,7 @@ const employees = () => {
                   {
                     backgroundColor:
                       activeRole === "PMO"
-                        ? colors.primary
+                        ? colors.primaryDark
                         : colors.primaryLight,
                   },
                 ]}
@@ -400,7 +397,7 @@ const employees = () => {
                   {
                     backgroundColor:
                       activeRole === "DO"
-                        ? colors.primary
+                        ? colors.primaryDark
                         : colors.primaryLight,
                   },
                 ]}
@@ -446,6 +443,7 @@ const employees = () => {
         {/** Main Content */}
         <View style={styles.mainContent}>
           <View style={styles.searchContainer}>
+            {/** Search */}
             <SearchBar
               value={searchQuery.trim()}
               placeholder="Seach name, position..."
@@ -616,7 +614,8 @@ const styles = StyleSheet.create({
   headerButtonContainer: {
     height: Platform.OS === "ios" ? 35 : 32,
     width: 70,
-    backgroundColor: colors.primaryLight,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.3)",
   },
 
   headerButtonTitle: {
@@ -642,7 +641,6 @@ const styles = StyleSheet.create({
 
   mainContentButtonContainer: {
     height: Platform.OS === "ios" ? 45 : 40,
-    backgroundColor: colors.primary,
     paddingHorizontal: 12,
   },
 

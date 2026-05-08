@@ -53,7 +53,7 @@ export const globalStyles = StyleSheet.create({
   buttonContainer: {
     width: "100%",
     height: 55,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.primaryDark,
   },
 
   buttonTitle: {

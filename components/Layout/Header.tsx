@@ -16,7 +16,7 @@ const Header = ({
   return (
     <View style={styles.headerContainer}>
       <LinearGradient
-        colors={["#007A56", "#00956A", "#00C588"]}
+        colors={["#03573e", "#037c5a", "#07ad79"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.headerSubContainer}

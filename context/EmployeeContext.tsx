@@ -61,11 +61,12 @@ export const EmployeeProvider = ({ children }: ChildrenProps) => {
   }, [employees]); // Save employees whenever employees change (add, edit, delete and update)
 
   // Add employee
-  const addEmployee = (employee: Omit<UnifiedEmployee, "id">) => {
+  const addEmployee = (newEmployee: Omit<UnifiedEmployee, "id">) => {
     const employeeWithId = {
-      ...employee,
+      ...newEmployee,
       id: Date.now().toString(),
     } as UnifiedEmployee;
+
     setEmployees((prev) => [...prev, employeeWithId]);
   };
 
