@@ -10,38 +10,28 @@ import React from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import MainLayout from "./main-layout";
 
-type EmployeesProps = {
-  ID: string;
-  firstName: string;
-  middleName: string;
-  lastName: string;
-  position: string;
-  department: string;
-  status: "Active" | "Inactive" | "Pending" | "On Leave";
-};
-
 // Static data (outside component to prevent re-render)
 const getDashboardSummaryData = (
   employees: UnifiedEmployee[],
 ): EmployeeSummaryData[] => [
   {
     value: employees.length.toString(),
-    label: "Total",
+    label: "Total Staff",
     isMainSummary: true,
   },
   {
     value: "40",
-    label: "Present",
+    label: "Present out of 35 staff",
     isMainSummary: true,
   },
   {
     value: "40",
-    label: "Absent",
+    label: "Complete Uniform",
     isMainSummary: true,
   },
   {
     value: "40",
-    label: "Late",
+    label: "Reports submitted",
     isMainSummary: true,
   },
 ];

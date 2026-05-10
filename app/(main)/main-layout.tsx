@@ -25,6 +25,10 @@ export default function MainLayout({ children }: MainLayoutProps) {
     router.push("/(main)/dashboard");
   };
 
+  const handleAttendanceScreen = () => {
+    router.push("/(main)/attendance");
+  };
+
   const footerData: FooterMenuProps[] = [
     // Home
     {
@@ -65,7 +69,8 @@ export default function MainLayout({ children }: MainLayoutProps) {
       activeLabelColor: colors.primaryDark,
       activeColor: colors.primaryDark,
       label: "Attendance",
-      onPress: () => {},
+      onPress: handleAttendanceScreen,
+      isActive: pathname.includes("attendance"),
     },
     // Uniform
     {
