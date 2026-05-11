@@ -77,3 +77,9 @@ export interface ValidationError {
   department?: string;
   assignedHospital?: string;
 }
+
+export interface HeaderRightProps {
+  activeRole: string;
+  role: string,
+  onPress: () => void;
+}

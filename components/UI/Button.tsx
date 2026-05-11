@@ -66,6 +66,5 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: "DINBold",
     color: colors.primaryLight,
-    letterSpacing: 0.3,
   },
 });

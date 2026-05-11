@@ -18,15 +18,15 @@ export default function MainLayout({ children }: MainLayoutProps) {
   const pathname = usePathname();
 
   const handleEmployeesScreen = () => {
-    router.push("/(main)/employees");
+    router.push("/employees");
   };
 
   const handleDashboardScreen = () => {
-    router.push("/(main)/dashboard");
+    router.push("/dashboard");
   };
 
   const handleAttendanceScreen = () => {
-    router.push("/(main)/attendance");
+    router.push("/attendance");
   };
 
   const footerData: FooterMenuProps[] = [

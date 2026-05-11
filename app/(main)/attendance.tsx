@@ -1,18 +1,15 @@
 import Header from "@/components/Layout/Header";
-import Button from "@/components/UI/Button";
-import { colors } from "@/constants/colors";
+import HeaderRight from "@/components/UI/HeaderRight";
 import { globalStyles } from "@/styles/globalStyle";
 import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import MainLayout from "./main-layout";
 
 const attendance = () => {
-  const [activeRole, setActiveRole] = useState<
-    "MARK_ATTENDANCE" | "VIEW_ATTENDANCE"
-  >("MARK_ATTENDANCE");
+  const [activeTab, setActiveTab] = useState<"MARK" | "VIEW">("MARK");
 
-  const handleMarkAttendance = () => setActiveRole("MARK_ATTENDANCE");
-  const handleViewAttendance = () => setActiveRole("VIEW_ATTENDANCE");
+  const handleButton1 = () => setActiveTab("MARK");
+  const handleButton2 = () => setActiveTab("VIEW");
   return (
     <MainLayout>
       <View style={styles.container}>
@@ -24,6 +21,14 @@ const attendance = () => {
               <Text style={globalStyles.headerTitle}>Attendance</Text>
             </View>
           }
+          rightComponent={
+            <HeaderRight
+              activeRole={activeTab}
+              onPress1={handleButton1}
+              onPress2={handleButton2}
+            />
+          }
+          /** 
           rightComponent={
             <View style={styles.rightComponentContainer}>
               <Button
@@ -56,7 +61,7 @@ const attendance = () => {
                   },
                 ]}
                 onPress={handleMarkAttendance}
-              />
+              /> 
 
               <Button
                 title="View"
@@ -90,7 +95,7 @@ const attendance = () => {
                 onPress={handleViewAttendance}
               />
             </View>
-          }
+          } */
           bottomComponent={<View></View>}
         />
       </View>
