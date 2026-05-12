@@ -13,7 +13,7 @@ export const globalStyles = StyleSheet.create({
   mainSummaryContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 30,
+    marginTop: 10,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.25)",
     borderRadius: 15,
