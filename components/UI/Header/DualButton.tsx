@@ -15,6 +15,9 @@ const DualButton = ({
   rightActiveIcon,
   rightIcon,
 }: DualButtonProps) => {
+  const isLeftActive = isActive === leftLabel;
+  const isRightActive = isActive === rightLabel;
+
   return (
     <View style={styles.container}>
       <Button
@@ -22,22 +25,18 @@ const DualButton = ({
         customContainerStyle={[
           styles.buttonContainer,
           {
-            backgroundColor:
-              isActive === leftLabel ? colors.primaryLight : "transparent",
+            backgroundColor: isLeftActive ? colors.primaryLight : "transparent",
           },
         ]}
         customTitleStyle={[
           styles.buttonLabel,
           {
-            color:
-              isActive === leftLabel ? colors.primaryDark : colors.primaryLight,
+            color: isLeftActive ? colors.primaryDark : colors.primaryLight,
           },
         ]}
-        icon={isActive === leftLabel ? leftActiveIcon : leftIcon}
+        icon={isLeftActive ? leftActiveIcon : leftIcon}
         iconSize={18}
-        iconColor={
-          isActive === leftLabel ? colors.primaryDark : colors.primaryLight
-        }
+        iconColor={isLeftActive ? colors.primaryDark : colors.primaryLight}
         onPress={onLeftPress}
       />
       <Button
@@ -45,24 +44,20 @@ const DualButton = ({
         customContainerStyle={[
           styles.buttonContainer,
           {
-            backgroundColor:
-              isActive === rightLabel ? colors.primaryLight : "transparent",
+            backgroundColor: isRightActive
+              ? colors.primaryLight
+              : "transparent",
           },
         ]}
         customTitleStyle={[
           styles.buttonLabel,
           {
-            color:
-              isActive === rightLabel
-                ? colors.primaryDark
-                : colors.primaryLight,
+            color: isRightActive ? colors.primaryDark : colors.primaryLight,
           },
         ]}
-        icon={isActive === rightLabel ? rightActiveIcon : rightIcon}
+        icon={isRightActive ? rightActiveIcon : rightIcon}
         iconSize={18}
-        iconColor={
-          isActive === rightLabel ? colors.primaryDark : colors.primaryLight
-        }
+        iconColor={isRightActive ? colors.primaryDark : colors.primaryLight}
         onPress={onRightPress}
       />
     </View>
@@ -78,12 +73,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: "rgba(255,255,255,0.15)",
     padding: 5,
+    gap: 3,
   },
 
   buttonContainer: {
     paddingHorizontal: 10,
     paddingVertical: 5,
-    backgroundColor: colors.primaryLight,
   },
 
   buttonLabel: {
