@@ -1,5 +1,5 @@
 import { colors } from "@/constants/colors";
-import { Platform, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 
 export const globalStyles = StyleSheet.create({
   headerLeftComponentContainer: {
@@ -8,22 +8,6 @@ export const globalStyles = StyleSheet.create({
 
   headerRightComponentContainer: {
     flexDirection: "row",
-  },
-
-  headerLabel: {
-    fontFamily: "DINMedium",
-    fontSize: Platform.OS === "ios" ? 20 : 18,
-    color: "rgba(255,255,255,0.6)",
-    letterSpacing: 0.5,
-    fontWeight: 600,
-  },
-
-  headerTitle: {
-    fontFamily: "DINBold",
-    color: colors.white,
-    fontSize: Platform.OS === "ios" ? 32 : 24,
-    letterSpacing: 0.5,
-    paddingVertical: 5,
   },
 
   mainSummaryContainer: {

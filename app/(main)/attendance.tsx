@@ -1,31 +1,32 @@
 import Header from "@/components/Layout/Header";
-import HeaderRight from "@/components/UI/HeaderRight";
-import { globalStyles } from "@/styles/globalStyle";
+import DualButton from "@/components/UI/Header/DualButton";
+import HeaderLeftTitle from "@/components/UI/Header/HeaderLeftTitle";
 import React, { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import MainLayout from "./main-layout";
 
 const attendance = () => {
-  const [activeTab, setActiveTab] = useState<"MARK" | "VIEW">("MARK");
+  const [activeTab, setActiveTab] = useState<"Mark" | "View">("Mark");
 
-  const handleButton1 = () => setActiveTab("MARK");
-  const handleButton2 = () => setActiveTab("VIEW");
+  const handleButton1 = () => setActiveTab("Mark");
+  const handleButton2 = () => setActiveTab("View");
   return (
     <MainLayout>
       <View style={styles.container}>
         <Header
           customHeaderContainer={styles.headerContainer}
-          leftComponent={
-            <View>
-              <Text style={globalStyles.headerLabel}>Track</Text>
-              <Text style={globalStyles.headerTitle}>Attendance</Text>
-            </View>
-          }
+          leftComponent={<HeaderLeftTitle label="Track" title="Attendance" />}
           rightComponent={
-            <HeaderRight
-              activeRole={activeTab}
-              onPress1={handleButton1}
-              onPress2={handleButton2}
+            <DualButton
+              leftLabel="Mark"
+              rightLabel="View"
+              leftActiveIcon="pencil"
+              leftIcon="pencil-outline"
+              rightActiveIcon="eye"
+              rightIcon="eye-off"
+              onLeftPress={handleButton1}
+              onRightPress={handleButton2}
+              isActive={activeTab}
             />
           }
           /** 

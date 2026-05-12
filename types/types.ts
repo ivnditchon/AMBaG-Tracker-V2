@@ -78,8 +78,17 @@ export interface ValidationError {
   assignedHospital?: string;
 }
 
-export interface HeaderRightProps {
-  activeRole: string;
-  role: string,
-  onPress: () => void;
+export interface HeaderLeftTitleProps {
+  label: string;
+  title: string;
+  dateToday?: string;
+}
+
+export interface DualButtonProps {
+  onLeftPress: () => void;
+  onRightPress: () => void;
+  leftLabel: string;
+  rightLabel: string;
+  isActive: boolean;
+  icon: React.ComponentProps<typeof Ionicons>["name"];
 }

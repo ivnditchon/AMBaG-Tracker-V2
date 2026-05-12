@@ -1,8 +1,10 @@
-import EmployeeCard from "@/components/cards/EmployeeCard";
+import EmployeeCard from "@/components/Cards/EmployeeCard";
 import Header from "@/components/Layout/Header";
 import Button from "@/components/UI/Button";
 import Dropdown from "@/components/UI/Dropdown";
 import Form from "@/components/UI/FormModal";
+import DualButton from "@/components/UI/Header/DualButton";
+import HeaderLeftTitle from "@/components/UI/Header/HeaderLeftTitle";
 import Input from "@/components/UI/Input";
 import SearchBar from "@/components/UI/SearchBar";
 import SummaryItem from "@/components/UI/SummaryItem";
@@ -127,9 +129,9 @@ const getEmployeesSummaryData = (
 const employees = () => {
   const { employees, addEmployee, editEmployee, removeEmployee, loading } =
     useAmbag();
-  const [activeRole, setActiveRole] = useState<"PMO" | "DO">("PMO");
+  const [activeTab, setActiveTab] = useState<"PMO" | "DO">("PMO");
   const initialState: UnifiedEmployee =
-    activeRole === "PMO"
+    activeTab === "PMO"
       ? {
           id: "",
           firstName: "",
@@ -138,7 +140,7 @@ const employees = () => {
           position: "",
           status: "Active",
           department: "",
-          role: activeRole,
+          role: activeTab,
         }
       : {
           id: "",
@@ -149,7 +151,7 @@ const employees = () => {
           status: "Active",
           department: "Admin",
           assignedHospital: "",
-          role: activeRole,
+          role: activeTab,
         };
   const [form, setForm] = useState<UnifiedEmployee>(initialState);
   const [searchQuery, setSearch] = useState<string>("");
@@ -159,6 +161,9 @@ const employees = () => {
   const [isDropdownActive, setDropDownActive] = useState<boolean>(false);
   const [isEditActive, setEditActive] = useState<boolean>(false);
 
+  const handleButton1 = () => setActiveTab("PMO");
+  const handleButton2 = () => setActiveTab("DO");
+
   const filteredEmployees = employees.filter((emp) => {
     const data =
       `${emp.firstName} ${emp.middleName} ${emp.lastName} ${emp.department} ${emp.status}`.toLowerCase();
@@ -166,12 +171,12 @@ const employees = () => {
   });
 
   const displayData = useMemo(() => {
-    return filteredEmployees.filter((e) => e.role === activeRole);
-  }, [filteredEmployees, activeRole]);
+    return filteredEmployees.filter((e) => e.role === activeTab);
+  }, [filteredEmployees, activeTab]);
 
   // Edit employee
   const handleEditEmployee = (employee: UnifiedEmployee) => {
-    setActiveRole(employee.role);
+    setActiveTab(employee.role);
     setForm(employee);
     setFormVissible(true);
     setEditActive(true);
@@ -184,7 +189,7 @@ const employees = () => {
     lastName: string,
   ) => {
     Alert.alert(
-      `${activeRole === "PMO" ? "Delete PMO" : "Delete Desk Officer"}`, // Title
+      `${activeTab === "PMO" ? "Delete PMO" : "Delete Desk Officer"}`, // Title
       `Are you sure you want to delete employee ${firstName} ${lastName}?`, // Message
       [
         {
@@ -227,17 +232,17 @@ const employees = () => {
   const employeesMainSummaryData = getEmployeesSummaryData(
     employees,
     true,
-    activeRole,
+    activeTab,
   );
   const employeesSubSummaryData = getEmployeesSummaryData(
     employees,
     false,
-    activeRole,
+    activeTab,
   );
 
-  const handlePmo = () => setActiveRole("PMO");
+  const handlePmo = () => setActiveTab("PMO");
   const handleDo = () => {
-    setActiveRole("DO");
+    setActiveTab("DO");
     setDropDownActive(true);
   };
 
@@ -296,7 +301,7 @@ const employees = () => {
         firstName: form.firstName.trim(),
         middleName: form.middleName.trim(),
         lastName: form.lastName.trim(),
-        role: activeRole, // This role will identify the data either DO or PMO (activeRole === DO | PMO)
+        role: activeTab, // This role will identify the data either DO or PMO (activeRole === DO | PMO)
       } as UnifiedEmployee;
       addEmployee(newEmployeeData);
     }
@@ -348,69 +353,19 @@ const employees = () => {
       <View style={styles.container}>
         <Header
           customHeaderContainer={styles.headerContainer}
-          leftComponent={
-            <View>
-              <Text style={globalStyles.headerLabel}>Manage</Text>
-              <Text style={globalStyles.headerTitle}>Employees</Text>
-            </View>
-          }
+          leftComponent={<HeaderLeftTitle label="Manage" title="Employees" />}
           rightComponent={
-            <View style={styles.headerButtonMainContainer}>
-              {/** PMO */}
-              <Button
-                title="PMO"
-                icon={
-                  activeRole === "PMO"
-                    ? "people-circle"
-                    : "people-circle-outline"
-                }
-                iconSize={Platform.OS === "ios" ? 22 : 18}
-                iconColor={activeRole === "PMO" ? colors.white : colors.primary}
-                customContainerStyle={[
-                  styles.headerButtonContainer,
-                  {
-                    backgroundColor:
-                      activeRole === "PMO"
-                        ? colors.primaryDark
-                        : colors.primaryLight,
-                  },
-                ]}
-                customTitleStyle={[
-                  styles.headerButtonTitle,
-                  {
-                    color: activeRole === "PMO" ? colors.white : colors.primary,
-                  },
-                ]}
-                onPress={handlePmo}
-              />
-              {/** DO */}
-              <Button
-                title="DO"
-                icon={
-                  activeRole === "DO"
-                    ? "people-circle"
-                    : "people-circle-outline"
-                }
-                iconSize={Platform.OS === "ios" ? 22 : 18}
-                iconColor={activeRole === "DO" ? colors.white : colors.primary}
-                customContainerStyle={[
-                  styles.headerButtonContainer,
-                  {
-                    backgroundColor:
-                      activeRole === "DO"
-                        ? colors.primaryDark
-                        : colors.primaryLight,
-                  },
-                ]}
-                customTitleStyle={[
-                  styles.headerButtonTitle,
-                  {
-                    color: activeRole === "DO" ? colors.white : colors.primary,
-                  },
-                ]}
-                onPress={handleDo}
-              />
-            </View>
+            <DualButton
+              leftLabel="PMO"
+              rightLabel="DO"
+              leftActiveIcon="people"
+              leftIcon="people-outline"
+              rightActiveIcon="people"
+              rightIcon="people-outline"
+              onLeftPress={handleButton1}
+              onRightPress={handleButton2}
+              isActive={activeTab}
+            />
           }
           bottomComponent={
             <FlatList
@@ -454,20 +409,20 @@ const employees = () => {
               icon="add"
               iconColor={colors.white}
               iconSize={18}
-              title={activeRole === "PMO" ? "Add PMO" : "Add DO"}
+              title={activeTab === "PMO" ? "Add PMO" : "Add DO"}
               customContainerStyle={styles.mainContentButtonContainer}
               customTitleStyle={styles.mainButtonTitle}
               onPress={handleOpenForm}
             />
           </View>
           <Text style={styles.employeeCount}>
-            {activeRole === "PMO"
-              ? filteredEmployees.filter((e) => e.role === activeRole).length
-              : filteredEmployees.filter((e) => e.role === activeRole)
+            {activeTab === "PMO"
+              ? filteredEmployees.filter((e) => e.role === activeTab).length
+              : filteredEmployees.filter((e) => e.role === activeTab)
                   .length}{" "}
-            {filteredEmployees.filter((e) => e.role === activeRole).length > 1
-              ? `${activeRole}'S`
-              : `${activeRole}`}{" "}
+            {filteredEmployees.filter((e) => e.role === activeTab).length > 1
+              ? `${activeTab}'S`
+              : `${activeTab}`}{" "}
             FOUND
           </Text>
           <FlatList<UnifiedEmployee>
@@ -492,7 +447,7 @@ const employees = () => {
                   style={styles.image}
                 />
                 <Text style={styles.employeeListEmptyComponentTextStyle}>
-                  No employees yet. Tap Add {activeRole} to get started 🚀
+                  No employees yet. Tap Add {activeTab} to get started 🚀
                 </Text>
               </View>
             }
@@ -501,11 +456,11 @@ const employees = () => {
           <Form
             visible={isFormVissible}
             onClose={handleClosedForm}
-            title={`${isEditActive ? "Edit" : "Add"} ${activeRole === "PMO" ? "PMO" : "DO"}`}
-            subTitle={`${isEditActive ? "Edit the" : "Fill in the"} ${activeRole === "PMO" ? "PMO details below" : "DO details below"}`}
+            title={`${isEditActive ? "Edit" : "Add"} ${activeTab === "PMO" ? "PMO" : "DO"}`}
+            subTitle={`${isEditActive ? "Edit the" : "Fill in the"} ${activeTab === "PMO" ? "PMO details below" : "DO details below"}`}
             icon="person-add"
             onSubmit={handleSubmitEmployee}
-            buttonTitle={`${isEditActive ? "Update" : "Add"} ${activeRole === "PMO" ? "PMO" : "DO"}`}
+            buttonTitle={`${isEditActive ? "Update" : "Add"} ${activeTab === "PMO" ? "PMO" : "DO"}`}
           >
             <View style={styles.inputContainer}>
               <Input
@@ -552,7 +507,7 @@ const employees = () => {
                 error={formValidationError.position}
               />
               <Dropdown
-                disable={activeRole === "DO" && isDropdownActive}
+                disable={activeTab === "DO" && isDropdownActive}
                 label="DEPARTMENT"
                 value={form.department}
                 onValueChange={(value) =>
@@ -565,7 +520,7 @@ const employees = () => {
                 placeholder="Select department"
                 error={formValidationError.department}
               />
-              {activeRole === "DO" && (
+              {activeTab === "DO" && (
                 <Dropdown
                   label="ASSIGNED HOSPITAL"
                   value={form.role === "DO" ? form.assignedHospital : ""}
@@ -588,7 +543,7 @@ const employees = () => {
                     status: value as EmploymentStatus,
                   })
                 }
-                items={activeRole === "PMO" ? PMO_STATUSES : DO_STATUSES}
+                items={activeTab === "PMO" ? PMO_STATUSES : DO_STATUSES}
                 placeholder="Select status"
                 dropdownPosition="top"
               />
