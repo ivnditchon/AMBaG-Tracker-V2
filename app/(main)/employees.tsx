@@ -357,11 +357,11 @@ const employees = () => {
           rightComponent={
             <DualButton
               leftLabel="PMO"
+              iconLeftActive="people"
+              iconLeftInactive="people-outline"
               rightLabel="DO"
-              leftActiveIcon="people"
-              leftIcon="people-outline"
-              rightActiveIcon="people"
-              rightIcon="people-outline"
+              iconRightActive="people"
+              iconRightInactive="people-outline"
               onLeftPress={handleButton1}
               onRightPress={handleButton2}
               isActive={activeTab}

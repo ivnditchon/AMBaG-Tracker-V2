@@ -89,6 +89,9 @@ export interface DualButtonProps {
   onRightPress: () => void;
   leftLabel: string;
   rightLabel: string;
-  isActive: boolean;
-  icon: React.ComponentProps<typeof Ionicons>["name"];
+  iconLeftActive: React.ComponentProps<typeof Ionicons>["name"];
+  iconLeftInactive: React.ComponentProps<typeof Ionicons>["name"];
+  iconRightActive: React.ComponentProps<typeof Ionicons>["name"];
+  iconRightInactive: React.ComponentProps<typeof Ionicons>["name"];
+  isActive: string;
 }

@@ -1,5 +1,6 @@
 import { colors } from "@/constants/colors";
 import { DualButtonProps } from "@/types/types";
+import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import Button from "../Button";
@@ -9,14 +10,29 @@ const DualButton = ({
   onRightPress,
   leftLabel,
   rightLabel,
+  iconLeftActive,
+  iconLeftInactive,
+  iconRightActive,
+  iconRightInactive,
   isActive,
-  leftActiveIcon,
-  leftIcon,
-  rightActiveIcon,
-  rightIcon,
 }: DualButtonProps) => {
-  const isLeftActive = isActive === leftLabel;
-  const isRightActive = isActive === rightLabel;
+  const getActiveStyles = (
+    label: string,
+    activeIcon: React.ComponentProps<typeof Ionicons>["name"],
+    inActiveIcon: React.ComponentProps<typeof Ionicons>["name"],
+  ) => {
+    // Implicit return ({}) === to return object directly Object  while explicit return {} JS expects a logic and return inside function
+    const isSelected = isActive === label;
+
+    return {
+      backgroundColor: isSelected ? colors.primaryLight : "transparent",
+      color: isSelected ? colors.primaryDark : colors.primaryLight,
+      icon: isSelected ? activeIcon : inActiveIcon,
+    };
+  };
+
+  const left = getActiveStyles(leftLabel, iconLeftActive, iconLeftInactive);
+  const right = getActiveStyles(rightLabel, iconRightActive, iconRightInactive);
 
   return (
     <View style={styles.container}>
@@ -25,18 +41,18 @@ const DualButton = ({
         customContainerStyle={[
           styles.buttonContainer,
           {
-            backgroundColor: isLeftActive ? colors.primaryLight : "transparent",
+            backgroundColor: left.backgroundColor,
           },
         ]}
         customTitleStyle={[
           styles.buttonLabel,
           {
-            color: isLeftActive ? colors.primaryDark : colors.primaryLight,
+            color: left.color,
           },
         ]}
-        icon={isLeftActive ? leftActiveIcon : leftIcon}
+        icon={left.icon}
         iconSize={18}
-        iconColor={isLeftActive ? colors.primaryDark : colors.primaryLight}
+        iconColor={left.color}
         onPress={onLeftPress}
       />
       <Button
@@ -44,20 +60,18 @@ const DualButton = ({
         customContainerStyle={[
           styles.buttonContainer,
           {
-            backgroundColor: isRightActive
-              ? colors.primaryLight
-              : "transparent",
+            backgroundColor: right.backgroundColor,
           },
         ]}
         customTitleStyle={[
           styles.buttonLabel,
           {
-            color: isRightActive ? colors.primaryDark : colors.primaryLight,
+            color: right.color,
           },
         ]}
-        icon={isRightActive ? rightActiveIcon : rightIcon}
+        icon={right.icon}
         iconSize={18}
-        iconColor={isRightActive ? colors.primaryDark : colors.primaryLight}
+        iconColor={right.color}
         onPress={onRightPress}
       />
     </View>

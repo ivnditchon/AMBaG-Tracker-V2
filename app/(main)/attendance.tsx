@@ -19,11 +19,11 @@ const attendance = () => {
           rightComponent={
             <DualButton
               leftLabel="Mark"
+              iconLeftActive="pencil"
+              iconLeftInactive="pencil-outline"
               rightLabel="View"
-              leftActiveIcon="pencil"
-              leftIcon="pencil-outline"
-              rightActiveIcon="eye"
-              rightIcon="eye-off"
+              iconRightActive="eye"
+              iconRightInactive="eye-off"
               onLeftPress={handleButton1}
               onRightPress={handleButton2}
               isActive={activeTab}

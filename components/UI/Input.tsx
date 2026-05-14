@@ -22,7 +22,7 @@ type InputProps = {
   onChangeText: (text: string) => void;
   onPress?: () => void;
   error?: string;
-  autoCapitalize: "none" | "sentences" | "words" | "characters";
+  autoCapitalize?: "none" | "sentences" | "words" | "characters";
 };
 
 const Input = ({
