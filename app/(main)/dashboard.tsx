@@ -1,5 +1,6 @@
 import Header from "@/components/Layout/Header";
 import Avatar from "@/components/UI/Avatar";
+import HeaderLeftTitle from "@/components/UI/Header/HeaderLeftTitle";
 import SummaryItem from "@/components/UI/SummaryItem";
 import { colors } from "@/constants/colors";
 import { useAmbag } from "@/context/AmbagContext";
@@ -7,7 +8,7 @@ import { globalStyles } from "@/styles/globalStyle";
 import { EmployeeSummaryData, UnifiedEmployee } from "@/types/types";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 import MainLayout from "./main-layout";
 
 // Static data (outside component to prevent re-render)
@@ -70,13 +71,7 @@ const Dashboard = () => {
       <View style={styles.content}>
         <Header
           customHeaderContainer={styles.headerContainer}
-          leftComponent={
-            <View style={globalStyles.headerLeftComponentContainer}>
-              <Text style={globalStyles.headerLabel}>{greeting}</Text>
-              <Text style={globalStyles.headerTitle}>Admin Panel</Text>
-              <Text style={styles.dateText}>{getToday}</Text>
-            </View>
-          }
+          leftComponent={<HeaderLeftTitle label="Manage" title="Admin Panel" />}
           rightComponent={
             <View style={globalStyles.headerRightComponentContainer}>
               <View style={styles.bellContainer}>
