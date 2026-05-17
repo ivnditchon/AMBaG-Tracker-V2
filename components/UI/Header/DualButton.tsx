@@ -10,10 +10,10 @@ const DualButton = ({
   onRightPress,
   leftLabel,
   rightLabel,
-  iconLeftActive,
-  iconLeftInactive,
-  iconRightActive,
-  iconRightInactive,
+  leftIcon,
+  leftActiveIcon,
+  rightIcon,
+  rightActiveIcon,
   isActive,
 }: DualButtonProps) => {
   const getActiveStyles = (
@@ -31,8 +31,8 @@ const DualButton = ({
     };
   };
 
-  const left = getActiveStyles(leftLabel, iconLeftActive, iconLeftInactive);
-  const right = getActiveStyles(rightLabel, iconRightActive, iconRightInactive);
+  const left = getActiveStyles(leftLabel, leftActiveIcon, leftIcon);
+  const right = getActiveStyles(rightLabel, rightActiveIcon, rightIcon);
 
   return (
     <View style={styles.container}>

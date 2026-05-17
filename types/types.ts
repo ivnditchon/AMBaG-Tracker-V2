@@ -1,6 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 
 export type EmploymentStatus = "Active" | "Inactive" | "Pending" | "On Leave";
+export type AttendanceStatus = "Present" | "Absent" | "Late" | "Half Day" | "On Leave";
+
 export const PMO_STATUSES: EmploymentStatus[] = [
   "On Leave",
   "Pending",
@@ -89,9 +91,30 @@ export interface DualButtonProps {
   onRightPress: () => void;
   leftLabel: string;
   rightLabel: string;
-  iconLeftActive: React.ComponentProps<typeof Ionicons>["name"];
-  iconLeftInactive: React.ComponentProps<typeof Ionicons>["name"];
-  iconRightActive: React.ComponentProps<typeof Ionicons>["name"];
-  iconRightInactive: React.ComponentProps<typeof Ionicons>["name"];
   isActive: string;
+  leftIcon: React.ComponentProps<typeof Ionicons>["name"];
+  leftActiveIcon: React.ComponentProps<typeof Ionicons>["name"];
+  rightIcon: React.ComponentProps<typeof Ionicons>["name"];
+  rightActiveIcon: React.ComponentProps<typeof Ionicons>["name"];
+}
+
+export interface CardsProps {
+  firstName: string;
+  lastName: string;
+  position: string;
+  department: string;
+  employeeStatus?: EmploymentStatus // Possible undefined if optional
+  attendanceStatus?: AttendanceStatus;
+  onEmployeeEdit?: () => void;
+  onEmployeeDelete?: () => void;
+  onAttendanceEdit?: () => void;
+  onAttendanceDelete?: () => void;
+  children?: React.ReactNode;
+}
+
+export interface CardProps {
+  listType: string;
+  topLeftComponent: React.ReactNode;
+  topRightComponent: React.ReactNode;
+  bottomComponent: React.ReactNode;
 }

@@ -23,4 +23,6 @@ export const colors = {
   placeholder: "#d4d2d2",
   purpleLight: "#ede7f6",
   purple: "#6a1b9a",
+  teal: "#B2DFDB",
+  tealLight: "#80CBC4"
 };

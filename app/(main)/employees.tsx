@@ -162,7 +162,10 @@ const employees = () => {
   const [isEditActive, setEditActive] = useState<boolean>(false);
 
   const handleButton1 = () => setActiveTab("PMO");
-  const handleButton2 = () => setActiveTab("DO");
+  const handleButton2 = () => {
+    setActiveTab("DO");
+    setDropDownActive(true);
+  };
 
   const filteredEmployees = employees.filter((emp) => {
     const data =
@@ -217,9 +220,9 @@ const employees = () => {
         department={
           item.role === "PMO" ? item.department : item.assignedHospital
         }
-        status={item.status}
-        onEdit={() => handleEditEmployee(item)}
-        onDelete={() =>
+        employeeStatus={item.status}
+        onEmployeeEdit={() => handleEditEmployee(item)}
+        onEmployeeDelete={() =>
           handleRemoveEmployee(item.id, item.firstName, item.lastName)
         }
       />
@@ -239,12 +242,6 @@ const employees = () => {
     false,
     activeTab,
   );
-
-  const handlePmo = () => setActiveTab("PMO");
-  const handleDo = () => {
-    setActiveTab("DO");
-    setDropDownActive(true);
-  };
 
   const handleOpenForm = () => {
     setForm(initialState); // Reset the form to initial empty values
@@ -345,9 +342,6 @@ const employees = () => {
     "Cotabato Sanitarium and General Hospital",
   ];
 
-  // Status options
-  const statusOptions = ["On Leave", "Pending", "Inactive", "Active"];
-
   return (
     <MainLayout>
       <View style={styles.container}>
@@ -357,11 +351,11 @@ const employees = () => {
           rightComponent={
             <DualButton
               leftLabel="PMO"
-              iconLeftActive="people"
-              iconLeftInactive="people-outline"
+              leftActiveIcon="people"
+              leftIcon="people-outline"
               rightLabel="DO"
-              iconRightActive="people"
-              iconRightInactive="people-outline"
+              rightActiveIcon="people"
+              rightIcon="people-outline"
               onLeftPress={handleButton1}
               onRightPress={handleButton2}
               isActive={activeTab}

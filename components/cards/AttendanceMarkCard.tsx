@@ -4,25 +4,27 @@ import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-const EmployeeCard = ({
+const AttendanceMarkCard = ({
   firstName,
   lastName,
   position,
   department,
-  employeeStatus,
-  onEmployeeEdit,
-  onEmployeeDelete,
+  attendanceStatus,
+  onAttendanceEdit,
+  onAttendanceDelete,
   children,
 }: CardsProps) => {
   const getStatusStyles = (status?: string) => {
     // If the type is optional and pass it into parameter make sure the parameter is optional too
     switch (status) {
-      case "Active":
+      case "Present":
         return { bg: colors.primaryLight, color: colors.primaryDark };
-      case "Inactive":
+      case "Absent":
         return { bg: colors.dangerLight, color: colors.danger };
-      case "Pending":
+      case "Late":
         return { bg: colors.warningLight, color: colors.warning };
+      case "Half Day":
+        return { bg: colors.tealLight, color: colors.teal };
       case "On Leave":
         return { bg: colors.purpleLight, color: colors.purple };
       default:
@@ -30,11 +32,9 @@ const EmployeeCard = ({
     }
   };
 
-  const statusStyles = getStatusStyles(employeeStatus);
-
+  const statusStyles = getStatusStyles(attendanceStatus);
   return (
     <View style={styles.container}>
-      {children}
       <View style={styles.employeeInfoContainer}>
         <View style={styles.employeeNameContainer}>
           <Text style={styles.employeeNameTextStyle}>{firstName} </Text>
@@ -44,6 +44,7 @@ const EmployeeCard = ({
           <Text style={styles.employeePositionText}>{position}</Text>
         </View>
         <Text style={styles.employeeDesignationText}>{department}</Text>
+
         <View
           style={[
             styles.employeeStatusContainer,
@@ -68,15 +69,15 @@ const EmployeeCard = ({
               },
             ]}
           >
-            {employeeStatus}
+            {attendanceStatus}
           </Text>
         </View>
       </View>
       <View style={styles.employeeActionsContainer}>
-        <TouchableOpacity activeOpacity={0.8} onPress={onEmployeeEdit}>
+        <TouchableOpacity activeOpacity={0.8} onPress={onAttendanceEdit}>
           <Ionicons name="create-outline" size={22} color={colors.warning} />
         </TouchableOpacity>
-        <TouchableOpacity activeOpacity={0.8} onPress={onEmployeeDelete}>
+        <TouchableOpacity activeOpacity={0.8} onPress={onAttendanceDelete}>
           <Ionicons name="trash-outline" size={22} color={colors.danger} />
         </TouchableOpacity>
       </View>
@@ -84,7 +85,7 @@ const EmployeeCard = ({
   );
 };
 
-export default EmployeeCard;
+export default AttendanceMarkCard;
 
 const styles = StyleSheet.create({
   container: {

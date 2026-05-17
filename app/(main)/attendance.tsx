@@ -1,20 +1,32 @@
+import Card from "@/components/Cards/Card";
 import Header from "@/components/Layout/Header";
+import Button from "@/components/UI/Button";
 import DualButton from "@/components/UI/Header/DualButton";
 import HeaderLeftTitle from "@/components/UI/Header/HeaderLeftTitle";
 import { colors } from "@/constants/colors";
+import { useAmbag } from "@/context/AmbagContext";
+import { UnifiedEmployee } from "@/types/types";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import React, { useState } from "react";
-import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useCallback, useMemo, useState } from "react";
+import {
+  FlatList,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import MainLayout from "./main-layout";
 
 const attendance = () => {
-  const [activeTab, setActiveTab] = useState<"Mark" | "View">("Mark");
+  const { employees } = useAmbag();
+  const [activeTab, setActiveTab] = useState<"MARK" | "VIEW">("MARK");
   const [attendanceDate, setAttendanceDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
 
-  const handleButton1 = () => setActiveTab("Mark");
-  const handleButton2 = () => setActiveTab("View");
+  const handleButton1 = () => setActiveTab("MARK");
+  const handleButton2 = () => setActiveTab("VIEW");
 
   const showDate = () => setShowPicker(true);
   const onDateChange = (event: any, selectedDate?: Date) => {
@@ -22,6 +34,85 @@ const attendance = () => {
       setAttendanceDate(selectedDate);
     }
   };
+
+  const displayData = useMemo(() => {
+    return employees.filter((e) => e.role === "PMO");
+  }, [employees, activeTab]);
+
+  const renderItem = useCallback(
+    ({ item }: { item: UnifiedEmployee }) => (
+      <Card
+        listType={`${activeTab}_ATTENDANCE`}
+        topLeftComponent={
+          <View>
+            <View style={{ flexDirection: "row" }}>
+              <Text>{item.firstName}</Text>
+              <Text>{item.lastName}</Text>
+            </View>
+            <Text>{item.position}</Text>
+            <Text>{item.department}</Text>
+          </View>
+        }
+        topRightComponent={<Text>Not yet marked</Text>}
+        bottomComponent={
+          <View
+            style={{
+              flexDirection: "row",
+              marginTop: 10,
+              justifyContent: "space-between",
+            }}
+          >
+            <Button
+              title="Present"
+              customContainerStyle={styles.buttonContainer}
+              customTitleStyle={styles.buttonTextStyle}
+              icon="checkmark-done"
+              iconSize={18}
+              iconColor={colors.primaryDark}
+              onPress={() => console.log()}
+            />
+            <Button
+              title="Absent"
+              customContainerStyle={styles.buttonContainer}
+              customTitleStyle={styles.buttonTextStyle}
+              icon="checkmark-done"
+              iconSize={18}
+              iconColor={colors.primaryDark}
+              onPress={() => console.log()}
+            />
+            <Button
+              title="Late"
+              customContainerStyle={styles.buttonContainer}
+              customTitleStyle={styles.buttonTextStyle}
+              icon="checkmark-done"
+              iconSize={18}
+              iconColor={colors.primaryDark}
+              onPress={() => console.log()}
+            />
+            <Button
+              title="Half day"
+              customContainerStyle={styles.buttonContainer}
+              customTitleStyle={styles.buttonTextStyle}
+              icon="checkmark-done"
+              iconSize={18}
+              iconColor={colors.primaryDark}
+              onPress={() => console.log()}
+            />
+            <Button
+              title="On Leave"
+              customContainerStyle={styles.buttonContainer}
+              customTitleStyle={styles.buttonTextStyle}
+              icon="checkmark-done"
+              iconSize={18}
+              iconColor={colors.primaryDark}
+              onPress={() => console.log()}
+            />
+          </View>
+        }
+      />
+    ),
+    [],
+  );
 
   return (
     <MainLayout>
@@ -32,11 +123,11 @@ const attendance = () => {
           rightComponent={
             <DualButton
               leftLabel="Mark"
-              iconLeftActive="pencil"
-              iconLeftInactive="pencil-outline"
+              leftActiveIcon="pencil"
+              leftIcon="pencil-outline"
               rightLabel="View"
-              iconRightActive="eye"
-              iconRightInactive="eye-off-outline"
+              rightActiveIcon="eye"
+              rightIcon="eye-off-outline"
               onLeftPress={handleButton1}
               onRightPress={handleButton2}
               isActive={activeTab}
@@ -104,6 +195,20 @@ const attendance = () => {
             </View>
           }
         />
+        {/** Main Content */}
+        <View style={styles.mainContent}>
+          <Text>TODAY'S ATTENDANCE -</Text>
+          <FlatList<UnifiedEmployee>
+            data={displayData}
+            keyExtractor={(item) => item.id}
+            renderItem={renderItem}
+            // Performance props
+            initialNumToRender={10}
+            maxToRenderPerBatch={5}
+            windowSize={5}
+            removeClippedSubviews={true} // For android lag
+          />
+        </View>
       </View>
     </MainLayout>
   );
@@ -199,7 +304,7 @@ const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
     justifyContent: "flex-end",
-    backgroundColor: "rgba(0,0,0,0.5)", // Madilim na background sa likod
+    backgroundColor: "rgba(0,0,0,0.5)",
   },
   modalContent: {
     backgroundColor: "white",
@@ -214,5 +319,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
+  },
+
+  mainContent: {
+    flex: 1,
+    paddingHorizontal: 25,
+  },
+
+  buttonContainer: {
+    backgroundColor: colors.gray,
+  },
+
+  buttonTextStyle: {
+    fontFamily: "DINBold",
   },
 });
