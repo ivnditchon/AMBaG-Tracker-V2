@@ -71,8 +71,10 @@ const Dashboard = () => {
       <View style={styles.content}>
         <Header
           customHeaderContainer={styles.headerContainer}
-          leftComponent={<HeaderLeftTitle label="Manage" title="Admin Panel" />}
-          rightComponent={
+          topLeftComponent={
+            <HeaderLeftTitle label="Manage" title="Admin Panel" />
+          }
+          topRightComponent={
             <View style={globalStyles.headerRightComponentContainer}>
               <View style={styles.bellContainer}>
                 <Ionicons

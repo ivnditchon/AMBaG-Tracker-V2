@@ -19,10 +19,13 @@ export const colors = {
   footerIconDefault: "#a0a1a1",
   lightGray: "#f1f5f9",
   gray: "#9e9e9e",
+  softGray: "#d1f0e5",
   inputBg: "#f8fffe",
   placeholder: "#d4d2d2",
   purpleLight: "#ede7f6",
   purple: "#6a1b9a",
   teal: "#B2DFDB",
-  tealLight: "#80CBC4"
+  tealLight: "#80CBC4",
+  blue: "#0288d1",
+  blueLight: "#e0f2fe",
 };

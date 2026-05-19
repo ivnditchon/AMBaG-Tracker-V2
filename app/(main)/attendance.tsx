@@ -1,11 +1,13 @@
 import Card from "@/components/Cards/Card";
+import CardInfo from "@/components/Cards/CardInfo";
+import CardStatus from "@/components/Cards/CardStatus";
 import Header from "@/components/Layout/Header";
 import Button from "@/components/UI/Button";
 import DualButton from "@/components/UI/Header/DualButton";
 import HeaderLeftTitle from "@/components/UI/Header/HeaderLeftTitle";
 import { colors } from "@/constants/colors";
 import { useAmbag } from "@/context/AmbagContext";
-import { UnifiedEmployee } from "@/types/types";
+import { EmployeeWithAttendanceStatus } from "@/types/types";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import React, { useCallback, useMemo, useState } from "react";
@@ -19,99 +21,120 @@ import {
 } from "react-native";
 import MainLayout from "./main-layout";
 
+const ATTENDANCE_BUTTONS = [
+  {
+    title: "Present",
+    icon: "checkmark-done-circle-outline",
+    color: colors.primaryDark,
+    active: colors.primaryLight,
+  },
+  {
+    title: "Absent",
+    icon: "close-circle-outline",
+    color: colors.danger,
+    active: colors.dangerLight,
+  },
+  {
+    title: "Late",
+    icon: "time-outline",
+    color: colors.warning,
+    active: colors.warningLight,
+  },
+  {
+    title: "Half Day",
+    icon: "hourglass-outline",
+    color: colors.purple,
+    active: colors.purpleLight,
+  },
+  {
+    title: "On Leave",
+    icon: "calendar-outline",
+    color: colors.blue,
+    active: colors.blueLight,
+  },
+];
+
 const attendance = () => {
-  const { employees } = useAmbag();
+  const {
+    employeesForCurrentDate,
+    selectedDate,
+    setSelectedDate,
+    updateAttendanceStatus,
+  } = useAmbag();
+
   const [activeTab, setActiveTab] = useState<"MARK" | "VIEW">("MARK");
-  const [attendanceDate, setAttendanceDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
+
+  const attendanceDate = useMemo(() => new Date(selectedDate), [selectedDate]);
 
   const handleButton1 = () => setActiveTab("MARK");
   const handleButton2 = () => setActiveTab("VIEW");
 
   const showDate = () => setShowPicker(true);
-  const onDateChange = (event: any, selectedDate?: Date) => {
-    if (selectedDate) {
-      setAttendanceDate(selectedDate);
+  const onDateChange = (event: any, date?: Date) => {
+    if (date) {
+      const formattedDate = date.toISOString().split("T")[0];
+      setSelectedDate(formattedDate);
     }
   };
 
-  const displayData = useMemo(() => {
-    return employees.filter((e) => e.role === "PMO");
-  }, [employees, activeTab]);
+  const filteredEmployees = useMemo((): EmployeeWithAttendanceStatus[] => {
+    return employeesForCurrentDate.filter((e) => e.role === "PMO");
+  }, [employeesForCurrentDate]);
 
   const renderItem = useCallback(
-    ({ item }: { item: UnifiedEmployee }) => (
-      <Card
-        listType={`${activeTab}_ATTENDANCE`}
-        topLeftComponent={
-          <View>
-            <View style={{ flexDirection: "row" }}>
-              <Text>{item.firstName}</Text>
-              <Text>{item.lastName}</Text>
+    ({ item }: { item: EmployeeWithAttendanceStatus }) => {
+      const currentStatus = item.attendanceStatus;
+      const isMarked = item.hasMarked;
+
+      return (
+        <Card
+          listType={`${activeTab}_ATTENDANCE`}
+          topLeftComponent={
+            <CardInfo
+              firstName={item.firstName}
+              lastName={item.lastName}
+              position={item.position}
+              department={item.department}
+            />
+          }
+          topRightComponent={
+            <CardStatus status={currentStatus || "Not marked yet"} />
+          }
+          bottomComponent={
+            <View style={styles.buttonContainer}>
+              {ATTENDANCE_BUTTONS.map((btn) => {
+                const isActive = currentStatus === btn.title;
+                return (
+                  <Button
+                    key={btn.title}
+                    title={btn.title}
+                    customContainerStyle={[
+                      styles.buttonStyle,
+                      isActive && {
+                        borderColor: btn.color,
+                        backgroundColor: btn.active,
+                      },
+                    ]}
+                    customTitleStyle={[
+                      styles.buttonTextStyle,
+                      isActive && { color: btn.color },
+                    ]}
+                    icon={btn.icon as any}
+                    iconSize={16}
+                    iconColor={btn.color}
+                    onPress={() => {
+                      updateAttendanceStatus(item.id, btn.title as any);
+                    }}
+                  />
+                );
+              })}
             </View>
-            <Text>{item.position}</Text>
-            <Text>{item.department}</Text>
-          </View>
-        }
-        topRightComponent={<Text>Not yet marked</Text>}
-        bottomComponent={
-          <View
-            style={{
-              flexDirection: "row",
-              marginTop: 10,
-              justifyContent: "space-between",
-            }}
-          >
-            <Button
-              title="Present"
-              customContainerStyle={styles.buttonContainer}
-              customTitleStyle={styles.buttonTextStyle}
-              icon="checkmark-done"
-              iconSize={18}
-              iconColor={colors.primaryDark}
-              onPress={() => console.log()}
-            />
-            <Button
-              title="Absent"
-              customContainerStyle={styles.buttonContainer}
-              customTitleStyle={styles.buttonTextStyle}
-              icon="checkmark-done"
-              iconSize={18}
-              iconColor={colors.primaryDark}
-              onPress={() => console.log()}
-            />
-            <Button
-              title="Late"
-              customContainerStyle={styles.buttonContainer}
-              customTitleStyle={styles.buttonTextStyle}
-              icon="checkmark-done"
-              iconSize={18}
-              iconColor={colors.primaryDark}
-              onPress={() => console.log()}
-            />
-            <Button
-              title="Half day"
-              customContainerStyle={styles.buttonContainer}
-              customTitleStyle={styles.buttonTextStyle}
-              icon="checkmark-done"
-              iconSize={18}
-              iconColor={colors.primaryDark}
-              onPress={() => console.log()}
-            />
-            <Button
-              title="On Leave"
-              customContainerStyle={styles.buttonContainer}
-              customTitleStyle={styles.buttonTextStyle}
-              icon="checkmark-done"
-              iconSize={18}
-              iconColor={colors.primaryDark}
-              onPress={() => console.log()}
-            />
-          </View>
-        }
-      />
-    ),
-    [],
+          }
+        />
+      );
+    },
+    [activeTab, updateAttendanceStatus],
   );
 
   return (
@@ -119,8 +142,10 @@ const attendance = () => {
       <View style={styles.container}>
         <Header
           customHeaderContainer={styles.headerContainer}
-          leftComponent={<HeaderLeftTitle label="Track" title="Attendance" />}
-          rightComponent={
+          topLeftComponent={
+            <HeaderLeftTitle label="Track" title="Attendance" />
+          }
+          topRightComponent={
             <DualButton
               leftLabel="Mark"
               leftActiveIcon="pencil"
@@ -198,10 +223,11 @@ const attendance = () => {
         {/** Main Content */}
         <View style={styles.mainContent}>
           <Text>TODAY'S ATTENDANCE -</Text>
-          <FlatList<UnifiedEmployee>
-            data={displayData}
+          <FlatList<EmployeeWithAttendanceStatus>
+            data={filteredEmployees}
             keyExtractor={(item) => item.id}
             renderItem={renderItem}
+            contentContainerStyle={styles.attendanceListContentContainerStyle}
             // Performance props
             initialNumToRender={10}
             maxToRenderPerBatch={5}
@@ -231,17 +257,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: "rgba(255,255,255,0.15)",
     padding: 3,
-  },
-
-  headerButtonContainer: {
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-  },
-
-  headerButtonTitle: {
-    fontSize: 14,
-    marginLeft: 5,
   },
 
   selectedDateContainer: {
@@ -327,10 +342,33 @@ const styles = StyleSheet.create({
   },
 
   buttonContainer: {
-    backgroundColor: colors.gray,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginTop: 20,
+    gap: 10,
+    justifyContent: "flex-start",
+  },
+
+  buttonStyle: {
+    backgroundColor: colors.inputBg,
+    borderWidth: 1,
+    borderColor: colors.softGray,
+    paddingVertical: 7,
+    paddingHorizontal: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 5,
   },
 
   buttonTextStyle: {
     fontFamily: "DINBold",
+    color: colors.gray,
+    fontSize: 14,
+    textAlign: "center",
+  },
+
+  attendanceListContentContainerStyle: {
+    gap: 10,
   },
 });

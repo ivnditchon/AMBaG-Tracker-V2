@@ -30,7 +30,6 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     padding: 20,
-    borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: "#fff",
     borderRadius: 10,
@@ -47,7 +46,7 @@ const styles = StyleSheet.create({
   topComponentContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    borderWidth: 1,
+    alignItems: "flex-start",
   },
 
   actionsContainer: {

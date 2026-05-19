@@ -1,7 +1,13 @@
 import { Ionicons } from "@expo/vector-icons";
+import { StyleProp, ViewStyle } from "react-native";
 
 export type EmploymentStatus = "Active" | "Inactive" | "Pending" | "On Leave";
-export type AttendanceStatus = "Present" | "Absent" | "Late" | "Half Day" | "On Leave";
+export type AttendanceStatus =
+  | "Present"
+  | "Absent"
+  | "Late"
+  | "Half Day"
+  | "On Leave";
 
 export const PMO_STATUSES: EmploymentStatus[] = [
   "On Leave",
@@ -103,7 +109,7 @@ export interface CardsProps {
   lastName: string;
   position: string;
   department: string;
-  employeeStatus?: EmploymentStatus // Possible undefined if optional
+  employeeStatus?: EmploymentStatus; // Possible undefined if optional
   attendanceStatus?: AttendanceStatus;
   onEmployeeEdit?: () => void;
   onEmployeeDelete?: () => void;
@@ -118,3 +124,34 @@ export interface CardProps {
   topRightComponent: React.ReactNode;
   bottomComponent: React.ReactNode;
 }
+
+export interface CardEmployeeInfoProps {
+  firstName: string;
+  lastName: string;
+  position: string;
+  department: string;
+}
+
+export interface HeaderProps {
+  topLeftComponent?: React.ReactNode;
+  topRightComponent?: React.ReactNode;
+  bottomComponent?: React.ReactNode;
+  customHeaderContainer: StyleProp<ViewStyle>;
+}
+
+export interface CardStatusProps {
+  status: string;
+}
+
+export interface AttendanceRecord {
+  id: string;
+  employeeId: string;
+  date: string;
+  status: AttendanceStatus;
+}
+
+// Ang shape ng employee kapag nilagyan na ng pansamantalang status para sa screen
+export type EmployeeWithAttendanceStatus = UnifiedEmployee & {
+  attendanceStatus: string; // "Present", "Absent", etc., o "" kung wala pang marka
+  hasMarked: boolean; // true kung may marka na, false kung wala pa
+};

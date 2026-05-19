@@ -1,4 +1,4 @@
-import BackButton from "@/components/BackButton";
+import BackButton from "@/components/backButton";
 import ScreenTitle from "@/components/ScreenTitle";
 import Button from "@/components/UI/Button";
 import Input from "@/components/UI/Input";

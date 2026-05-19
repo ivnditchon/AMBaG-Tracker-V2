@@ -104,28 +104,26 @@ export default function MainLayout({ children }: MainLayoutProps) {
     <PaperProvider>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
-          <View style={styles.subContainer}>
-            {/** Main Content */}
-            {children}
-            {/** Footer section (fixed in every screen) */}
-            <View style={styles.footer}>
-              {footerData.map((item) => (
-                <FooterMenu
-                  key={item.label}
-                  icon={item.icon}
-                  isActive={item.isActive}
-                  activeIcon={item.activeIcon}
-                  labelFont={item.labelFont}
-                  activeLabelFont={item.activeLabelFont}
-                  labelColor={item.labelColor}
-                  activeLabelColor={item.activeLabelColor}
-                  color={item.color}
-                  activeColor={item.activeColor}
-                  label={item.label}
-                  onPress={item.onPress}
-                />
-              ))}
-            </View>
+          {/** Main Content */}
+          {children}
+          {/** Footer section (fixed in every screen) */}
+          <View style={styles.footer}>
+            {footerData.map((item) => (
+              <FooterMenu
+                key={item.label}
+                icon={item.icon}
+                isActive={item.isActive}
+                activeIcon={item.activeIcon}
+                labelFont={item.labelFont}
+                activeLabelFont={item.activeLabelFont}
+                labelColor={item.labelColor}
+                activeLabelColor={item.activeLabelColor}
+                color={item.color}
+                activeColor={item.activeColor}
+                label={item.label}
+                onPress={item.onPress}
+              />
+            ))}
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -137,10 +135,6 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-  },
-
-  subContainer: {
-    flex: 1,
   },
 
   footer: {

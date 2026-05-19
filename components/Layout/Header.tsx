@@ -1,17 +1,11 @@
+import { HeaderProps } from "@/types/types";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
-import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
-
-type HeaderProps = {
-  leftComponent?: React.ReactNode;
-  rightComponent?: React.ReactNode;
-  bottomComponent?: React.ReactNode;
-  customHeaderContainer: StyleProp<ViewStyle>;
-};
+import { StyleSheet, View } from "react-native";
 
 const Header = ({
-  leftComponent,
-  rightComponent,
+  topLeftComponent,
+  topRightComponent,
   bottomComponent,
   customHeaderContainer,
 }: HeaderProps) => {
@@ -24,8 +18,8 @@ const Header = ({
         style={styles.headerSubContainer}
       >
         <View style={styles.subContainer}>
-          {leftComponent}
-          {rightComponent}
+          {topLeftComponent}
+          {topRightComponent}
         </View>
         {bottomComponent}
       </LinearGradient>

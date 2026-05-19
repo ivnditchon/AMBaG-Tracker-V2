@@ -1,6 +1,18 @@
-import { UnifiedEmployee } from "@/types/types";
+import {
+  AttendanceRecord,
+  AttendanceStatus,
+  EmployeeWithAttendanceStatus,
+  UnifiedEmployee,
+} from "@/types/types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 // Define shape of the context
 interface AmbagContextType {
@@ -9,8 +21,16 @@ interface AmbagContextType {
   addEmployee: (employee: UnifiedEmployee) => void;
   editEmployee: (id: string, form: UnifiedEmployee) => void;
   removeEmployee: (id: string) => void;
+  // Attendance
+  attendanceRecords: AttendanceRecord[];
+  selectedDate: string;
+  setSelectedDate: (Date: string) => void;
+  employeesForCurrentDate: EmployeeWithAttendanceStatus[];
+  updateAttendanceStatus: (
+    employeeId: string,
+    status: AttendanceStatus,
+  ) => void;
 }
-
 // Create the context with a default value
 const AmbagContext = createContext<AmbagContextType>({
   employees: [],
@@ -18,6 +38,12 @@ const AmbagContext = createContext<AmbagContextType>({
   addEmployee: () => {},
   editEmployee: () => {},
   removeEmployee: () => {},
+  // Attendance
+  attendanceRecords: [],
+  selectedDate: new Date().toISOString().split("T")[0],
+  setSelectedDate: () => {},
+  employeesForCurrentDate: [],
+  updateAttendanceStatus: () => {},
 });
 
 const EMPLOYEE_KEY = "ambag_employees";
@@ -28,6 +54,12 @@ type ChildrenProps = {
 
 export const AmbagProvider = ({ children }: ChildrenProps) => {
   const [employees, setEmployees] = useState<UnifiedEmployee[]>([]);
+  const [attendanceRecords, setAttendanceRecords] = useState<
+    AttendanceRecord[]
+  >([]);
+  const [selectedDate, setSelectedDate] = useState<string>(
+    new Date().toISOString().split("T")[0],
+  ); // Default date today
   const [loading, setLoading] = useState(true);
 
   // Load from AsyncStorage (once)
@@ -82,6 +114,47 @@ export const AmbagProvider = ({ children }: ChildrenProps) => {
     setEmployees((prev) => prev.filter((emp) => emp.id !== id));
   };
 
+  const employeesForCurrentDate = useMemo(() => {
+    return employees.map((emp) => {
+      const foundRecord = attendanceRecords.find(
+        (rec) => rec.employeeId === emp.id && rec.date === selectedDate,
+      );
+      return {
+        ...emp,
+        attendanceStatus: foundRecord ? foundRecord.status : "",
+        hasMarked: foundRecord ? true : false,
+      };
+    });
+  }, [employees, attendanceRecords, selectedDate]);
+
+  const updateAttendanceStatus = useCallback(
+    (employeeId: string, status: AttendanceStatus) => {
+      setAttendanceRecords((prevRecords) => {
+        const recordIndex = prevRecords.findIndex(
+          (rec) => rec.employeeId === employeeId && rec.date === selectedDate,
+        );
+
+        if (recordIndex > -1) {
+          const updateRecords = [...prevRecords];
+          updateRecords[recordIndex] = {
+            ...updateRecords[recordIndex],
+            status: status,
+          };
+          return updateRecords;
+        } else {
+          const newRecord: AttendanceRecord = {
+            id: `ATT-${Date.now()}`,
+            employeeId: employeeId,
+            date: selectedDate, // Nakakandado sa selectedDate ng screen
+            status: status,
+          };
+          return [...prevRecords, newRecord];
+        }
+      });
+    },
+    [selectedDate],
+  );
+
   return (
     <AmbagContext.Provider
       value={{
@@ -90,6 +163,12 @@ export const AmbagProvider = ({ children }: ChildrenProps) => {
         addEmployee,
         editEmployee,
         removeEmployee,
+        // Attendance
+        attendanceRecords,
+        selectedDate,
+        setSelectedDate,
+        employeesForCurrentDate,
+        updateAttendanceStatus,
       }}
     >
       {children}
@@ -97,4 +176,8 @@ export const AmbagProvider = ({ children }: ChildrenProps) => {
   );
 };
 
-export const useAmbag = () => useContext(AmbagContext);
+export const useAmbag = () => {
+  const context = useContext(AmbagContext);
+  if (!context) throw new Error("useAmbag must be used within AmbagProvider");
+  return context;
+};

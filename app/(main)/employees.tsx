@@ -347,8 +347,10 @@ const employees = () => {
       <View style={styles.container}>
         <Header
           customHeaderContainer={styles.headerContainer}
-          leftComponent={<HeaderLeftTitle label="Manage" title="Employees" />}
-          rightComponent={
+          topLeftComponent={
+            <HeaderLeftTitle label="Manage" title="Employees" />
+          }
+          topRightComponent={
             <DualButton
               leftLabel="PMO"
               leftActiveIcon="people"
