@@ -5,7 +5,9 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const EmployeeCard = ({
+  id,
   firstName,
+  middleName,
   lastName,
   position,
   department,
@@ -73,10 +75,28 @@ const EmployeeCard = ({
         </View>
       </View>
       <View style={styles.employeeActionsContainer}>
-        <TouchableOpacity activeOpacity={0.8} onPress={onEmployeeEdit}>
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() =>
+            onEmployeeEdit?.({
+              id,
+              firstName,
+              middleName,
+              lastName,
+              position,
+              department,
+              status: employeeStatus,
+            })
+          }
+        >
           <Ionicons name="create-outline" size={22} color={colors.warning} />
         </TouchableOpacity>
-        <TouchableOpacity activeOpacity={0.8} onPress={onEmployeeDelete}>
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() =>
+            onEmployeeDelete?.(id || "", firstName || "", lastName || "")
+          }
+        >
           <Ionicons name="trash-outline" size={22} color={colors.danger} />
         </TouchableOpacity>
       </View>

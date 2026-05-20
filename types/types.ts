@@ -105,14 +105,20 @@ export interface DualButtonProps {
 }
 
 export interface CardsProps {
+  id?: string;
   firstName: string;
+  middleName: string;
   lastName: string;
   position: string;
   department: string;
   employeeStatus?: EmploymentStatus; // Possible undefined if optional
   attendanceStatus?: AttendanceStatus;
-  onEmployeeEdit?: () => void;
-  onEmployeeDelete?: () => void;
+  onEmployeeEdit?: (employee: any) => void;
+  onEmployeeDelete?: (
+    id: string,
+    firstName?: string,
+    lastName?: string,
+  ) => void;
   onAttendanceEdit?: () => void;
   onAttendanceDelete?: () => void;
   children?: React.ReactNode;

@@ -130,8 +130,8 @@ const employees = () => {
   const { employees, addEmployee, editEmployee, removeEmployee, loading } =
     useAmbag();
   const [activeTab, setActiveTab] = useState<"PMO" | "DO">("PMO");
-  const initialState: UnifiedEmployee =
-    activeTab === "PMO"
+  const getBlankForm = (role: "PMO" | "DO"): UnifiedEmployee => {
+    return role === "PMO"
       ? {
           id: "",
           firstName: "",
@@ -140,7 +140,7 @@ const employees = () => {
           position: "",
           status: "Active",
           department: "",
-          role: activeTab,
+          role: "PMO",
         }
       : {
           id: "",
@@ -151,9 +151,11 @@ const employees = () => {
           status: "Active",
           department: "Admin",
           assignedHospital: "",
-          role: activeTab,
+          role: "DO",
         };
-  const [form, setForm] = useState<UnifiedEmployee>(initialState);
+  };
+
+  const [form, setForm] = useState<UnifiedEmployee>(getBlankForm(activeTab));
   const [searchQuery, setSearch] = useState<string>("");
   const [isFormVissible, setFormVissible] = useState<boolean>(false);
   const [formValidationError, setFormValidationError] =
@@ -161,69 +163,110 @@ const employees = () => {
   const [isDropdownActive, setDropDownActive] = useState<boolean>(false);
   const [isEditActive, setEditActive] = useState<boolean>(false);
 
-  const handleButton1 = () => setActiveTab("PMO");
-  const handleButton2 = () => {
+  const handleButton1 = useCallback(() => setActiveTab("PMO"), []);
+  const handleButton2 = useCallback(() => {
     setActiveTab("DO");
     setDropDownActive(true);
-  };
-
-  const filteredEmployees = employees.filter((emp) => {
-    const data =
-      `${emp.firstName} ${emp.middleName} ${emp.lastName} ${emp.department} ${emp.status}`.toLowerCase();
-    return data.includes(searchQuery.toLowerCase());
-  });
+  }, []);
 
   const displayData = useMemo(() => {
-    return filteredEmployees.filter((e) => e.role === activeTab);
-  }, [filteredEmployees, activeTab]);
+    const cleanSearchQuery = searchQuery.trim().toLocaleLowerCase();
+
+    return employees.filter((emp) => {
+      // 1. PINAGANDANG UNANG SALA (PMO vs Desk Officer Logic)
+      if (activeTab === "PMO") {
+        // Kung PMO tab ang active, dapat PMO lang ang ipasa. Kung hindi PMO, block agad!
+        if (emp.role !== "PMO") return false;
+      } else {
+        // Kung DO tab naman ang active, ipakita lahat ng HINDI PMO. Kung PMO siya, block natin!
+        if (emp.role === "PMO") return false;
+      }
+
+      // 2. PANGALAWANG SALA (Search Query Check)
+      // Kung walang tina-type ang user, pasok na agad ang natitirang employees!
+      if (!cleanSearchQuery) return true;
+
+      // Kung may tina-type, dito lang natin gagawin ang string conversion para tipid sa memory
+      const searchString =
+        `${emp.firstName} ${emp.middleName || ""} ${emp.lastName} ${emp.department || ""} ${emp.status || ""}`.toLowerCase();
+
+      return searchString.includes(cleanSearchQuery);
+    });
+  }, [employees, searchQuery, activeTab]);
 
   // Edit employee
-  const handleEditEmployee = (employee: UnifiedEmployee) => {
-    setActiveTab(employee.role);
-    setForm(employee);
-    setFormVissible(true);
-    setEditActive(true);
-  };
+  const handleEditEmployee = useCallback(
+    (employee: any) => {
+      // PIGIL-SABOTAHE: Kung walang dalang role ang card, gamitin kung ano ang kasalukuyang activeTab natin (PMO o DO)
+      const employeeRole = employee.role || activeTab;
+
+      // Binuo natin ang kumpletong UnifiedEmployee object na may selyadong role
+      const formattedEmployee: UnifiedEmployee = {
+        id: employee.id || "",
+        firstName: employee.firstName || "",
+        middleName: employee.middleName || "",
+        lastName: employee.lastName || "",
+        position: employee.position || "",
+        status: employee.employeeStatus || employee.status || "Active",
+        role: employeeRole, // <--- Selyado! Siguradong "PMO" o "DO" ito ngayon, hindi na undefined!
+
+        // Kung PMO, ibigay ang department. Kung DO, ibigay ang assignedHospital
+        ...(employeeRole === "PMO"
+          ? { department: employee.department || "" }
+          : {
+              department: "Admin",
+              assignedHospital: employee.department || "",
+            }),
+      };
+
+      setActiveTab(employeeRole); // <--- Ligtas na! Siguradong totoong tab string ang maseset
+      setForm(formattedEmployee);
+      setFormVissible(true);
+      setEditActive(true);
+    },
+    [activeTab],
+  ); // <--- Kailangan bantayan si activeTab para sa fallback value
 
   // Remove employee
-  const handleRemoveEmployee = (
-    id: string,
-    firstName: string,
-    lastName: string,
-  ) => {
-    Alert.alert(
-      `${activeTab === "PMO" ? "Delete PMO" : "Delete Desk Officer"}`, // Title
-      `Are you sure you want to delete employee ${firstName} ${lastName}?`, // Message
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-        {
-          text: "Delete",
-          style: "destructive", // Show red on iOS
-          onPress: () => {
-            removeEmployee(id);
+  const handleRemoveEmployee = useCallback(
+    (id: string, firstName: string, lastName: string) => {
+      Alert.alert(
+        `${activeTab === "PMO" ? "Delete PMO" : "Delete Desk Officer"}`, // Title
+        `Are you sure you want to delete employee ${firstName} ${lastName}?`, // Message
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
           },
-        },
-      ],
-    );
-  };
+          {
+            text: "Delete",
+            style: "destructive", // Show red on iOS
+            onPress: () => {
+              removeEmployee(id);
+            },
+          },
+        ],
+      );
+    },
+    [activeTab, removeEmployee], // There is a dependent array cause there is a value and a function inside callBack
+  );
 
   // Compute data outside FlatList - Prevent from lag
   const renderItem = useCallback(
     ({ item }: { item: UnifiedEmployee }) => (
       <EmployeeCard
+        id={item.id}
         firstName={item.firstName}
+        middleName={item.middleName}
         lastName={item.lastName}
         position={item.position}
         department={
           item.role === "PMO" ? item.department : item.assignedHospital
         }
         employeeStatus={item.status}
-        onEmployeeEdit={() => handleEditEmployee(item)}
-        onEmployeeDelete={() =>
-          handleRemoveEmployee(item.id, item.firstName, item.lastName)
+        onEmployeeEdit={handleEditEmployee}
+        onEmployeeDelete={(id, firstName, lastName) =>
+          handleRemoveEmployee(id, firstName || "", lastName || "")
         }
       />
     ),
@@ -232,27 +275,85 @@ const employees = () => {
 
   if (loading) return null;
 
-  const employeesMainSummaryData = getEmployeesSummaryData(
-    employees,
-    true,
-    activeTab,
-  );
-  const employeesSubSummaryData = getEmployeesSummaryData(
-    employees,
-    false,
-    activeTab,
-  );
+  const { employeesMainSummaryData, employeesSubSummaryData } = useMemo(() => {
+    const totalCount = employees.length;
+    const pmoCount = employees.filter((e) => e.role === "PMO").length;
+    const doCount = totalCount - pmoCount;
 
-  const handleOpenForm = () => {
-    setForm(initialState); // Reset the form to initial empty values
+    const activeCount = employees.filter(
+      (e) => e.role === activeTab && e.status === "Active",
+    ).length;
+    const inactiveCount = employees.filter(
+      (e) => e.role === activeTab && e.status === "Inactive",
+    ).length;
+    const pendingCount = employees.filter(
+      (e) => e.role === activeTab && e.status === "Pending",
+    ).length;
+    const onLeaveCount = employees.filter(
+      (e) => e.role === activeTab && e.status === "On Leave",
+    ).length;
+
+    const main = [
+      { value: totalCount.toString(), label: "TOTAL", isMainSummary: true },
+      { value: pmoCount.toString(), label: "PMO", isMainSummary: true },
+      { value: doCount.toString(), label: "DO", isMainSummary: true },
+    ];
+
+    const sub =
+      activeTab === "PMO"
+        ? [
+            {
+              value: activeCount.toString(),
+              label: "Active",
+              isMainSummary: false,
+            },
+            {
+              value: inactiveCount.toString(),
+              label: "Inactive",
+              isMainSummary: false,
+            },
+            {
+              value: pendingCount.toString(),
+              label: "Pending",
+              isMainSummary: false,
+            },
+            {
+              value: onLeaveCount.toString(),
+              label: "On Leave",
+              isMainSummary: false,
+            },
+          ]
+        : [
+            {
+              value: activeCount.toString(),
+              label: "Active",
+              isMainSummary: false,
+            },
+            {
+              value: inactiveCount.toString(),
+              label: "Inactive",
+              isMainSummary: false,
+            },
+            {
+              value: pendingCount.toString(),
+              label: "Pending",
+              isMainSummary: false,
+            },
+          ];
+
+    return { employeesMainSummaryData: main, employeesSubSummaryData: sub };
+  }, [employees, activeTab]);
+
+  const handleOpenForm = useCallback(() => {
+    setForm(getBlankForm(activeTab)); // Reset the form to initial empty values
     setFormVissible(true); // Open the form
-  };
+  }, [activeTab]);
 
-  const handleClosedForm = () => {
-    setForm(initialState);
+  const handleClosedForm = useCallback(() => {
+    setForm(getBlankForm(activeTab));
     setFormVissible(false); // Close the form
     setEditActive(false);
-  };
+  }, [activeTab]);
 
   const formValidation = () => {
     const errors: ValidationError = {};
@@ -295,9 +396,9 @@ const employees = () => {
     } else {
       const newEmployeeData = {
         ...form,
-        firstName: form.firstName.trim(),
-        middleName: form.middleName.trim(),
-        lastName: form.lastName.trim(),
+        firstName: (form.firstName || "").trim(),
+        middleName: (form.middleName || "").trim(),
+        lastName: (form.lastName || "").trim(),
         role: activeTab, // This role will identify the data either DO or PMO (activeRole === DO | PMO)
       } as UnifiedEmployee;
       addEmployee(newEmployeeData);
@@ -413,10 +514,9 @@ const employees = () => {
           </View>
           <Text style={styles.employeeCount}>
             {activeTab === "PMO"
-              ? filteredEmployees.filter((e) => e.role === activeTab).length
-              : filteredEmployees.filter((e) => e.role === activeTab)
-                  .length}{" "}
-            {filteredEmployees.filter((e) => e.role === activeTab).length > 1
+              ? displayData.filter((e) => e.role === activeTab).length
+              : displayData.filter((e) => e.role === activeTab).length}{" "}
+            {displayData.filter((e) => e.role === activeTab).length > 1
               ? `${activeTab}'S`
               : `${activeTab}`}{" "}
             FOUND
@@ -425,7 +525,7 @@ const employees = () => {
             data={displayData}
             keyExtractor={(item) => item.id}
             contentContainerStyle={
-              filteredEmployees.length === 0
+              displayData.length === 0
                 ? { flexGrow: 1 }
                 : styles.employeesListContentContainerStyle
             } // No need to wrap Flatlist if this is present
@@ -461,7 +561,7 @@ const employees = () => {
             <View style={styles.inputContainer}>
               <Input
                 label="FIRST NAME"
-                value={form.firstName}
+                value={form.firstName || ""}
                 placeHolder="e.g Ivan"
                 onChangeText={(newText) =>
                   setForm({ ...form, firstName: newText })
@@ -471,7 +571,7 @@ const employees = () => {
               />
               <Input
                 label="MIDDLE NAME"
-                value={form.middleName.trim()}
+                value={form.middleName || ""}
                 placeHolder="e.g Hanma"
                 onChangeText={(newText) =>
                   setForm({ ...form, middleName: newText })
@@ -481,7 +581,7 @@ const employees = () => {
               />
               <Input
                 label="LAST NAME"
-                value={form.lastName.trim()}
+                value={form.lastName || ""}
                 placeHolder="e.g Hanma"
                 onChangeText={(newText) =>
                   setForm({ ...form, lastName: newText })
@@ -502,6 +602,8 @@ const employees = () => {
                 placeholder="Select position"
                 error={formValidationError.position}
               />
+              {/* 🚀 PERFORMANCE & UI WIN: Ipakita lang ang Department Dropdown KUNG PMO ang activeTab */}
+              {/* 🚀 KUNG PMO: Ipakita ang Department DROP-DOWN para pwedeng pumili */}
               <Dropdown
                 disable={activeTab === "DO" && isDropdownActive}
                 label="DEPARTMENT"
@@ -516,6 +618,7 @@ const employees = () => {
                 placeholder="Select department"
                 error={formValidationError.department}
               />
+              {/* Kung DO naman ang activeTab, ipakita ang Assigned Hospital Dropdown */}
               {activeTab === "DO" && (
                 <Dropdown
                   label="ASSIGNED HOSPITAL"
@@ -528,6 +631,7 @@ const employees = () => {
                   }
                   items={partnerHospital}
                   placeholder="Select assigned hospital"
+                  error={formValidationError.assignedHospital} // <--- Dagdagan mo rin ng validation error hook para malinis!
                 />
               )}
               <Dropdown
